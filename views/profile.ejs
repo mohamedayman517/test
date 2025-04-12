@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interior Design Portfolio</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Belleza&display=swap"
+      rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <link rel="stylesheet" href="/css/public.css">
+    <link rel="stylesheet" href="/css/darkMode.css">
+  </head>
+  <body>
+    <style>
+ 
+      .dropdown {
+          position: relative;
+      }
+      
+      .dropdown-menu {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          background: white;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
+          display: none;
+          flex-direction: column;
+          min-width: 150px;
+      }
+      
+      .dropdown-menu a {
+          display: block;
+          padding: 10px;
+          color: black;
+          text-decoration: none;
+      }
+      
+      .dropdown-menu a:hover {
+          background: #f4f4f4;
+      }
+      
+      
+      .dropdown:hover .dropdown-menu {
+          display: flex;
+      }
+      
+      </style>
+    <style>
+  .profile-image-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  .edit-profile-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+    background-color: #007bff;
+    border: none;
+    font-size: 16px;
+    line-height: 1;
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+
+  .edit-profile-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
+  }
+
+  .col-md-4 {
+    position: relative;
+  }
+</style>
+
+    <div class="container" data-aos="zoom-in" data-aos-duration="1200">
+      <div class="row">
+        <div
+          class="navv-bar py-4 d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center gap-3">
+            <% if (!user || (user && user.id !== engData._id.toString())) { %>
+              <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i>
+              </a>
+            <% } %>
+            <div class="logo" style="font-size: 35px;" data-aos="fade-down"
+              data-aos-duration="1200">
+              Decore&More
+            </div>
+          </div>
+          <div class="menu-btn d-lg-none" data-aos="fade-up"
+            data-aos-duration="1200">
+            <i class="fa-solid fa-bars"></i>
+          </div>
+          <div class="nav-links" data-aos="fade-up" data-aos-duration="1200">
+            <ul class="list-unstyled m-0">
+              <% if (user && user.role === 'user') { %>
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/#op" class="nav-link">About</a></li>
+                <li class="dropdown">
+                  <a href="/#od" class="nav-link">Services</a>
+                  <div class="dropdown-menu">
+                    <a href="/eng?occasion=Birthday" class="nav-link">Birthday</a>
+                    <a href="/eng?occasion=Wedding" class="nav-link">Wedding</a>
+                    <a href="/eng?occasion=Engagement" class="nav-link">Engagement</a>
+                    <a href="/eng?occasion=BabyShower" class="nav-link">BabyShower</a>
+                  </div>
+                </li>
+                <li><a href="/designers" class="nav-link">Designers</a></li>
+                <li class="dropdown">
+                  <a href="/eng" class="nav-link">Engineers</a>
+                  <div class="dropdown-menu">
+                    <a href="/login">Log In</a>
+                    <a href="/register">Register</a>
+                  </div>
+                  <% if (user && user.name) { %>
+                    <li class="dropdown">
+                      <a href="#" class="nav-link d-flex align-items-center">
+                        <i class="fa-solid fa-user"></i>
+                        <span><%= user.name %></span>
+                      </a>
+                      <div class="dropdown-menu">
+                        <a href="/userProfile/<%= user._id %>" class="nav-link">
+                          <i class="fas fa-user me-2"></i>Profile
+                        </a>
+                        <a href="#" class="nav-link" onclick="logout()">
+                          <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </a>
+                      </div>
+                    </li>
+                  <% } %>
+
+                </li>
+                <li><a href="/contact" class="nav-link">Contact</a></li>
+
+                 
+                <% } else if(user && user.role === 'Engineer') { %>
+
+
+
+                  <li>
+                    <button class="btn" onclick="logout()">Logout</button>
+                  </li>
+                  <li>
+                    <button onclick="toggleDarkMode()" class="dark-mode">
+                      <i class="fa-solid fa-moon"></i>
+                    </button>
+                  </li>
+                  <li class="notification-icon">
+                    <button class="btn position-relative" id="notificationBtn">
+                      <i class="fas fa-bell"></i>
+                      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-count" id="notificationCount">
+                        0
+                      </span>
+                    </button>
+                  </li>
+
+
+
+                  <% } else { %>
+                
+              <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/#op" class="nav-link">About</a></li>
+                <li class="dropdown">
+                  <a href="/#od" class="nav-link">Services</a>
+                  <div class="dropdown-menu">
+                    <a href="/eng?occasion=Birthday" class="nav-link">Birthday</a>
+                    <a href="/eng?occasion=Wedding" class="nav-link">Wedding</a>
+                    <a href="/eng?occasion=Engagement" class="nav-link">Engagement</a>
+                    <a href="/eng?occasion=BabyShower" class="nav-link">BabyShower</a>
+                  </div>
+                </li>
+                <li><a href="/designers" class="nav-link">Designers</a></li>
+                <li class="dropdown">
+                  <a href="/eng" class="nav-link">Engineers</a>
+                  <div class="dropdown-menu">
+                    <a href="/login">Log In</a>
+                    <a href="/register">Register</a>
+                  </div>
+                  <li>
+                    <button onclick="toggleDarkMode()" class="dark-mode">
+                      <i class="fa-solid fa-moon"></i>
+                    </button>
+                  </li>
+                  <% } %>
+              <% if (user && user.role === 'user') { %>
+                <li><a href="/Favorite" class="nav-link">Favorite</a></li>
+              <% } %>
+
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h1 class="text-center mt-5"
+      style="font-family: Dancing Script; letter-spacing: 2px; font-weight: bolder;">
+      Discover the creative world of <%= engData.firstName %>.
+    </h1>
+
+    <section id="profile" class="py-5 d-flex align-items-center">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-4" position-relative>
+            <div class="profile-image-container">
+              <img src="<%= engData.profilePhoto || 'images/team-img2.jpg' %>"
+                class="img-fluid rounded-circle" alt="<%= engData.firstName %>">
+            
+                <% if (user && user.role === 'Engineer') { %>
+              <button class="btn btn-primary edit-profile-btn"
+                data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                <i class="fas fa-pen"></i>
+              </button>
+              <% } %>
+            </div>
+          </div>
+          <div class="col-md-8">
+            <h1 id="engineerName"><%= engData.firstName %><%= engData.lastName
+              %></h1>
+            <h3 class="py-4"><%= engData.title %></h3>
+            <p id="engineerBio" class="lead"><%= engData.bio %></p>
+            <% if (user && user.role === 'user') { %>
+            <button id="addToFavoritesBtn" class="btn btn-warning">Add to
+              Favorites</button>
+            <% } %>
+            <div class="mt-4" style="font-family: sans-serif;">
+              <% engData.badges.forEach(badge => { %>
+              <span class="badge bg-secondary me-2"><%= badge %></span>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <% if (user && user.role === 'Engineer') { %>
+    <div id="chatLauncher" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+      <button class="chat-button" onclick="startChat()" style="background-color: #007bff; color: white; border: none; padding: 12px 16px; border-radius: 50%; font-size: 20px; cursor: pointer;">
+        💬
+      </button>
+    </div>
+
+    <!-- Chat iframe -->
+    <iframe id="chatFrame" src="" style="display:none; position: fixed; bottom: 80px; right: 20px; width: 350px; height: 500px; border: 1px solid #ccc; border-radius: 10px; z-index: 1000; background-color: white;"></iframe>
+    <% } %>
+
+    <div class="container-lg py-5">
+      <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold mb-3">What Our Clients Say</h1>
+        <p class="text-muted fs-5">Trusted by thousands of satisfied customers
+          worldwide</p>
+      </div>
+      <div class="row g-4">
+        <% engData.testimonials.forEach(testimonial => { %>
+        <div class="col-md-4">
+          <div class="card h-100 testimonial-card">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-4">
+                <div>
+                  <h5 class="mb-1"><%= testimonial.name %></h5>
+                  <p class="text-muted mb-0"><%= testimonial.rating %>⭐</p>
+                </div>
+              </div>
+              <p class="mb-0"><%= testimonial.comment %></p>
+            </div>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+    <% if (user && user.role === 'Engineer') { %>
+    <section id="bookings" class="py-5" style="font-family: sans-serif;">
+      <div class="container">
+        <h2 class="mb-4">Project Bookings</h2>
+        <div class="card">
+          <div class="card-body">
+            <% if (engData.bookings.length > 0) { %>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Client Name</th>
+                    <th>Phone</th>
+                    <th>Project Type</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% engData.bookings.forEach(booking => { %>
+                  <tr>
+                    <td><%= booking.clientName %></td>
+                    <td><%= booking.phone %></td>
+                    <td><%= booking.projectType %></td>
+                    <td><%= new Date(booking.date).toLocaleString("en-GB", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true
+                      }).replace(/,\s.*$/, '') %></td>
+                    <td><span
+                        class="badge bg-<%= booking.status === 'Active' ? 'success' : 'warning' %>"><%=
+                        booking.status %></span></td>
+
+                    <td>
+                      <button class="btn btn-danger btn-sm"
+                        onclick="deleteBooking('<%= booking._id %>')">
+                        <i class="bi bi-trash"></i> Delete
+                      </button>
+                    </td>
+                  </tr>
+
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+            <% } else { %>
+              <p class="text-center text-muted">No bookings available</p>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </section>
+    <% } %>
+    <style>
+      .rating-section {
+          text-align: center;
+          margin: 20px 0;
+      }
+      .rating-stars {
+          font-size: 40px;
+          cursor: pointer;
+      }
+      .rating-stars .star {
+          color: #ddd;
+          transition: color 0.2s;
+      }
+      .rating-stars .star:hover,
+      .rating-stars .star.active {
+          color: #ffc107;
+      }
+      .form-group {
+          margin-bottom: 15px;
+      }
+      .form-group label {
+          display: block;
+          margin-bottom: 5px;
+          font-weight: bold;
+      }
+      .form-group input,
+      .form-group textarea {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          font-size: 16px;
+      }
+      .form-group textarea {
+          resize: vertical;
+          height: 100px;
+      }
+      .submit-btn {
+          display: block;
+          width: 15%;
+          padding: 10px;
+      
+          color: #fff;
+          border: none;
+          border-radius: 5px;
+          font-size: 16px;
+          cursor: pointer;
+      }
+      .popup {
+          display: none;
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background-color: #fff;
+          padding: 20px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          border-radius: 10px;
+          text-align: center;
+          z-index: 1000;
+      }
+      .popup button {
+          padding: 10px 20px;
+          background-color: #28a745;
+          color: #fff;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+      }
+      .overlay {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          z-index: 999;
+      }
+  </style>
+    <!-- Rating Section -->
+    <% if (user && user.role === 'user') { %>
+    <div class="rating-section" id="ratingStars">
+      <h2 class="h2">Rate the Engineer</h2>
+      <div class="rating-stars">
+        <span class="star" data-value="1">★</span>
+        <span class="star" data-value="2">★</span>
+        <span class="star" data-value="3">★</span>
+        <span class="star" data-value="4">★</span>
+        <span class="star" data-value="5">★</span>
+      </div>
+    </div>
+
+    <!-- Feedback Form -->
+    <form id="feedbackForm" method="post" action="/rate">
+      <input type="hidden" name="engineerId" value="<%= engData._id %>">
+      <div class="form-group">
+        <label for="name" style="font-family: sans-serif;">Your Name:</label>
+        <input type="text" name="name" style="font-family: sans-serif;"
+          id="name" placeholder="Enter your name" required>
+      </div>
+      <div class="form-group">
+        <label for="comment" style="font-family: sans-serif;">Your
+          Comment:</label>
+        <textarea id="comment" name="comment" style="font-family: sans-serif;"
+          placeholder="Leave your feedback here..." required></textarea>
+      </div>
+      <button type="submit" class="submit-btn"
+        style="background-color: goldenrod; font-family: sans-serif;">Submit
+        Feedback</button>
+    </form>
+    <% } %>
+    <!-- Pop-up -->
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="popup">
+      <p>Thank you for your feedback!</p>
+      <button onclick="closePopup()">OK</button>
+    </div>
+
+    <section id="portfolio" class="py-5">
+      <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2>Portfolio</h2>
+          <% if (user && user.role === 'Engineer') { %>
+          <button class="btn"
+            style="background-color: goldenrod; color: white; font-family: sans-serif;"
+            data-bs-toggle="modal" data-bs-target="#uploadModal">
+            <i class="bi bi-upload"></i> Upload New
+          </button>
+          <% } %>
+        </div>
+        <div class="row g-4" id="p">
+          <% projects.forEach(project => { %>
+          <div class="col-md-4">
+            <div class="portfolio-item">
+              <% if (user && user.role === 'user') { %>
+              <a
+                href="/payment?engineerId=<%= engData._id %>&projectId=<%= project._id %>"><img
+                  src="<%= project.image %>" class="img-fluid"
+                  alt="<%= project.name %>"></a>
+            
+                  <% } else if (user && user.role === "Engineer") { %>
+              <img src="<%= project.image %>" class="img-fluid"
+                alt="<%= project.name %>">
+                <% } else { %>
+                  <a
+                  href="/payment?engineerId=<%= engData._id %>&projectId=<%= project._id %>"><img
+                    src="<%= project.image %>" class="img-fluid"
+                    alt="<%= project.name %>"></a>
+              <% } %>
+
+              <div class="portfolio-overlay">
+                <h5><%= project.name %></h5>
+                <p style="font-size: 18px;"><%= project.price %> EGP</p>
+                <p><%= project.area %> m²</p>
+                <% if (user && user.role === 'Engineer') { %>
+                <button onclick="deleteProject('<%= project._id %>')"
+                  class="btn btn-danger btn-sm">Delete</button>
+                <button onclick="editProject('<%= project._id %>')"
+                  class="btn btn-dark btn-sm">Edit</button>
+                <% } %>
+              </div>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+    </section>
+
+    <!-- Upload Modal -->
+    <div class="modal fade" id="uploadModal" tabindex="-1"
+      style="font-family: sans-serif;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <% if (user && user.role === 'Engineer') { %>
+          <div class="modal-header">
+            <h5 class="modal-title">Upload New Project</h5>
+            <button type="submit" class="btn-close"
+              data-bs-dismiss="modal"></button>
+          </div>
+          <% } %>
+          <div class="modal-body">
+            <form id="createProjectForm" action="/create" method="post" enctype="multipart/form-data">
+              <div class="mb-3">
+                <label class="form-label">Project Title</label>
+                <input id="projectName" name="projectName" type="text" class="form-control" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Project Type</label>
+                <select id="projectType" name="projectType" class="form-select" required>
+                  <option value disabled selected>Select</option>
+                  <option>Birthday</option>
+                  <option>Wedding</option>
+                  <option>BabyShower</option>
+                  <option>Engagement</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Project Image</label>
+                <input id="projectImage" name="projectImage" type="file" class="form-control" accept="image/*" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Project Area (m²)</label>
+                <input id="projectArea" name="projectArea" type="number" class="form-control" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Price</label>
+                <input id="projectPrice" name="projectPrice" type="number" class="form-control" required>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Upload</button>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <style>
+      
+
+
+
+
+
+        
+      footer a:hover {
+          opacity: 0.8;
+          transition: all 0.3s ease;
+      }
+      
+      footer {
+          border-top: 2px solid var(--border);
+      }
+      
+      footer h5 {
+          font-weight: 600;
+          letter-spacing: 1px;
+      }
+      
+      footer .social-links a:hover {
+          transform: translateY(-3px);
+      }
+      
+      footer .list-unstyled li a:hover {
+          padding-left: 5px;
+      }
+      
+      footer .container {
+          max-width: 1200px;
+      }
+      
+      @media (max-width: 768px) {
+          footer h2.display-4 {
+              font-size: 2.5rem;
+          }
+          
+          footer .col-md-4 {
+              text-align: center;
+          }
+          
+          footer .d-flex.gap-3 {
+              justify-content: center;
+          }
+      }
+      </style>
+
+    <footer class="bg-dark text-warning py-5">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-12 text-center mb-4">
+            <h2 class="display-4 fw-bold">Decor&More</h2>
+          </div>
+          <div class="col-md-4">
+            <h5 class="border-bottom border-warning pb-2">Contact Us</h5>
+            <div class="mt-3">
+              <p><i
+                  class="bi bi-envelope-fill me-2"></i>info@decorandmore.com</p>
+              <a href="https://web.whatsapp.com/send?phone=201556159175"
+                target="_blank">
+                <p><i class="bi bi-telephone-fill me-2"></i>+20 1556159175</p>
+              </a>
+              <p><i class="bi bi-geo-alt-fill me-2"></i>123 Decor Street, Design
+                City</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <h5 class="border-bottom border-warning pb-2">Quick Links</h5>
+            <ul class="list-unstyled mt-3">
+              <li class="mb-2"><a href="/"
+                  class="text-warning text-decoration-none">Home</a></li>
+              <li class="mb-2"><a href="/#op"
+                  class="text-warning text-decoration-none">About</a></li>
+              <li class="mb-2"><a href="/login"
+                  class="text-warning text-decoration-none">login</a></li>
+              <li class="mb-2"><a href="/register"
+                  class="text-warning text-decoration-none">register</a></li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <h5 class="border-bottom border-warning pb-2">Follow Us</h5>
+            <div class="mt-3 d-flex gap-3">
+              <a href="#" class="text-warning fs-4" aria-label="Facebook"><i
+                  class="bi bi-facebook"></i></a>
+              <a href="#" class="text-warning fs-4" aria-label="Instagram"><i
+                  class="bi bi-instagram"></i></a>
+              <a href="#" class="text-warning fs-4" aria-label="Twitter"><i
+                  class="bi bi-twitter-x"></i></a>
+              <a href="#" class="text-warning fs-4" aria-label="LinkedIn"><i
+                  class="bi bi-linkedin"></i></a>
+            </div>
+          </div>
+          <div class="col-12">
+            <hr class="border-warning">
+            <p class="text-center mb-0">&copy; 2024 Decor&More. All rights
+              reserved.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // JavaScript for Star Rating and Pop-up
+        document.addEventListener("DOMContentLoaded", function () {
+            const stars = document.querySelectorAll('.rating-stars .star');
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('overlay');
+            const feedbackForm = document.getElementById('feedbackForm');
+            const ratingStarsContainer = document.querySelector('.rating-stars');
+            const h2 = document.querySelector('.h2');
+
+            // Only proceed if the feedback form exists
+            if (feedbackForm) {
+                let selectedRating = 0;
+
+                if (stars) {
+                    stars.forEach(star => {
+                        star.addEventListener('click', () => {
+                            selectedRating = Number(star.getAttribute('data-value'));
+                            highlightStars(selectedRating);
+                        });
+                    });
+                }
+
+                feedbackForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+
+                    const name = document.getElementById('name').value.trim();
+                    const comment = document.getElementById('comment').value.trim();
+                    const engineerId = document.querySelector('input[name="engineerId"]').value;
+
+                    if (selectedRating === 0) {
+                        alert("Please select a rating before submitting.");
+                        return;
+                    }
+
+                    const data = { engineerId, name, rating: selectedRating, comment };
+
+                    fetch("/rate", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(data)
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (feedbackForm) feedbackForm.style.display = 'none';
+                        if (ratingStarsContainer) ratingStarsContainer.style.display = 'none';
+                        if (h2) h2.style.display = 'none';
+                        selectedRating = 0;
+                        highlightStars(0);
+                        showPopup();
+                    })
+                    .catch(error => {
+                        console.error("Error submitting rating:", error);
+                        alert("Error in sending rate.");
+                    });
+                });
+
+                function highlightStars(value) {
+                    if (stars) {
+                        stars.forEach(star => {
+                            if (Number(star.getAttribute('data-value')) <= value) {
+                                star.classList.add('active');
+                            } else {
+                                star.classList.remove('active');
+                            }
+                        });
+                    }
+                }
+
+                function showPopup() {
+                    if (popup) popup.style.display = 'block';
+                    if (overlay) overlay.style.display = 'block';
+                    if (feedbackForm) feedbackForm.style.display = 'none';
+                }
+            }
+
+            window.closePopup = function() {
+                if (popup) popup.style.display = 'none';
+                if (overlay) overlay.style.display = 'none';
+            }
+        });
+    </script>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+
+    <script src="../user/create.js"></script>
+    <script src="/js/darkMode.js"></script>
+
+    <script src="../user/login.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        const engineer = {
+          _id: "<%= engData._id %>",
+          firstName: "<%= engData.firstName %>",
+          lastName: "<%= engData.lastName %>",
+          bio: "<%= engData.bio %>",
+          profilePhoto: "<%= engData.profilePhoto || 'images/team-img2.jpg' %>"
+        };
+    
+        const addToFavoritesBtn = document.getElementById("addToFavoritesBtn");
+        
+        if (addToFavoritesBtn) {
+          addToFavoritesBtn.addEventListener("click", function() {
+            let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+            
+            if (!favorites.includes(engineer._id)) {
+              favorites.push(engineer._id);
+              localStorage.setItem("favorites", JSON.stringify(favorites));
+              Swal.fire({
+                title: 'Success!',
+                text: 'Engineer added to favorites',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false,
+                position: 'top-end',
+                toast: true,
+                background: '#28a745',
+                color: 'white',
+                iconColor: 'white'
+              });
+            } else {
+              Swal.fire({
+                title: 'Warning!',
+                text: 'Engineer is already in favorites',
+                icon: 'warning',
+                timer: 2000,
+                showConfirmButton: false,
+                position: 'top-end',
+                toast: true,
+                background: '#ffc107',
+                color: 'white',
+                iconColor: 'white'
+              });
+            }
+          });
+        }
+      });
+    </script>
+
+    <script>
+      function deleteBooking(bookingId) {
+        const dialog = document.createElement('div');
+        dialog.className = 'custom-confirm-dialog';
+        dialog.innerHTML = `
+          <div class="dialog-header">
+            <i class="fas fa-exclamation-triangle dialog-icon"></i>
+            <div class="dialog-title">Delete Booking</div>
+          </div>
+          <div class="dialog-message">
+            Are you sure you want to delete this booking? This action cannot be undone.
+          </div>
+          <div class="dialog-buttons">
+            <button class="btn btn-cancel">Cancel</button>
+            <button class="btn btn-delete">Delete</button>
+          </div>
+        `;
+
+        const overlay = document.createElement('div');
+        overlay.className = 'dialog-overlay';
+
+        document.body.appendChild(overlay);
+        document.body.appendChild(dialog);
+
+        const cancelBtn = dialog.querySelector('.btn-cancel');
+        const deleteBtn = dialog.querySelector('.btn-delete');
+
+        cancelBtn.addEventListener('click', () => {
+          document.body.removeChild(overlay);
+          document.body.removeChild(dialog);
+        });
+
+        deleteBtn.addEventListener('click', async () => {
+          try {
+            const response = await fetch(`/delete-booking/${bookingId}`, {
+              method: "DELETE",
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+              showAlert('Booking deleted successfully!', 'success');
+              setTimeout(() => {
+                window.location.reload();
+              }, 1500);
+            } else {
+              showAlert(data.message || 'Error deleting booking', 'error');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            showAlert('Error deleting booking. Please try again.', 'error');
+          } finally {
+            document.body.removeChild(overlay);
+            document.body.removeChild(dialog);
+          }
+        });
+      }
+    </script>
+
+    <div class="modal fade" id="editProfileModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Profile</h5>
+            <button type="button" class="btn-close"
+              data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="editProfileForm">
+              <div class="mb-3">
+                <input type="hidden" name="id" id="id"
+                  value="<%= engData._id %>">
+                <label class="form-label">First Name</label>
+                <input type="text" class="form-control" id="editFirstName"
+                  name="firstName">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="editLastName"
+                  name="lastName">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Bio</label>
+                <textarea class="form-control" id="editBio"
+                  name="bio"></textarea>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Profile Photo</label>
+                <input type="file" class="form-control" id="editProfilePhoto"
+                  name="profilePhoto" accept="image/*">
+              </div>
+              <button type="submit" class="btn btn-success">Save
+                Changes</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const editProfileForm = document.getElementById("editProfileForm");
+        const editProfileModal = document.getElementById('editProfileModal');
+        
+        // Only proceed if both the form and modal exist
+        if (editProfileForm && editProfileModal) {
+          // Set initial values
+          const firstNameInput = document.getElementById("editFirstName");
+          const lastNameInput = document.getElementById("editLastName");
+          const bioInput = document.getElementById("editBio");
+
+          if (firstNameInput && lastNameInput && bioInput) {
+            firstNameInput.value = "<%= engData.firstName %>";
+            lastNameInput.value = "<%= engData.lastName %>";
+            bioInput.value = "<%= engData.bio %>";
+          }
+
+          editProfileForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+            
+            const formData = new FormData();
+            formData.append("id", "<%= engData._id %>");
+            formData.append("firstName", firstNameInput.value);
+            formData.append("lastName", lastNameInput.value);
+            formData.append("bio", bioInput.value);
+            
+            const fileInput = document.getElementById("editProfilePhoto");
+            if (fileInput && fileInput.files.length > 0) {
+              formData.append("profilePhoto", fileInput.files[0]);
+            }
+
+            try {
+              const response = await fetch("/updateProfile", {
+                method: "POST",
+                body: formData,
+                credentials: 'include'
+              });
+
+              const result = await response.json();
+              if (result.success) {
+                // Update the UI with new data
+                const nameElement = document.getElementById("engineerName");
+                const bioElement = document.getElementById("engineerBio");
+                const profileImage = document.querySelector(".img-fluid.rounded-circle");
+
+                if (nameElement) nameElement.textContent = result.user.firstName + result.user.lastName;
+                if (bioElement) bioElement.textContent = result.user.bio;
+                
+                // Update profile photo if changed
+                if (result.user.profilePhoto && profileImage) {
+                  profileImage.src = result.user.profilePhoto;
+                }
+
+                showAlert('Profile updated successfully!', 'success');
+                
+                // Close the modal
+                const modal = bootstrap.Modal.getInstance(editProfileModal);
+                if (modal) modal.hide();
+              } else {
+                showAlert(result.message || 'Error updating profile!', 'error');
+              }
+            } catch (error) {
+              console.error('Error:', error);
+              showAlert('Error updating profile. Please try again.', 'error');
+            }
+          });
+        }
+      });
+    </script>
+
+<% if (user && user.role === 'Engineer') { %>
+    <script>  
+    function logout() {
+    fetch("/logout", { method: "POST" }).then(() => (window.location.href = "/login"));
+  }
+</script>
+<% } %>
+
+<% if (user && user.role === 'user') { %>
+  <script>  
+    function logout() {
+    fetch("/logout", { method: "POST" }).then(() => (window.location.href = "/"));
+  }
+</script>
+  <% } %>
+  
+  </body>
+  <% if (user && user.role === 'Engineer') { %>
+    <script>
+      window.engineerData = {
+        id: '<%= engData._id %>'
+      };
+    </script>
+  <% } %>
+  <script>
+    // All JavaScript functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      // Notification functionality
+      const socket = io();
+      const notificationList = document.getElementById('notificationList');
+      const notificationBtn = document.getElementById('notificationBtn');
+      const notificationCount = document.getElementById('notificationCount');
+      const notificationModalElement = document.getElementById('notificationModal');
+      
+      let notificationModal;
+      if (notificationModalElement) {
+        try {
+          notificationModal = new bootstrap.Modal(notificationModalElement);
+        } catch (error) {
+          console.error('Error initializing notification modal:', error);
+        }
+      }
+      
+      if (notificationList && notificationBtn && notificationCount) {
+        socket.on('newMessage', function(data) {
+          const currentCount = parseInt(notificationCount.textContent) || 0;
+          notificationCount.textContent = currentCount + 1;
+          
+          const notificationItem = document.createElement('div');
+          notificationItem.className = 'notification-item';
+          notificationItem.innerHTML = `
+            <div class="sender">${data.senderName}</div>
+            <div class="message">${data.content}</div>
+            <div class="time">${new Date(data.timestamp).toLocaleString()}</div>
+          `;
+          
+          notificationItem.addEventListener('click', function() {
+            window.location.href = `/chat/${data.userId}/${data.engineerId}`;
+          });
+          
+          notificationList.prepend(notificationItem);
+        });
+        
+        notificationBtn.addEventListener('click', function() {
+          if (notificationModal) {
+            notificationModal.show();
+            notificationCount.textContent = '0';
+          }
+        });
+      }
+    });
+
+    // Logout functionality
+    function logout() {
+      fetch("/logout", { method: "POST" }).then(() => (window.location.href = "/login"));
+    }
+
+    // Chat functionality
+    function startChat() {
+      const chatFrame = document.getElementById('chatFrame');
+      if (chatFrame.style.display === 'none') {
+        chatFrame.style.display = 'block';
+        chatFrame.src = `/chat/<%= engData._id %>`;
+      } else {
+        chatFrame.style.display = 'none';
+        chatFrame.src = '';
+      }
+    }
+  </script>
+</body>
+</html>

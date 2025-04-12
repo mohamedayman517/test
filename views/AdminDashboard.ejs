@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/AdminDashboard_style.css">
+    <link rel="stylesheet" href="/css/public.css">
+    <link rel="stylesheet" href="/css/darkMode.css">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <!-- Add SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Add SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .custom-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            animation: slideIn 0.3s ease-out;
+            max-width: 400px;
+            font-family: sans-serif;
+            border: none;
+        }
+
+        .custom-alert.success {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border-left: 5px solid #28a745;
+            color: #155724;
+        }
+
+        .custom-alert.error {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            border-left: 5px solid #dc3545;
+            color: #721c24;
+        }
+
+        .custom-alert.warning {
+            background: linear-gradient(135deg, #fff3cd, #ffeeba);
+            border-left: 5px solid #ffc107;
+            color: #856404;
+        }
+
+        .alert-icon {
+            font-size: 28px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .alert-message {
+            font-size: 15px;
+            line-height: 1.4;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    </style>
+
+  </head>
+
+  <body>
+    <button class="btn" onclick="logout()">Logout</button>
+
+    <div class="container">
+      <h1>Admin Dashboard</h1>
+      <button onclick="toggleDarkMode()" class="dark-mode">
+        <li class="fa-solid fa-moon"></li>
+      </button>
+      <div class="search-bar">
+        <input type="text" id="searchInput"
+          placeholder="Search for engineers..." onkeyup="filterEngineers()">
+      </div>
+
+      <div class="card-container" id="engineerCards">
+        <% engineers.forEach(engineer => { %>
+        <div class="card"
+          data-name="<%= engineer.firstName %> <%= engineer.lastName %>">
+          <img
+            src="<%= engineer.profilePhoto || '/images/default-avatar.png' %>"
+            alt="<%= engineer.firstName %>">
+          <h3><%= engineer.firstName %> <%= engineer.lastName %></h3>
+          <p>Email: <%= engineer.email %></p>
+          <p>Phone: <%= engineer.phone %></p>
+          <div class="rating mb-2">
+            <% let rating = Math.round(engineer.averageRating); %>
+            <% for (let i = 0; i < 5; i++) { %>
+            <% if (i < rating) { %>
+            <i class="bi bi-star-fill"></i>
+            <% } else { %>
+            <i class="bi bi-star"></i>
+            <% } %>
+            <% } %>
+            <span class="ms-2"
+              style="font-family: sans-serif; font-size: 18px;"><%=
+              engineer.rating %></span>
+          </div>
+          <button
+            onclick="deleteEngineer('<%= engineer._id %>')">Delete</button>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+    <button onclick="loadPendingEngineers()" class="btn btn-primary">عرض المهندسين غير الموافق عليهم</button>
+    <div class="table-container">
+    <table id="engineersTable">
+      <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>ID Card Photo</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- سيتم ملء البيانات ديناميكيًا -->
+    </tbody>
+  </table>
+  </div>
+  <script>
+async function loadPendingEngineers() {
+    const response = await fetch("/pending-engineers");
+    const engineers = await response.json();
+
+    const tableBody = document.querySelector("#engineersTable tbody");
+    tableBody.innerHTML = ""; // تفريغ المحتوى قبل إعادة التحميل
+
+    engineers.forEach(engineer => {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${engineer.firstName} ${engineer.lastName}</td>
+            <td>${engineer.email}</td>
+            <td><img src="${engineer.idCardPhoto || '/images/default-avatar.png'}" alt="${engineer.firstName}" width="100"  onclick="openImageModal('${engineer.idCardPhoto}')"></td>
+
+            <td>
+                <button class="approve-btn" onclick="approveEngineer('${engineer.email}', this)">
+                    Approve
+                </button>
+                 <button class="reject-btn" onclick="rejectEngineer('${engineer.email}', this)">
+                    Not Approve
+                </button>
+            </td>
+        `;
+
+        tableBody.appendChild(row);
+    });
+}
+
+// دالة الموافقة
+async function approveEngineer(email, button) {
+    await fetch("/approve-engineer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+    });
+
+    // إزالة الصف من الجدول بعد الموافقة
+    button.closest("tr").remove();
+}
+
+async function rejectEngineer(email, button) {
+    const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "This engineer will not be approved!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, reject",
+        cancelButtonText: "Cancel",
+        reverseButtons: true
+    });
+
+    if (result.isConfirmed) {
+        try {
+            const response = await fetch("/reject-engineer", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email })
+            });
+
+            const data = await response.json();
+            if (data.message) {
+                button.closest("tr").remove();
+                
+                Swal.fire({
+                    icon: "success",
+                    title: "Rejected",
+                    text: "Engineer has been rejected successfully.",
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Failed to reject engineer",
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+    }
+}
+
+  </script>
+
+
+<style>
+  /* تحسين حاوية الجدول */
+.table-container {
+    margin-top: 20px;
+    width: 100%;
+    overflow-x: auto;
+    padding: 10px;
+}
+
+/* تحسين تصميم الجدول */
+#engineersTable {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+/* تحسين رأس الجدول */
+#engineersTable thead {
+    background: #007bff;
+    color: #fff;
+    font-weight: bold;
+}
+
+#engineersTable th, #engineersTable td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+/* تحسين تناوب ألوان الصفوف */
+#engineersTable tbody tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+/* تحسين تأثير التمرير */
+#engineersTable tbody tr:hover {
+    background: #e9ecef;
+}
+
+/* تحسين تصميم زر الموافقة */
+.approve-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-right: 5px;
+    font-size: 14px;
+}
+
+.approve-btn:hover {
+    background: #218838;
+}
+
+/* تحسين تصميم زر الرفض */
+.reject-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 14px;
+}
+
+.reject-btn:hover {
+    background: #c82333;
+}
+
+/* تحسين تصميم زر "عرض المهندسين غير الموافق عليهم" */
+.btn-primary {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: block;
+    margin: 20px auto;
+    width: fit-content;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+}
+
+
+#engineersTable img {
+    width: 120px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    transition: transform 0.3s ease;
+}
+
+#engineersTable img:hover {
+    transform: scale(1.1);
+}
+
+/* تصميم النافذة المنبثقة */
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+.close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: red;
+}
+
+</style>
+
+
+
+
+    <script src="../user/AdminDashboard.js"></script>
+    <script src="/js/darkMode.js"></script>
+
+
+<!-- نافذة تكبير الصورة -->
+<div id="imageModal" class="modal">
+  <span class="close" onclick="closeImageModal()">&times;</span>
+  <img class="modal-content" id="fullImage">
+</div>
+
+
+
+<script>
+  function openImageModal(imageSrc) {
+    const modal = document.getElementById("imageModal");
+    const fullImage = document.getElementById("fullImage");
+
+    fullImage.src = imageSrc;
+    modal.style.display = "flex";
+}
+
+function closeImageModal() {
+    document.getElementById("imageModal").style.display = "none";
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `custom-alert ${type}`;
+    
+    const icon = type === 'success' ? '✓' : type === 'warning' ? '⚠️' : '✕';
+    const title = type === 'success' ? 'Success!' : type === 'warning' ? 'Warning!' : 'Error!';
+    
+    alertDiv.innerHTML = `
+        <div class="alert-icon">${icon}</div>
+        <div class="alert-content">
+            <div class="alert-title">${title}</div>
+            <div class="alert-message">${message}</div>
+        </div>
+    `;
+    
+    document.body.appendChild(alertDiv);
+    
+    setTimeout(() => {
+        alertDiv.style.animation = 'slideOut 0.3s ease-out forwards';
+        setTimeout(() => {
+            document.body.removeChild(alertDiv);
+        }, 300);
+    }, 3000);
+}
+
+</script>
+
+  </body>
+
+</html>

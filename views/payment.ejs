@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/public.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/darkMode.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+  <!-- fonts  -->
+  <link href="https://fonts.googleapis.com/css2?family=Belleza&display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <script src="https://js.stripe.com/v3/"></script>
+  </head>
+  <body>
+    <style>
+      body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .nav-container {
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+      }
+
+      .main-content {
+        margin-top: 100px;
+        margin-bottom: 50px;
+        flex: 1;
+      }
+
+      .payment-container {
+        display: flex;
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        max-width: 1000px;
+        width: 90%;
+        margin: 0 auto;
+        min-height: 500px;
+      }
+
+      .image-section {
+        flex: 1;
+        background-image: url('/images/payment.png');
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        position: relative;
+      }
+
+      .image-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(212, 175, 55, 0.2), rgba(0, 0, 0, 0.1));
+      }
+
+      .form-section {
+        flex: 1;
+        padding: 40px;
+        background-color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .form-section h2 {
+        font-size: 32px;
+        color: #D4AF37;
+        margin-bottom: 30px;
+        text-align: center;
+        font-family: 'Great Vibes', cursive;
+      }
+
+      #paymentFormData {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      #paymentFormData input,
+      #paymentFormData select {
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        outline: none;
+        transition: all 0.3s ease;
+        background-color: #f8f9fa;
+      }
+
+      #paymentFormData input:focus,
+      #paymentFormData select:focus {
+        border-color: #D4AF37;
+        box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+      }
+
+      #paymentFormData button,
+      #payButton {
+        padding: 15px;
+        background-color: #D4AF37;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      #paymentFormData button:hover,
+      #payButton:hover {
+        background-color: #b88c2e;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      }
+
+      #payButton {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+
+      .chat-button {
+        background-color: #D4AF37 !important;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+      }
+
+      .chat-button:hover {
+        transform: scale(1.1);
+      }
+
+      @media (max-width: 768px) {
+        .payment-container {
+          flex-direction: column;
+          margin: 20px;
+          width: auto;
+        }
+
+        .image-section {
+          height: 200px;
+        }
+
+        .form-section {
+          padding: 20px;
+        }
+
+        .form-section h2 {
+          font-size: 28px;
+        }
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+      }
+
+      .nav-links ul {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+      }
+
+      .nav-links .nav-link {
+        color: #333;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+      }
+
+      .nav-links .nav-link:hover {
+        color: #D4AF37;
+      }
+
+      .dark-mode {
+        background: none;
+        border: none;
+        color: #333;
+        cursor: pointer;
+        padding: 5px;
+        transition: color 0.3s ease;
+      }
+
+      .dark-mode:hover {
+        color: #D4AF37;
+      }
+
+      .dropdown {
+        position: relative;
+      }
+
+      .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        display: none;
+        flex-direction: column;
+        min-width: 150px;
+        z-index: 1000;
+      }
+
+      .dropdown:hover .dropdown-menu {
+        display: flex;
+      }
+
+      .dropdown-menu a {
+        padding: 10px 15px;
+        color: #333;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+      }
+
+      .dropdown-menu a:hover {
+        background-color: #f8f9fa;
+        color: #D4AF37;
+      }
+
+      @media (max-width: 991px) {
+        .nav-links {
+          display: none;
+        }
+
+        .nav-links.active {
+          display: flex;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: white;
+          padding: 20px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-links ul {
+          flex-direction: column;
+          width: 100%;
+        }
+
+        .dropdown-menu {
+          position: static;
+          box-shadow: none;
+          margin-top: 10px;
+        }
+      }
+    </style>
+
+    <div class="nav-container">
+      <div class="container">
+        <div class="row">
+          <div class="navv-bar py-4 d-flex justify-content-between align-items-center">
+            <div class="logo d-flex align-items-center" style="font-size: 35px;">
+              <button class="btn btn-outline-dark ms-auto" onclick="history.back()">
+                <i class="fa-solid fa-arrow-left"></i> Back
+              </button>
+              <span class="ms-3" style="font-family: 'Great Vibes', cursive;">Decore&More</span>  
+            </div>
+            <div class="menu-btn d-lg-none">
+              <i class="fa-solid fa-bars"></i>
+            </div>
+            <div class="nav-links">
+              <ul class="list-unstyled m-0">
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="#op" class="nav-link">About</a></li>
+                <li class="dropdown">
+                  <a href="#od" class="nav-link">Services</a>
+                  <div class="dropdown-menu">
+                    <a href="/eng?occasion=Birthday" class="nav-link">Birthday</a>
+                    <a href="/eng?occasion=Wedding" class="nav-link">Wedding</a>
+                    <a href="/eng?occasion=Engagement" class="nav-link">Engagement</a>
+                    <a href="/eng?occasion=BabyShower" class="nav-link">BabyShower</a>
+                  </div>
+                </li>
+                <li><a href="/designers" class="nav-link">Designers</a></li>
+                <li class="dropdown">
+                  <a href="/eng" class="nav-link">Engineers</a>
+                
+                </li>
+                <li><a href="/contact" class="nav-link">Contact</a></li>
+                <% if (user && user.role === 'user') { %>
+                <li><a href="/Favorite" class="nav-link">Favorite</a></li>
+                <% } %>
+                <% if (user && user.name) { %>
+                  <li class="dropdown">
+                    <a href="#" class="nav-link d-flex align-items-center">
+                      <i class="fa-solid fa-user"></i>
+                      <span><%= user.name %></span>
+                    </a>
+                    <div class="dropdown-menu">
+                      <a href="/userProfile/<%= user._id %>" class="nav-link">
+                        <i class="fas fa-user me-2"></i>Profile
+                      </a>
+                      <a href="#" class="nav-link" onclick="logout()">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                      </a>
+                    </div>
+                  </li>
+              
+                <% } %>
+                <button onclick="toggleDarkMode()" class="dark-mode">
+                  <i class="fa-solid fa-moon"></i>
+                </button>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="main-content">
+      <div class="payment-container">
+        <div class="image-section"></div>
+        <div class="form-section">
+          <h2>Enter Payment Details</h2>
+          <button id="payButton">Pay Now</button>
+
+          <div id="paymentForm" style="display:none;">
+            <form id="paymentFormData">
+              <input type="hidden" name="engineerId" value="<%= engineerId %>">
+              <input type="hidden" name="projectId" value="<%= projectId %>">
+              <input type="text" name="fullName" placeholder="Full Name" required>
+              <input type="number" name="phone" placeholder="Phone Number" required>
+              <select name="paymentMethod">
+                <option value="" disabled selected>Select Payment Method</option>
+                <option value="visa">Visa</option>
+                <option value="meza">Meza</option>
+              </select>
+              <button type="submit">Complete Payment</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Button -->
+    <div id="chatLauncher" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+      <button class="chat-button" style="color: white; border: none; padding: 15px 18px; border-radius: 50%; font-size: 22px; cursor: pointer;">
+        💬
+      </button>
+    </div>
+
+    <!-- Chat Frame -->
+    <iframe id="chatFrame" src="" style="display:none; position: fixed; bottom: 80px; right: 20px; width: 350px; height: 500px; border: 1px solid #ccc; border-radius: 10px; z-index: 1000; background-color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"></iframe>
+
+    <!-- Add this modal for login/register -->
+    <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="authModalLabel">Login or Register</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div id="loginForm" style="display: none;">
+              <form id="loginFormData" class="mt-3">
+                <div class="mb-3">
+                  <label for="loginEmail" class="form-label">Email</label>
+                  <input type="email" class="form-control" id="loginEmail" required>
+                </div>
+                <div class="mb-3">
+                  <label for="loginPassword" class="form-label">Password</label>
+                  <input type="password" class="form-control" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+              </form>
+            </div>
+            <div id="registerForm" style="display: none;">
+              <form id="registerFormData" class="mt-3">
+                <div class="mb-3">
+                  <label for="registerName" class="form-label">Name</label>
+                  <input type="text" class="form-control" id="registerName" required>
+                </div>
+                <div class="mb-3">
+                  <label for="registerEmail" class="form-label">Email</label>
+                  <input type="email" class="form-control" id="registerEmail" required>
+                </div>
+                <div class="mb-3">
+                  <label for="registerPassword" class="form-label">Password</label>
+                  <input type="password" class="form-control" id="registerPassword" required>
+                </div>
+
+                <div class="mb-3">
+                  <label for="bio" class="form-label">Bio</label>
+                  <input type="text" class="form-control" id="bio" >
+                </div>
+                <div class="mb-3">
+                  <label for="registerPhone" class="form-label">Phone</label>
+                  <input type="tel" class="form-control" id="registerPhone" required>
+                </div>
+                <div class="col-12">
+                  <label class="form-label"
+                    style="font-family: sans-serif;">Profile Photo</label>
+                  <div class="drop-zone">
+                    <span class="drop-zone__prompt"
+                      style="font-family: sans-serif;">Drop file here or click
+                      to upload</span>
+                    <input type="file" name="profilePhoto"
+                      class="drop-zone__input"
+                      style="font-family: sans-serif;" accept=".jpg,.png"
+                      onchange="previewProfilePhoto(event)">
+                    <div class="profile-preview rounded-circle"></div>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Register</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function logout() {
+      fetch("/logout", { method: "POST" }).then(() => (window.location.href = "/"));
+    }
+  </script>
+    <style>
+      :root {
+        --primary: #ffd700;
+        --primary-foreground: #000000;
+        --secondary: #ffffff;
+        --secondary-foreground: #000000;
+        --accent: #ffd700;
+        --accent-foreground: #000000;
+        --background: #1a1a1a;
+        --foreground: #ffffff;
+        --card: #2a2a2a;
+        --card-foreground: #ffffff;
+        --border: #ffd700;
+        --input: #333333;
+        --ring: #ffd700;
+    }
+    
+    footer a:hover {
+        opacity: 0.8;
+        transition: all 0.3s ease;
+    }
+    
+    footer {
+        border-top: 2px solid var(--border);
+    }
+    
+    footer h5 {
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+    
+    footer .social-links a:hover {
+        transform: translateY(-3px);
+    }
+    
+    footer .list-unstyled li a:hover {
+        padding-left: 5px;
+    }
+    
+    footer .container {
+        max-width: 1200px;
+    }
+    
+    @media (max-width: 768px) {
+        footer h2.display-4 {
+            font-size: 2.5rem;
+        }
+        
+        footer .col-md-4 {
+            text-align: center;
+        }
+        
+        footer .d-flex.gap-3 {
+            justify-content: center;
+        }
+    }
+    
+    
+    </style>
+    <footer class="bg-dark text-warning py-5">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-12 text-center mb-4">
+            <h2 class="display-4 fw-bold">Decor&More</h2>
+          </div>
+          <div class="col-md-4">
+            <h5 class="border-bottom border-warning pb-2">Contact Us</h5>
+            <div class="mt-3">
+              <p><i
+                  class="bi bi-envelope-fill me-2"></i>info@decorandmore.com</p>
+              <a href="https://web.whatsapp.com/send?phone=201556159175"
+                target="_blank">
+                <p><i class="bi bi-telephone-fill me-2"></i>+20 1556159175</p>
+              </a>
+              <p><i class="bi bi-geo-alt-fill me-2"></i>123 Decor Street,
+                Design
+                City</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <h5 class="border-bottom border-warning pb-2">Quick Links</h5>
+            <ul class="list-unstyled mt-3">
+              <li class="mb-2"><a href="/"
+                  class="text-warning text-decoration-none">Home</a></li>
+              <li class="mb-2"><a href="/#op"
+                  class="text-warning text-decoration-none">About</a></li>
+              <li class="mb-2"><a href="/login"
+                  class="text-warning text-decoration-none">login</a></li>
+              <li class="mb-2"><a href="/register"
+                  class="text-warning text-decoration-none">register</a></li>
+                
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <h5 class="border-bottom border-warning pb-2">Follow Us</h5>
+            <div class="mt-3 d-flex gap-3">
+              <a href="#" class="text-warning fs-4" aria-label="Facebook"><i
+                  class="bi bi-facebook"></i></a>
+              <a href="#" class="text-warning fs-4" aria-label="Instagram"><i
+                  class="bi bi-instagram"></i></a>
+              <a href="#" class="text-warning fs-4" aria-label="Twitter"><i
+                  class="bi bi-twitter-x"></i></a>
+              <a href="#" class="text-warning fs-4" aria-label="LinkedIn"><i
+                  class="bi bi-linkedin"></i></a>
+            </div>
+          </div>
+          <div class="col-12">
+            <hr class="border-warning">
+            <p class="text-center mb-0">&copy; 2024 Decor&More. All rights
+              reserved.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/customAlerts.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const authModal = new bootstrap.Modal(document.getElementById('authModal'));
+      const urlParams = new URLSearchParams(window.location.search);
+      const engineerId = urlParams.get("engineerId");
+      const projectId = urlParams.get("projectId");
+      let user = null;
+      try {
+        // Get user data from the server-side variable
+        const userData = '<%- JSON.stringify(user || null) %>';
+        user = userData !== 'null' ? JSON.parse(userData) : null;
+      } catch (e) {
+        console.error('Error parsing user data:', e);
+        user = null;
+      }
+      const isAuthenticated = !!user;
+
+      // Update the navbar based on authentication status
+      const userNavItem = document.querySelector('.nav-links ul li:last-child');
+      if (userNavItem) {
+        if (user && user.name) {
+          userNavItem.innerHTML = `
+            <div class="dropdown">
+              <a href="#" class="nav-link d-flex align-items-center">
+                <i class="fas fa-user-circle me-2"></i>
+                <span>${user.name}</span>
+              </a>
+              <div class="dropdown-menu">
+                <a href="/profile/${user._id}" class="nav-link">
+                  <i class="fas fa-user me-2"></i>Profile
+                </a>
+                <a href="#" class="nav-link" onclick="logout()">
+                  <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </a>
+              </div>
+            </div>
+          `;
+        } else {
+          userNavItem.innerHTML = `
+            <a href="#" class="nav-link" onclick="showLoginModal()">Login</a>
+          `;
+        }
+      }
+
+      // Handle payment button click
+      document.getElementById("payButton").addEventListener("click", function() {
+        document.getElementById("paymentForm").style.display = "block";
+      });
+
+      // Handle payment form submission
+      document.getElementById("paymentFormData").addEventListener("submit", async function(event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+        data.engineerId = engineerId;
+        data.projectId = projectId;
+
+        if (!data.engineerId || !data.projectId) {
+          showErrorAlert("Engineer or Project Not Found!");
+          return;
+        }
+
+        try {
+          const response = await fetch("/payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+          });
+
+          const result = await response.json();
+          if (result.success) {
+            showSuccessAlert("Payment Successful!", () => {
+              window.location.href = `/profile/${result.engineerId}`;
+            });
+          } else {
+            showErrorAlert(result.message || "Error during payment.");
+          }
+        } catch (error) {
+          showErrorAlert("Payment failed. Please try again.");
+        }
+      });
+
+      // Handle chat button click
+      document.querySelector('.chat-button').addEventListener('click', function() {
+        if (isAuthenticated) {
+          startChat();
+        } else {
+          Swal.fire({
+            title: 'Do you have an account?',
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'Yes, I have an account',
+            denyButtonText: 'No, I want to register',
+            cancelButtonText: 'Cancel'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              document.getElementById('loginForm').style.display = 'block';
+              document.getElementById('registerForm').style.display = 'none';
+              authModal.show();
+            } else if (result.isDenied) {
+              document.getElementById('registerForm').style.display = 'block';
+              document.getElementById('loginForm').style.display = 'none';
+              authModal.show();
+            }
+          });
+        }
+      });
+
+      // Handle login form submission
+      document.getElementById('loginFormData').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        try {
+          const response = await fetch('/payment/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              email: document.getElementById('loginEmail').value,
+              password: document.getElementById('loginPassword').value
+            })
+          });
+
+          const data = await response.json();
+          if (data.success) {
+            authModal.hide();
+            user = data.user;
+            window.location.reload();
+
+            startChat();
+          } else {
+            showErrorAlert(data.message);
+          }
+        } catch (error) {
+          showErrorAlert('Login failed');
+        }
+      });
+
+      // Handle register form submission
+      document.getElementById('registerFormData').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        try {
+          const response = await fetch('/payment/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              name: document.getElementById('registerName').value,
+              email: document.getElementById('registerEmail').value,
+              password: document.getElementById('registerPassword').value,
+              phone: document.getElementById('registerPhone').value,
+              bio: document.getElementById('bio').value,
+               profilePhotoInput : document.querySelector('input[type="file"][name="profilePhoto"]'),
+               profilePhoto : profilePhotoInput.files.length > 0 ? profilePhotoInput.files[0] : null,
+
+            })
+          });
+
+          const data = await response.json();
+          if (data.success) {
+            authModal.hide();
+            user = data.user;
+            startChat();
+          } else {
+            showErrorAlert(data.message);
+          }
+        } catch (error) {
+          showErrorAlert('Registration failed');
+        }
+      });
+
+      function startChat() {
+        if (!user || !user._id) {
+          showErrorAlert('User not found. Please try again.');
+          return;
+        }
+        const chatUrl = `/chat/${user._id}/${engineerId}`;
+        chatFrame.src = chatUrl;
+        chatFrame.style.display = chatFrame.style.display === "none" ? "block" : "none";
+      }
+    });
+    function previewProfilePhoto(event) {
+  const input = event.target;
+  const preview = document.querySelector(".profile-preview");
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      preview.style.backgroundImage = `url(${e.target.result})`;
+      preview.style.display = "block";
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+    </script>
+  </body>
+</html>

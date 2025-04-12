@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net;
+      font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net;
+      style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://cdnjs.cloudflare.com;
+    " />
+
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="/css/public.css" />
+    <link rel="stylesheet" href="/css/darkMode.css" />
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+
+    <!-- Font Awesome (6.7.2 latest) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
+    <!-- SweetAlert2 -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+
+    <!-- AOS Animation -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"
+      rel="stylesheet"
+    />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Belleza&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+
+
+    <title>Home</title>
+  </head>
+  <body>
+    <style>
+ 
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    display: none;
+    flex-direction: column;
+    min-width: 150px;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 10px;
+    color: black;
+    text-decoration: none;
+}
+
+.dropdown-menu a:hover {
+    background: #f4f4f4;
+}
+
+
+.dropdown:hover .dropdown-menu {
+    display: flex;
+}
+
+</style>
+
+    <div class="container" data-aos="zoom-in" data-aos-duration="1200">
+      <div class="row">
+        <div
+          class="navv-bar py-4 d-flex justify-content-between align-items-center">
+          <!-- Logo Section -->
+          <div class="logo" style="font-size: 35px;" data-aos="fade-down"
+            data-aos-duration="1200">
+            Decore&More
+          </div>
+          <!-- Menu Button -->
+          <div class="menu-btn d-lg-none" data-aos="fade-up"
+            data-aos-duration="1200">
+            <i class="fa-solid fa-bars"></i>
+          </div>
+          <!-- Navigation Links -->
+          <div class="nav-links" data-aos="fade-up" data-aos-duration="1200">
+            <ul class="list-unstyled m-0">
+
+              <li><a href="/" class="nav-link">Home</a></li>
+              <li><a href="#op" class="nav-link">About</a></li>
+              <li class="dropdown"><a href="#od" class="nav-link">Services</a>
+              <div class="dropdown-menu">
+                <a href="/eng?occasion=Birthday" class="nav-link">Birthday</a>
+                <a href="/eng?occasion=Wedding" class="nav-link">Wedding</a>
+                <a href="/eng?occasion=Engagement" class="nav-link">Engagement</a>
+                <a href="/eng?occasion=BabyShower" class="nav-link">BabyShower</a>
+              </div>
+              </li>
+              <li><a href="/designers" class="nav-link">Designers</a></li>
+              <li class="dropdown">
+                <a href="/eng" class="nav-link">Engineers</a>
+                <div class="dropdown-menu">
+                  <a href="/login">Log In</a>
+                  <a href="/register">Register</a>
+
+                </div>
+              </li>
+              <li><a href="/contact" class="nav-link">Contact</a></li>
+              <li><a href="/Favorite" class="nav-link">Favorite</a></li>
+              
+
+            
+                    <% if (user && user.name) { %>
+                      <li class="dropdown">
+                        <a href="#" class="nav-link d-flex align-items-center">
+                          <i class="fa-solid fa-user"></i>
+                          <span><%= user.name %></span>
+                        </a>
+                        <div class="dropdown-menu">
+                          <a href="/userProfile/<%= user._id %>" class="nav-link">
+                            <i class="fas fa-user me-2"></i>Profile
+                          </a>
+                          <a href="#" class="nav-link" onclick="logout()">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                          </a>
+                        </div>
+                      </li>
+                      <% }else{ %>  
+                        <li><a href="/login" class="nav-link"><i
+                          class="fa-solid fa-user"></i></a></li>
+                    <% } %>
+                    <button onclick="toggleDarkMode()" class="dark-mode">
+                      <i class="fa-solid fa-moon"></i>
+                    </button>
+
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- end navbar -->
+
+    <!-- start first section  -->
+
+    <div class="home-img">
+      <h1 class="d-flex  justify-content-center align-items-center h-75 pt-5"
+        style="font-size: 100px;">
+        Decore&More
+      </h1>
+    </div>
+
+    <!-- end first section -->
+
+    <!-- start section two  -->
+
+    <!-- end section two  -->
+    <main>
+      <section class="about-section py-5" id="op">
+        <div class="container">
+          <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+              <div class="image-wrapper">
+                <img src="../images/about.jpg" alt="Professional team"
+                  class="img-fluid rounded shadow-lg">
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="content-wrapper text-center text-lg-start">
+                <h2 class="display-4 mb-4" style="color: #E4A598;">About Us</h2>
+                <p class="leadd mb-4">We are an innovative platform that bridges
+                  the gap between clients and professional event designers. Our
+                  goal is to simplify the process of finding and booking event
+                  services by showcasing designers' work, offering client
+                  feedback, and providing a seamless booking experience.</p>
+                <p class="leadd mb-4"> Whether it's an engagement, wedding,
+                  birthday, or baby shower, we help make every moment
+                  extraordinary.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="mission-section py-5">
+        <div class="container">
+          <div class="row align-items-center">
+            <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
+              <div class="image-wrapper">
+                <img src="../images/goal.webp" alt="Company vision"
+                  class="img-fluid rounded shadow-lg" style="height: 350px;">
+              </div>
+            </div>
+            <div class="col-lg-6 order-lg-1">
+              <div class="content-wrapper text-center text-lg-start">
+                <h2 class="display-4 mb-4" style="color: #E4A598;">Our Goal</h2>
+                <p class="leadd mb-4">Our mission is to connect clients with the
+                  most talented event designers to transform their special
+                  occasions into unforgettable memories.</p>
+                <p class="leadd mb-4"> We provide a platform that makes it easy
+                  to explore, choose, and book the perfect designer for any
+                  celebration</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <section class="services-section" id="od">
+      <h2>Our Services</h2>
+      <p>Life's special moments deserve to be celebrated in style. Whether it's
+        a magical wedding, a joyful engagement, a memorable birthday, or the
+        sweet celebration of a newborn, we've got you covered. Choose your
+        occasion and explore talented designers ready to bring your vision to
+        life with elegance and creativity. Let's make your day
+        unforgettable!</p>
+      <div class="services-list">
+        <div class="service-item">
+          <span>🎉</span>
+          <h3>Birthday</h3>
+          <p>Make your birthday special with beautiful decorations that match
+            your style!</p>
+          <a href="/eng?occasion=Birthday" class="booking-button">Book Now</a>
+        </div>
+        <div class="service-item">
+          <span>💍</span>
+          <h3>Wedding</h3>
+          <p>Timeless elegance for a wedding as unique as your love!</p>
+          <a href="/eng?occasion=Wedding" class="booking-button">Book Now</a>
+        </div>
+        <div class="service-item">
+          <span>💕</span>
+          <h3>Engagement</h3>
+          <p>Elegant and stylish decorations to celebrate your love story!</p>
+          <a href="/eng?occasion=Engagement" class="booking-button mt-3">Book
+            Now</a>
+        </div>
+        <div class="service-item">
+          <span>🍼</span>
+          <h3>Baby Shower</h3>
+          <p>Welcome your little one with soft and charming decorations</p>
+          <a href="/eng?occasion=BabyShower" class="booking-button">Book Now</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- start section three  -->
+
+    <style>
+  :root {
+    --primary: #ffd700;
+    --primary-foreground: #000000;
+    --secondary: #ffffff;
+    --secondary-foreground: #000000;
+    --accent: #ffd700;
+    --accent-foreground: #000000;
+    --background: #1a1a1a;
+    --foreground: #ffffff;
+    --card: #2a2a2a;
+    --card-foreground: #ffffff;
+    --border: #ffd700;
+    --input: #333333;
+    --ring: #ffd700;
+}
+
+footer a:hover {
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+footer {
+    border-top: 2px solid var(--border);
+}
+
+footer h5 {
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+footer .social-links a:hover {
+    transform: translateY(-3px);
+}
+
+footer .list-unstyled li a:hover {
+    padding-left: 5px;
+}
+
+footer .container {
+    max-width: 1200px;
+}
+
+@media (max-width: 768px) {
+    footer h2.display-4 {
+        font-size: 2.5rem;
+    }
+    
+    footer .col-md-4 {
+        text-align: center;
+    }
+    
+    footer .d-flex.gap-3 {
+        justify-content: center;
+    }
+}
+
+
+</style>
+
+    <footer class="bg-dark text-warning py-5">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-12 text-center mb-4">
+            <h2 class="display-4 fw-bold">Decor&More</h2>
+          </div>
+          <div class="col-md-4">
+            <h5 class="border-bottom border-warning pb-2">Contact Us</h5>
+            <div class="mt-3">
+              <p><i
+                  class="bi bi-envelope-fill me-2"></i>info@decorandmore.com</p>
+              <a href="https://web.whatsapp.com/send?phone=201556159175"
+                target="_blank">
+                <p><i class="bi bi-telephone-fill me-2"></i>+20 1556159175</p>
+              </a>
+              <p><i class="bi bi-geo-alt-fill me-2"></i>123 Decor Street, Design
+                City</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <h5 class="border-bottom border-warning pb-2">Quick Links</h5>
+            <ul class="list-unstyled mt-3">
+              <li class="mb-2"><a href="/"
+                  class="text-warning text-decoration-none">Home</a></li>
+              <li class="mb-2"><a href="#op"
+                  class="text-warning text-decoration-none">About</a></li>
+              <li class="mb-2"><a href="/login"
+                  class="text-warning text-decoration-none">login</a></li>
+              <li class="mb-2"><a href="/register"
+                  class="text-warning text-decoration-none">register</a></li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <h5 class="border-bottom border-warning pb-2">Follow Us</h5>
+            <div class="mt-3 d-flex gap-3">
+              <a href="#" class="text-warning fs-4" aria-label="Facebook"><i
+                  class="bi bi-facebook"></i></a>
+              <a href="#" class="text-warning fs-4" aria-label="Instagram"><i
+                  class="bi bi-instagram"></i></a>
+              <a href="#" class="text-warning fs-4" aria-label="Twitter"><i
+                  class="bi bi-twitter-x"></i></a>
+              <a href="#" class="text-warning fs-4" aria-label="LinkedIn"><i
+                  class="bi bi-linkedin"></i></a>
+            </div>
+          </div>
+          <div class="col-12">
+            <hr class="border-warning">
+            <p class="text-center mb-0">&copy; 2024 Decor&More. All rights
+              reserved.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="../user/login.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/darkMode.js"></script>
+    <script src="../js/main.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/customAlerts.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        if (typeof AOS !== 'undefined') {
+          AOS.init({
+            duration: 1200,
+            once: true
+          });
+        }
+      });
+    </script>
+  <script>
+    function logout() {
+    fetch("/logout", { method: "POST" }).then(() => (window.location.href = "/"));
+  }
+</script>
+  </body>
+</html>

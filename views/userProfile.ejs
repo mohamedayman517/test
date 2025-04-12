@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interior Design Portfolio</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Belleza&display=swap"
+      rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <link rel="stylesheet" href="/css/public.css">
+    <link rel="stylesheet" href="/css/darkMode.css">
+  </head>
+  <body>
+    <style>
+ 
+      .dropdown {
+          position: relative;
+      }
+      
+      .dropdown-menu {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          background: white;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
+          display: none;
+          flex-direction: column;
+          min-width: 150px;
+      }
+      
+      .dropdown-menu a {
+          display: block;
+          padding: 10px;
+          color: black;
+          text-decoration: none;
+      }
+      
+      .dropdown-menu a:hover {
+          background: #f4f4f4;
+      }
+      
+      
+      .dropdown:hover .dropdown-menu {
+          display: flex;
+      }
+      
+      </style>
+    <style>
+  .profile-image-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  .edit-profile-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+    background-color: #007bff;
+    border: none;
+    font-size: 16px;
+    line-height: 1;
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+
+  .edit-profile-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
+  }
+
+  .col-md-4 {
+    position: relative;
+  }
+</style>
+
+    <div class="container" data-aos="zoom-in" data-aos-duration="1200">
+      <div class="row">
+        <div
+          class="navv-bar py-4 d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center gap-3">
+            <% if (!user || (user && user.id !== userData._id.toString())) { %>
+              <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i>
+              </a>
+            <% } %>
+            <div class="logo" style="font-size: 35px;" data-aos="fade-down"
+              data-aos-duration="1200">
+              Decore&More
+            </div>
+          </div>
+          <div class="menu-btn d-lg-none" data-aos="fade-up"
+            data-aos-duration="1200">
+            <i class="fa-solid fa-bars"></i>
+          </div>
+          <div class="nav-links" data-aos="fade-up" data-aos-duration="1200">
+            <ul class="list-unstyled m-0">
+              <% if (!user) { %>
+              <li><a href="/" class="nav-link">Home</a></li>
+              <li><a href="/#op" class="nav-link">About</a></li>
+              <li class="dropdown">
+                <a href="/#od" class="nav-link">Services</a>
+              <div class="dropdown-menu">
+                <a href="/eng?occasion=Birthday" class="nav-link">Birthday</a>
+                <a href="/eng?occasion=Wedding" class="nav-link">Wedding</a>
+                <a href="/eng?occasion=Engagement" class="nav-link">Engagement</a>
+                <a href="/eng?occasion=BabyShower" class="nav-link">BabyShower</a>
+              </div>
+              </li>
+              <li><a href="/designers" class="nav-link">Designers</a></li>
+              <li class="dropdown">
+                <a href="/eng" class="nav-link">Enginners</a>
+              <div class="dropdown-menu">
+                <a href="/login">Log In</a>
+                <a href="/register">Register</a>
+              </div>
+              </li>
+              <li><a href="/contact" class="nav-link">Contact</a></li>
+              <li><a href="/Favorite" class="nav-link">Favorite</a></li>
+              <% } %>
+
+              <li>
+                <% if (user) { %>
+                <button class="btn" onclick="logout()">Logout</button>
+                <% } %>
+              </li>
+              <button onclick="toggleDarkMode()" class="dark-mode">
+                <li class="fa-solid fa-moon"></li>
+              </button>
+          
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  
+
+    <section id="profile" class="py-5 d-flex align-items-center">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-4" position-relative>
+            <div class="profile-image-container">
+              <img src="<%= userData.profilePhoto || 'images/team-img2.jpg' %>"
+                class="img-fluid rounded-circle" alt="<%= userData.name %>">
+              <% if (user) { %>
+              <button class="btn btn-primary edit-profile-btn"
+                data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                <i class="fas fa-pen"></i>
+              </button>
+              <% } %>
+            </div>
+          </div>
+          <div class="col-md-8">
+            <h1 id="userName"><%= userData.name %>
+            </h1>
+            
+            <p id="userBio" class="lead"><%= userData.bio %></p>
+          
+          
+          </div>
+        </div>
+      </div>
+    </section>
+  
+
+    
+  
+    <style>
+      .rating-section {
+          text-align: center;
+          margin: 20px 0;
+      }
+      .rating-stars {
+          font-size: 40px;
+          cursor: pointer;
+      }
+      .rating-stars .star {
+          color: #ddd;
+          transition: color 0.2s;
+      }
+      .rating-stars .star:hover,
+      .rating-stars .star.active {
+          color: #ffc107;
+      }
+      .form-group {
+          margin-bottom: 15px;
+      }
+      .form-group label {
+          display: block;
+          margin-bottom: 5px;
+          font-weight: bold;
+      }
+      .form-group input,
+      .form-group textarea {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          font-size: 16px;
+      }
+      .form-group textarea {
+          resize: vertical;
+          height: 100px;
+      }
+      .submit-btn {
+          display: block;
+          width: 15%;
+          padding: 10px;
+      
+          color: #fff;
+          border: none;
+          border-radius: 5px;
+          font-size: 16px;
+          cursor: pointer;
+      }
+      .popup {
+          display: none;
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background-color: #fff;
+          padding: 20px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          border-radius: 10px;
+          text-align: center;
+          z-index: 1000;
+      }
+      .popup button {
+          padding: 10px 20px;
+          background-color: #28a745;
+          color: #fff;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+      }
+      .overlay {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          z-index: 999;
+      }
+  </style>
+    <!-- Rating Section -->
+
+  
+
+  
+
+    <!-- Upload Modal -->
+  
+    <style>
+      
+
+
+
+
+
+        
+      footer a:hover {
+          opacity: 0.8;
+          transition: all 0.3s ease;
+      }
+      
+      footer {
+          border-top: 2px solid var(--border);
+      }
+      
+      footer h5 {
+          font-weight: 600;
+          letter-spacing: 1px;
+      }
+      
+      footer .social-links a:hover {
+          transform: translateY(-3px);
+      }
+      
+      footer .list-unstyled li a:hover {
+          padding-left: 5px;
+      }
+      
+      footer .container {
+          max-width: 1200px;
+      }
+      
+      @media (max-width: 768px) {
+          footer h2.display-4 {
+              font-size: 2.5rem;
+          }
+          
+          footer .col-md-4 {
+              text-align: center;
+          }
+          
+          footer .d-flex.gap-3 {
+              justify-content: center;
+          }
+      }
+      </style>
+
+    <footer class="bg-dark text-warning py-5">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-12 text-center mb-4">
+            <h2 class="display-4 fw-bold">Decor&More</h2>
+          </div>
+          <div class="col-md-4">
+            <h5 class="border-bottom border-warning pb-2">Contact Us</h5>
+            <div class="mt-3">
+              <p><i
+                  class="bi bi-envelope-fill me-2"></i>info@decorandmore.com</p>
+              <a href="https://web.whatsapp.com/send?phone=201556159175"
+                target="_blank">
+                <p><i class="bi bi-telephone-fill me-2"></i>+20 1556159175</p>
+              </a>
+              <p><i class="bi bi-geo-alt-fill me-2"></i>123 Decor Street, Design
+                City</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <h5 class="border-bottom border-warning pb-2">Quick Links</h5>
+            <ul class="list-unstyled mt-3">
+              <li class="mb-2"><a href="/"
+                  class="text-warning text-decoration-none">Home</a></li>
+              <li class="mb-2"><a href="/#op"
+                  class="text-warning text-decoration-none">About</a></li>
+              <li class="mb-2"><a href="/login"
+                  class="text-warning text-decoration-none">login</a></li>
+              <li class="mb-2"><a href="/register"
+                  class="text-warning text-decoration-none">register</a></li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <h5 class="border-bottom border-warning pb-2">Follow Us</h5>
+            <div class="mt-3 d-flex gap-3">
+              <a href="#" class="text-warning fs-4" aria-label="Facebook"><i
+                  class="bi bi-facebook"></i></a>
+              <a href="#" class="text-warning fs-4" aria-label="Instagram"><i
+                  class="bi bi-instagram"></i></a>
+              <a href="#" class="text-warning fs-4" aria-label="Twitter"><i
+                  class="bi bi-twitter-x"></i></a>
+              <a href="#" class="text-warning fs-4" aria-label="LinkedIn"><i
+                  class="bi bi-linkedin"></i></a>
+            </div>
+          </div>
+          <div class="col-12">
+            <hr class="border-warning">
+            <p class="text-center mb-0">&copy; 2024 Decor&More. All rights
+              reserved.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="editProfileForm">
+              <div class="mb-3">
+                <label for="editName" class="form-label">Name</label>
+                <input type="text" class="form-control" id="editName" name="name" required>
+              </div>
+              <div class="mb-3">
+                <label for="editBio" class="form-label">Bio</label>
+                <textarea class="form-control" id="editBio" name="bio" rows="3"></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="editProfilePhoto" class="form-label">Profile Photo</label>
+                <input type="file" class="form-control" id="editProfilePhoto" name="profilePhoto" accept="image/*">
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+
+    <script src="../user/create.js"></script>
+    <script src="/js/darkMode.js"></script>
+
+    <script src="../user/login.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        const user = {
+          _id: "<%= userData._id %>",
+          name: "<%= userData.name %>",
+          bio: "<%= userData.bio %>",
+          profilePhoto: "<%= userData.profilePhoto || 'images/team-img2.jpg' %>"
+        };
+
+        // Initialize edit profile form
+        const editProfileForm = document.getElementById("editProfileForm");
+        const editProfileModal = document.getElementById('editProfileModal');
+        
+        if (editProfileForm && editProfileModal) {
+          // Set initial values
+          document.getElementById("editName").value = user.name;
+          document.getElementById("editBio").value = user.bio;
+          
+          // Initialize the modal with error handling
+          let modalInstance;
+          try {
+            modalInstance = new bootstrap.Modal(editProfileModal, {
+              backdrop: true,
+              keyboard: true,
+              focus: true
+            });
+          } catch (error) {
+            console.error('Error initializing modal:', error);
+          }
+          
+          editProfileForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+            
+            const formData = new FormData();
+            formData.append("name", document.getElementById("editName").value);
+            formData.append("bio", document.getElementById("editBio").value);
+            
+            const fileInput = document.getElementById("editProfilePhoto");
+            if (fileInput && fileInput.files.length > 0) {
+              formData.append("profilePhoto", fileInput.files[0]);
+            }
+
+            try {
+              const response = await fetch("/updateProfile", {
+                method: "POST",
+                body: formData,
+                credentials: 'include'
+              });
+
+              const result = await response.json();
+              if (result.success) {
+                // Update the UI with new data
+                const nameElement = document.getElementById("userName");
+                const bioElement = document.getElementById("userBio");
+                const profileImage = document.querySelector(".img-fluid.rounded-circle");
+
+                if (nameElement) nameElement.textContent = result.user.name;
+                if (bioElement) bioElement.textContent = result.user.bio;
+                
+                // Update profile photo if changed
+                if (result.user.profilePhoto && profileImage) {
+                  profileImage.src = result.user.profilePhoto;
+                }
+
+                // Show success message
+                Swal.fire({
+                  title: 'Success!',
+                  text: 'Profile updated successfully',
+                  icon: 'success',
+                  timer: 2000,
+                  showConfirmButton: false,
+                  position: 'top-end',
+                  toast: true
+                });
+                
+                // Close the modal
+                if (modalInstance) {
+                  modalInstance.hide();
+                } else {
+                  // Fallback if modal instance is not available
+                  const modal = bootstrap.Modal.getInstance(editProfileModal);
+                  if (modal) modal.hide();
+                }
+              } else {
+                Swal.fire({
+                  title: 'Error!',
+                  text: result.message || 'Error updating profile',
+                  icon: 'error',
+                  timer: 2000,
+                  showConfirmButton: false,
+                  position: 'top-end',
+                  toast: true
+                });
+              }
+            } catch (error) {
+              console.error('Error:', error);
+              Swal.fire({
+                title: 'Error!',
+                text: 'Error updating profile. Please try again.',
+                icon: 'error',
+                timer: 2000,
+                showConfirmButton: false,
+                position: 'top-end',
+                toast: true
+              });
+            }
+          });
+        }
+      });
+    </script>
+
+    <script>
+    function logout() {
+      fetch("/logout", { method: "POST" }).then(() => {
+        const userRole = '<%= user ? user.role : "" %>';
+        if (userRole === 'Engineer') {
+          window.location.href = "/login";
+        } else {
+          window.location.href = "/";
+        }
+      });
+    }
+    </script>
+  </body>
+  <% if (user && user.role === 'user') { %>
+    <script>
+      window.engineerData = {
+        id: '<%= userData._id %>'
+      };
+    </script>
+  <% } %>
+</html>

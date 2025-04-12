@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- إضافة رابط Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"
+      rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet">
+    <link rel="stylesheet" href="/css/public.css">
+    <link rel="stylesheet" href="/css/darkMode.css">
+
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css">
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- fonts  -->
+    <link href="https://fonts.googleapis.com/css2?family=Belleza&display=swap"
+      rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap"
+      rel="stylesheet">
+    <style>
+            :root {
+    --primary: #4A90E2;
+    --primary-foreground: #FFFFFF;
+    --secondary: #50E3C2;
+    --secondary-foreground: #000000;
+    --accent: #FF7F50;
+    --accent-foreground: #FFFFFF;
+    --background: #F8F9FA;
+    --foreground: #212529;
+    --card: #FFFFFF;
+    --card-foreground: #212529;
+    --border: #DEE2E6;
+    --input: #E9ECEF;
+    --ring: #4A90E2;
+    --radius: 0.5rem;
+    --shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+body {
+
+    color: var(--foreground);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.form-control {
+    border-color: var(--border);
+    border-radius: var(--radius);
+}
+
+.form-control:focus {
+    border-color: var(--ring);
+    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--primary-foreground);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+
+.drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.drop-zone:hover {
+    border-color: var(--primary);
+}
+
+.profile-preview {
+    width: 120px;
+    height: 120px;
+    margin: 1rem auto;
+    background-size: cover;
+    background-position: center;
+    display: none;
+}
+
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+}
+
+.event-type {
+    position: relative;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.event-type:hover {
+    border-color: var(--accent);
+}
+
+.event-checkbox {
+    position: absolute;
+    opacity: 0;
+}
+
+.event-type label {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.event-type i {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.password-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.char-count {
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .events-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+         </style>
+
+    <title>Register</title>
+  </head>
+  <body>
+    <style>
+ 
+      .dropdown {
+          position: relative;
+      }
+      
+      .dropdown-menu {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          background: white;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          border-radius: 5px;
+          display: none;
+          flex-direction: column;
+          min-width: 150px;
+      }
+      
+      .dropdown-menu a {
+          display: block;
+          padding: 10px;
+          color: black;
+          text-decoration: none;
+      }
+      
+      .dropdown-menu a:hover {
+          background: #f4f4f4;
+      }
+      
+      
+      .dropdown:hover .dropdown-menu {
+          display: flex;
+      }
+      
+      </style>
+    <div class="container" data-aos="zoom-in" data-aos-duration="1200">
+      <div class="row">
+        <div
+          class="navv-bar py-4 d-flex justify-content-between align-items-center">
+          <!-- Logo Section -->
+          <div class="logo" style="font-size: 35px;" data-aos="fade-down"
+            data-aos-duration="1200">
+            Decore&More
+          </div>
+          <!-- Menu Button -->
+          <div class="menu-btn d-lg-none" data-aos="fade-up"
+            data-aos-duration="1200">
+            <i class="fa-solid fa-bars"></i>
+          </div>
+          <!-- Navigation Links -->
+          <div class="nav-links" data-aos="fade-up" data-aos-duration="1200">
+            <ul class="list-unstyled m-0">
+              <li><a href="/" class="nav-link">Home</a></li>
+              <li><a href="/#op" class="nav-link">About</a></li>
+              <li class="dropdown">
+                <a href="/#od" class="nav-link">Services</a>
+              <div class="dropdown-menu">
+                <a href="/eng?occasion=Birthday" class="nav-link">Birthday</a>
+                <a href="/eng?occasion=Wedding" class="nav-link">Wedding</a>
+                <a href="/eng?occasion=Engagement" class="nav-link">Engagement</a>
+                <a href="/eng?occasion=BabyShower" class="nav-link">BabyShower</a>
+              </div>
+              </li>
+              <li><a href="/designers" class="nav-link">Designers</a></li>
+              <li><a href="/eng" class="nav-link">Enginners</a></li>
+              <li><a href="/contact" class="nav-link">Contact</a></li>
+              <li><a href="/Favorite" class="nav-link">Favorite</a></li>
+              <% if (user && user.name) { %>
+                <li class="dropdown">
+                  <a href="#" class="nav-link d-flex align-items-center">
+                    <i class="fa-solid fa-user"></i>
+                    <span><%= user.name %></span>
+                  </a>
+                  <div class="dropdown-menu">
+                    <a href="/userProfile/<%= user._id %>" class="nav-link">
+                      <i class="fas fa-user me-2"></i>Profile
+                    </a>
+                    <a href="#" class="nav-link" onclick="logout()">
+                      <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
+                  </div>
+                </li>
+                <% }else{ %>  
+                  <li><a href="/login" class="nav-link"><i
+                    class="fa-solid fa-user"></i></a></li>
+              <% } %>
+              <button onclick="toggleDarkMode()" class="dark-mode">
+                <li class="fa-solid fa-moon"></li>
+              </button>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end navbar -->
+
+    <div class="container py-5">
+      <div class="row justify-content-center">
+
+        <div class="col-12 col-lg-8">
+          <div class="card shadow-lg border-0">
+            <div class="card-body p-4 p-md-5">
+              <h1 class="text-center mb-4" style="font-size: 35px;"> Join our
+                network of talented designers and showcase your skills to a <br>
+                world of clients looking for extraordinary events</h1>
+              <form action="/register" method="post" class="needs-validation"
+                id="designerForm" enctype="multipart/form-data">
+                <div class="row g-4">
+                  <div class="col-md-6">
+                    <label class="form-label"
+                      style="font-family: sans-serif;">First Name</label>
+                    <input type="text" name="firstName" class="form-control"
+                      style="font-family: sans-serif;" required minlength="2"
+                      placeholder="Enter your first name">
+                      <span id="firstNameError" class="error-message"></span>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label"
+                      style="font-family: sans-serif;">Last Name</label>
+                    <input type="text" name="lastName" class="form-control"
+                      required
+                      minlength="2" style="font-family: sans-serif;"
+                      placeholder="Enter your last name">
+                      <span id="lastNameError" class="error-message"></span>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label"
+                      style="font-family: sans-serif;">Email</label>
+                    <input type="email" name="email" class="form-control"
+                      style="font-family: sans-serif;" required
+                      placeholder="your.email@gmail.com">
+                      <span id="emailError" class="error-message"></span>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label"
+                      style="font-family: sans-serif;">Phone Number</label>
+                    <input type="tel" id="phone" name="phone"
+                      class="form-control" required>
+                      <span id="phoneError" class="error-message"></span>
+                  </div>
+
+                  <div class="col-md-6 position-relative">
+                    <label class="form-label"
+                      style="font-family: sans-serif;">Password</label>
+                    <input type="password" name="password" class="form-control"
+                      style="font-family: sans-serif;" required minlength="6"
+                      id="password">
+                    <i class="bi bi-eye password-toggle"></i>
+                    <span id="passwordError" class="error-message"></span>
+
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label"
+                      style="font-family: sans-serif;">Confirm Password</label>
+                    <input type="password" name="confirmPassword"
+                      class="form-control" required>
+                      <span id="confirmPasswordError"
+                        class="error-message"></span>
+                  </div>
+
+                  <div class="col-md-6">
+                    <select name="role" id="role">
+                      <option value="Engineer">Engineer</option>
+                    </select>
+                    <span id="roleError" class="error-message"></span>
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label"
+                      style="font-family: sans-serif;">Profile Photo</label>
+                    <div class="drop-zone">
+                      <span class="drop-zone__prompt"
+                        style="font-family: sans-serif;">Drop file here or click
+                        to upload</span>
+                      <input type="file" name="profilePhoto"
+                        class="drop-zone__input"
+                        style="font-family: sans-serif;" accept=".jpg,.png"
+                        onchange="previewProfilePhoto(event)">
+                      <div class="profile-preview rounded-circle"></div>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label"
+                      style="font-family: sans-serif;">ID Card Photo</label>
+                    <div class="drop-zone">
+                      <span class="drop-zone__prompt"
+                        style="font-family: sans-serif;">
+                        Drop file here or click to upload
+                      </span>
+                      <input type="file" name="idCardPhoto"
+                        class="drop-zone__input" accept=".jpg,.png" required>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label"
+                      style="font-family: sans-serif;">Events
+                      Specialization</label>
+                    <div class="events-grid">
+                      <div class="event-type">
+                        <input type="checkbox" id="birthday" name="specialties"
+                          value="birthday"
+                          class="event-checkbox" required>
+                        <label style="font-family: sans-serif;"
+                          for="birthday"><i class="bi bi-cake2"
+                            style="color: goldenrod;"></i>Birthday</label>
+                      </div>
+                      <div class="event-type">
+                        <input type="checkbox" id="engagement"
+                          name="specialties" value="engagement"
+                          class="event-checkbox" required>
+                        <label style="font-family: sans-serif;"
+                          for="engagement"><i class="bi bi-heart-fill"
+                            style="color: goldenrod;"></i>Engagement</label>
+                      </div>
+                      <div class="event-type">
+                        <input type="checkbox" id="wedding" name="specialties"
+                          value="wedding"
+                          class="event-checkbox" required>
+                        <label style="font-family: sans-serif;" for="wedding"><i
+                            class="bi bi-hearts"
+                            style="color: goldenrod;"></i>Wedding</label>
+                      </div>
+                      <div class="event-type">
+                        <input type="checkbox" id="babyshower"
+                          name="specialties" value="babyShower"
+                          class="event-checkbox" required>
+                        <label style="font-family: sans-serif;"
+                          for="babyshower"><i class="bi bi-stars"
+                            style="color: goldenrod;"></i>Baby Showers</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label"
+                      style="font-family: sans-serif;">Personal Bio</label>
+                    <textarea name="bio" class="form-control" rows="4"
+                      maxlength="300"
+                      style="font-family: sans-serif;"
+                      placeholder="Share your design philosophy and creative approach"></textarea>
+                      <span id="bioError" class="error-message"></span>
+                    <div class="char-count text-end"><span>0</span>/300</div>
+                    <div class="col-12">
+                      <div class="form-check">
+                        <input type="hidden" name="termsAccepted" value="false">
+                        <input class="form-check-input" type="checkbox" required
+                          id="termsAccepted" value="true">
+                          <span id="termsAcceptedError" class="error-message"></span>
+                        <label class="form-check-label"
+                          style="color: goldenrod ; font-family: sans-serif;"
+                          for="terms">I agree to the Terms of Service and
+                          Privacy
+                          Policy</label>
+                      </div>
+                    </div> 
+                  </div>
+
+                  <div class="col-12 text-center">
+                    <button type="submit" class="btn  px-5"
+                      style="font-family: sans-serif; background-color: goldenrod; color: white;">Regsiter</button>
+                  </div>
+                </div>
+                <div id="message" style="display: none;"></div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const checkboxes = document.querySelectorAll(".event-checkbox");
+        
+                checkboxes.forEach(checkbox => {
+                    checkbox.addEventListener("change", function () {
+                        const parentDiv = this.closest(".event-type");
+                        if (this.checked) {
+                            parentDiv.style.border = "2px solid goldenrod"; 
+                        } else {
+                            parentDiv.style.border = ""; 
+                        }
+                    });
+                });
+            });
+        </script>
+
+    <style>
+
+  
+  footer a:hover {
+      opacity: 0.8;
+      transition: all 0.3s ease;
+  }
+  
+  footer {
+      border-top: 2px solid var(--border);
+  }
+  
+  footer h5 {
+      font-weight: 600;
+      letter-spacing: 1px;
+  }
+  
+  footer .social-links a:hover {
+      transform: translateY(-3px);
+  }
+  
+  footer .list-unstyled li a:hover {
+      padding-left: 5px;
+  }
+  
+  footer .container {
+      max-width: 1200px;
+  }
+  
+  @media (max-width: 768px) {
+      footer h2.display-4 {
+          font-size: 2.5rem;
+      }
+      
+      footer .col-md-4 {
+          text-align: center;
+      }
+      
+      footer .d-flex.gap-3 {
+          justify-content: center;
+      }
+  }
+  </style>
+  <script>
+    function logout() {
+    fetch("/logout", { method: "POST" }).then(() => (window.location.href = "/login"));
+  }
+</script>
+    <footer class="bg-dark text-warning py-5">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-12 text-center mb-4">
+            <h2 class="display-4 fw-bold">Decor&More</h2>
+          </div>
+          <div class="col-md-4">
+            <h5 class="border-bottom border-warning pb-2">Contact Us</h5>
+            <div class="mt-3">
+              <p><i
+                  class="bi bi-envelope-fill me-2"></i>info@decorandmore.com</p>
+              <a href="https://web.whatsapp.com/send?phone=201556159175"
+                target="_blank">
+                <p><i class="bi bi-telephone-fill me-2"></i>+20 1556159175</p>
+              </a>
+              <p><i class="bi bi-geo-alt-fill me-2"></i>123 Decor Street, Design
+                City</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <h5 class="border-bottom border-warning pb-2">Quick Links</h5>
+            <ul class="list-unstyled mt-3">
+              <li class="mb-2"><a href="/"
+                  class="text-warning text-decoration-none">Home</a></li>
+              <li class="mb-2"><a href="/#op"
+                  class="text-warning text-decoration-none">About</a></li>
+              <li class="mb-2"><a href="/login"
+                  class="text-warning text-decoration-none">login</a></li>
+              <li class="mb-2"><a href="/register"
+                  class="text-warning text-decoration-none">register</a></li>
+
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <h5 class="border-bottom border-warning pb-2">Follow Us</h5>
+            <div class="mt-3 d-flex gap-3">
+              <a href="#" class="text-warning fs-4" aria-label="Facebook"><i
+                  class="bi bi-facebook"></i></a>
+              <a href="#" class="text-warning fs-4" aria-label="Instagram"><i
+                  class="bi bi-instagram"></i></a>
+              <a href="#" class="text-warning fs-4" aria-label="Twitter"><i
+                  class="bi bi-twitter-x"></i></a>
+              <a href="#" class="text-warning fs-4" aria-label="LinkedIn"><i
+                  class="bi bi-linkedin"></i></a>
+            </div>
+          </div>
+          <div class="col-12">
+            <hr class="border-warning">
+            <p class="text-center mb-0">&copy; 2024 Decor&More. All rights
+              reserved.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="../user/register.js"></script>
+    <script src="../user/login.js"></script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/darkMode.js"></script>
+
+  <script>
+
+
+// show Password
+document.querySelector('.password-toggle').addEventListener('click', function() {
+  const passwordField = document.getElementById('password');
+  const type = passwordField.type === 'password' ? 'text' : 'password';
+  passwordField.type = type;
+});
+
+
+
+</script>
+
+
+<style>
+  .input-error {
+    border: 2px solid red;
+    background-color: #ffe6e6;
+}
+
+.error-message {
+    color: red;
+    font-size: 14px;
+    display: block;
+    margin-top: 5px;
+}
+
+</style>
+
+
+  </body>
+</html>

@@ -1,0 +1,334 @@
+<style>
+  .custom-confirm-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    animation: dialogFadeIn 0.3s ease-out;
+  }
+
+  .dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    animation: overlayFadeIn 0.3s ease-out;
+  }
+
+  .dialog-header {
+    margin-bottom: 20px;
+  }
+
+  .dialog-icon {
+    font-size: 48px;
+    color: #ffc107;
+    margin-bottom: 15px;
+  }
+
+  .dialog-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  .dialog-message {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 25px;
+    line-height: 1.5;
+  }
+
+  .dialog-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .dialog-buttons .btn {
+    padding: 10px 25px;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .btn-cancel {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+  }
+
+  .btn-cancel:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+  }
+
+  .btn-delete {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+  }
+
+  .btn-delete:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+  }
+
+  @keyframes dialogFadeIn {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -60%);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+  }
+
+  @keyframes overlayFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .custom-alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    animation: slideIn 0.3s ease-out;
+    max-width: 400px;
+    font-family: sans-serif;
+    border: none;
+  }
+
+  .custom-alert.success {
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    border-left: 5px solid #28a745;
+    color: #155724;
+  }
+
+  .custom-alert.error {
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    border-left: 5px solid #dc3545;
+    color: #721c24;
+  }
+
+  .custom-alert.warning {
+    background: linear-gradient(135deg, #fff3cd, #ffeeba);
+    border-left: 5px solid #ffc107;
+    color: #856404;
+  }
+
+  .alert-icon {
+    font-size: 28px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .alert-content {
+    flex: 1;
+  }
+
+  .alert-title {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .alert-message {
+    font-size: 15px;
+    line-height: 1.4;
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideOut {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  function approveEngineer(email) {
+    const dialog = document.createElement('div');
+    dialog.className = 'custom-confirm-dialog';
+    dialog.innerHTML = `
+      <div class="dialog-header">
+        <i class="fas fa-check-circle dialog-icon"></i>
+        <div class="dialog-title">Approve Engineer</div>
+      </div>
+      <div class="dialog-message">
+        Are you sure you want to approve this engineer? This will allow them to access their account.
+      </div>
+      <div class="dialog-buttons">
+        <button class="btn btn-cancel">Cancel</button>
+        <button class="btn btn-delete">Approve</button>
+      </div>
+    `;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'dialog-overlay';
+
+    document.body.appendChild(overlay);
+    document.body.appendChild(dialog);
+
+    const cancelBtn = dialog.querySelector('.btn-cancel');
+    const approveBtn = dialog.querySelector('.btn-delete');
+
+    cancelBtn.addEventListener('click', () => {
+      document.body.removeChild(overlay);
+      document.body.removeChild(dialog);
+    });
+
+    approveBtn.addEventListener('click', async () => {
+      try {
+        const response = await fetch('/approve-engineer', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        });
+
+        const data = await response.json();
+        if (data.message) {
+          showAlert(data.message, 'success');
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showAlert('Error approving engineer', 'error');
+      } finally {
+        document.body.removeChild(overlay);
+        document.body.removeChild(dialog);
+      }
+    });
+  }
+
+  async function rejectEngineer(email, button) {
+    const dialog = document.createElement('div');
+    dialog.className = 'custom-confirm-dialog';
+    dialog.innerHTML = `
+      <div class="dialog-header">
+        <i class="fas fa-times-circle dialog-icon" style="color: #dc3545;"></i>
+        <div class="dialog-title">رفض المهندس</div>
+      </div>
+      <div class="dialog-message">
+        هل أنت متأكد من أنك لا تريد الموافقة على هذا المهندس؟
+      </div>
+      <div class="dialog-buttons">
+        <button class="btn btn-cancel">إلغاء</button>
+        <button class="btn btn-delete">رفض</button>
+      </div>
+    `;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'dialog-overlay';
+
+    document.body.appendChild(overlay);
+    document.body.appendChild(dialog);
+
+    const cancelBtn = dialog.querySelector('.btn-cancel');
+    const rejectBtn = dialog.querySelector('.btn-delete');
+
+    cancelBtn.addEventListener('click', () => {
+      document.body.removeChild(overlay);
+      document.body.removeChild(dialog);
+    });
+
+    rejectBtn.addEventListener('click', async () => {
+      try {
+        const response = await fetch('/reject-engineer', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        });
+
+        const data = await response.json();
+        if (data.message) {
+          showAlert(data.message, 'success');
+          button.closest("tr").remove();
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showAlert('Error rejecting engineer', 'error');
+      } finally {
+        document.body.removeChild(overlay);
+        document.body.removeChild(dialog);
+      }
+    });
+  }
+
+  function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `custom-alert ${type}`;
+    
+    const icon = type === 'success' ? '✓' : type === 'warning' ? '⚠️' : '✕';
+    const title = type === 'success' ? 'Success!' : type === 'warning' ? 'Warning!' : 'Error!';
+    
+    alertDiv.innerHTML = `
+      <div class="alert-icon">${icon}</div>
+      <div class="alert-content">
+        <div class="alert-title">${title}</div>
+        <div class="alert-message">${message}</div>
+      </div>
+    `;
+    
+    document.body.appendChild(alertDiv);
+    
+    setTimeout(() => {
+      alertDiv.style.animation = 'slideOut 0.3s ease-out forwards';
+      setTimeout(() => {
+        document.body.removeChild(alertDiv);
+      }, 300);
+    }, 3000);
+  }
+</script> 

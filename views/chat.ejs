@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat</title>
+  <style>
+    #chat-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    #chat-box {
+      height: 400px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+    .message-container {
+      margin: 10px 0;
+      max-width: 70%;
+    }
+    .message-container.self {
+      margin-left: auto;
+    }
+    .message-container:not(.self) {
+      margin-right: auto;
+    }
+    .sender-name {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 2px;
+      padding-left: 8px;
+    }
+    .message {
+      padding: 8px;
+      border-radius: 5px;
+    }
+    .message.self {
+      background-color: #007bff;
+      color: white;
+    }
+    .message:not(.self) {
+      background-color: #f1f1f1;
+    }
+    #input-area {
+      display: flex;
+      gap: 10px;
+    }
+    #messageInput {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    #sendMessageButton {
+      padding: 8px 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .error {
+      color: red;
+      text-align: center;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="chat-container">
+    <div id="chat-box">
+      <% if (messages && messages.length > 0) { %>
+        <% messages.forEach(function(message) { %>
+          <div class="message-container <%= message.senderType === 'user' ? 'self' : '' %>">
+            <div class="sender-name"><%= message.senderName %></div>
+            <div class="message <%= message.senderType === 'user' ? 'self' : '' %>">
+              <%= message.content %>
+            </div>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <div class="no-messages">No messages yet. Start the conversation!</div>
+      <% } %>
+    </div>
+    <div id="input-area">
+      <input type="text" id="messageInput" placeholder="Type your message" />
+      <button id="sendMessageButton">Send</button>
+    </div>
+  </div>
+
+  <script>
+    // Pass user data to the chat script
+    window.chatData = {
+      userId: '<%= user._id %>',
+      engineerId: '<%= engineer._id %>',
+      senderType: '<%= user.role === "Engineer" ? "engineer" : "user" %>',
+      isEngineer: <%= user.role === "Engineer" ? true : false %>
+    };
+
+    // Add error handling for invalid IDs
+    if (!window.chatData.userId || !window.chatData.engineerId) {
+      console.error('Invalid user or engineer ID');
+      document.getElementById('input-area').style.display = 'none';
+      document.getElementById('chat-box').innerHTML = '<div class="error">Error: Invalid chat session. Please try again.</div>';
+    }
+  </script>
+  <script defer src="/socket.io/socket.io.js"></script>
+  <script defer src="/js/chat.js"></script>
+</body>
+</html>
