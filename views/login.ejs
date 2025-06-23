@@ -12,7 +12,8 @@
     <link rel="stylesheet" href="/css/public.css">
 
     <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <link rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -106,11 +107,11 @@
   </head>
   <body>
     <style>
- 
+
       .dropdown {
           position: relative;
       }
-      
+
       .dropdown-menu {
           position: absolute;
           top: 100%;
@@ -122,30 +123,39 @@
           flex-direction: column;
           min-width: 150px;
       }
-      
+
       .dropdown-menu a {
           display: block;
           padding: 10px;
           color: black;
           text-decoration: none;
       }
-      
+
       .dropdown-menu a:hover {
           background: #f4f4f4;
       }
-      
-      
+
+
       .dropdown:hover .dropdown-menu {
           display: flex;
       }
+
       
+      .logo-hero {
+    background: linear-gradient(90deg, #d4af37 0%, #ffd700 50%, #bfa14a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
       </style>
     <div class="container" data-aos="zoom-in" data-aos-duration="1200">
       <div class="row">
         <div
           class="navv-bar py-4 d-flex justify-content-between align-items-center">
           <!-- Logo Section -->
-          <div class="logo" style="font-size: 35px;" data-aos="fade-down"
+          <div class="logo-hero" style="font-size: 35px;" data-aos="fade-down"
             data-aos-duration="1200">
             Decore&More
           </div>
@@ -161,38 +171,62 @@
               <li><a href="/#op" class="nav-link">About</a></li>
               <li class="dropdown">
                 <a href="/#od" class="nav-link">Services</a>
-              <div class="dropdown-menu">
-                <a href="/eng?occasion=Birthday" class="nav-link">Birthday</a>
-                <a href="/eng?occasion=Wedding" class="nav-link">Wedding</a>
-                <a href="/eng?occasion=Engagement" class="nav-link">Engagement</a>
-                <a href="/eng?occasion=BabyShower" class="nav-link">BabyShower</a>
-              </div>
+                <div class="dropdown-menu">
+                  <a href="/packages/by-occasion?occasion=Birthday"
+                    class="nav-link">Birthday</a>
+                  <a href="/packages/by-occasion?occasion=Wedding"
+                    class="nav-link">Wedding</a>
+                  <a href="/packages/by-occasion?occasion=Engagement"
+                    class="nav-link">Engagement</a>
+                  <a href="/packages/by-occasion?occasion=BabyShower"
+                    class="nav-link">BabyShower</a>
+                </div>
               </li>
               <li><a href="/designers" class="nav-link">Designers</a></li>
-              <li><a href="/eng" class="nav-link">Engineers</a></li>
-              <li><a href="/contact" class="nav-link">Contact</a></li>
-              <li><a href="/Favorite" class="nav-link">Favorite</a></li>
-              <% if (user && user.name) { %>
-                <li class="dropdown">
-                  <a href="#" class="nav-link d-flex align-items-center">
-                    <i class="fa-solid fa-user"></i>
-                    <span><%= user.name %></span>
-                  </a>
-                  <div class="dropdown-menu">
-                    <a href="/userProfile/<%= user._id %>" class="nav-link">
-                      <i class="fas fa-user me-2"></i>Profile
-                    </a>
-                    <a href="#" class="nav-link" onclick="logout()">
-                      <i class="fas fa-sign-out-alt me-2"></i>Logout
-                    </a>
-                  </div>
-                </li>
-                <% }else{ %>  
-                  <li><a href="/login" class="nav-link"><i
-                    class="fa-solid fa-user"></i></a></li>
+              <% if (!user || !user.name) { %>
+              <li class="dropdown">
+                <a href="#" class="nav-link">Register</a>
+                <div class="dropdown-menu">
+                  <a href="/registerCustomer">Customer</a>
+                  <a href="/register">Engineer</a>
+                </div>
+              </li>
               <% } %>
-              <button onclick="toggleDarkMode()" class="dark-mode">
-                <li class="fa-solid fa-moon"></li>
+
+              <% if (!user || !user.name) { %>
+              <li class="dropdown">
+                <a href="#" class="nav-link">Login</a>
+                <div class="dropdown-menu">
+                  <a href="/login">Customer</a>
+                  <a href="/login">Engineer</a>
+                </div>
+              </li>
+              <% } %>
+
+              <li><a href="/contact" class="nav-link">Contact</a></li>
+
+              <% if (user && user.name) { %>
+              <li class="dropdown">
+                <a href="#" class="nav-link d-flex align-items-center">
+                  <i class="fa-solid fa-user"></i>
+                  <span><%= user.name %></span>
+                </a>
+                <div class="dropdown-menu">
+                  <a href="/userProfile/<%= user.id %>" class="nav-link">
+                    <i class="fas fa-user me-2"></i>Profile
+                  </a>
+                  <a href="#" class="nav-link" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                  </a>
+                </div>
+              </li>
+              <% }else{ %>
+
+              <% } %>
+              <button onclick="toggleDarkMode()" class="dark-mode"
+                aria-label="Toggle dark mode">
+                <i class="fa-solid fa-moon" aria-hidden="true"
+                  title="Toggle to dark mode"></i>
               </button>
             </ul>
           </div>
@@ -207,7 +241,7 @@
           <div class="card border-0 shadow-lg">
             <div class="card-body p-5">
               <div class="text-center mb-4">
-                <h4 class="fw-bold">Welcome Back!</h4>
+                <h4 class="fw-bold section-gradient-title">Welcome Back!</h4>
                 <p class="text-muted">Please login to your account</p>
               </div>
               <form action="/login" method="post" id="loginForm" novalidate
@@ -247,18 +281,10 @@
                     role="status"></span>
                   Login
                 </button>
-                <a href="/forgetPassword">Forget password</a>
-                <div class="text-center">
-                  <p class="mb-3 text-muted">Or login with</p>
-                  <div class="d-flex gap-2 justify-content-center">
-                    <button type="button" style="font-family: sans-serif;"
-                      class="btn btn-outline-primary"><i
-                        class="bi bi-google me-2"></i>Google</button>
-                    <button type="button" style="font-family: sans-serif;"
-                      class="btn btn-outline-primary"><i
-                        class="bi bi-facebook me-2"></i>Facebook</button>
-                  </div>
-                </div>
+                <a href="/forgetPassword"
+                  style="color: goldenrod; font-weight: 500;">Forget
+                  password</a>
+
                 <div id="alertBox"
                   style="display: none; font-weight: bold; margin-top: 10px;"></div>
               </form>
@@ -274,42 +300,42 @@
   </script>
     <style>
 
-      
+
       footer a:hover {
           opacity: 0.8;
           transition: all 0.3s ease;
       }
-      
+
       footer {
           border-top: 2px solid var(--border);
       }
-      
+
       footer h5 {
           font-weight: 600;
           letter-spacing: 1px;
       }
-      
+
       footer .social-links a:hover {
           transform: translateY(-3px);
       }
-      
+
       footer .list-unstyled li a:hover {
           padding-left: 5px;
       }
-      
+
       footer .container {
           max-width: 1200px;
       }
-      
+
       @media (max-width: 768px) {
           footer h2.display-4 {
               font-size: 2.5rem;
           }
-          
+
           footer .col-md-4 {
               text-align: center;
           }
-          
+
           footer .d-flex.gap-3 {
               justify-content: center;
           }
@@ -342,10 +368,12 @@
                   class="text-warning text-decoration-none">Home</a></li>
               <li class="mb-2"><a href="/#op"
                   class="text-warning text-decoration-none">About</a></li>
+              <% if (!user) { %>
               <li class="mb-2"><a href="/login"
                   class="text-warning text-decoration-none">login</a></li>
               <li class="mb-2"><a href="/register"
                   class="text-warning text-decoration-none">register</a></li>
+              <% } %>
             </ul>
           </div>
           <div class="col-md-4">
@@ -370,8 +398,8 @@
       </div>
     </footer>
 
-    <script src="../user/register.js"></script>
-    <script src="../user/login.js"></script>
+    <script src="/js/register.js"></script>
+    <script src="/js/login.js"></script>
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -379,6 +407,23 @@
     <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/js/customAlerts.js"></script>
-  
+
+    <script>
+  function togglePassword() {
+    const passwordInput = document.getElementById("password");
+    const toggleIcon = document.querySelector(".password-toggle i");
+
+    if (passwordInput.type === "password") {
+      passwordInput.type = "text";
+      toggleIcon.classList.remove("bi-eye");
+      toggleIcon.classList.add("bi-eye-slash");
+    } else {
+      passwordInput.type = "password";
+      toggleIcon.classList.remove("bi-eye-slash");
+      toggleIcon.classList.add("bi-eye");
+    }
+  }
+</script>
+
   </body>
 </html>

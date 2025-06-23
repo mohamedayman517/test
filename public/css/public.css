@@ -8,7 +8,7 @@ html {
 }
 
 body {
-  font-family: "Great Vibes" !important;
+  font-family: "Roboto", Arial, sans-serif !important;
   font-weight: 400;
   font-size: 14px;
   line-height: 26px;
@@ -21,13 +21,11 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: "Dancing Script" !important;
+  font-family: "Belleza", "Roboto", Arial, sans-serif !important;
 }
 
-
-
 .logo img {
-  max-height: 60px;
+  max-height: 80px;
 }
 
 .nav-links {
@@ -148,8 +146,7 @@ h4 {
 }
 
 .about_disc {
-  font-family: "Great Vibes";
-
+  font-family: "Roboto", Arial, sans-serif;
   font-size: 18px;
 }
 
@@ -1648,26 +1645,40 @@ p.lead {
 
 /* SweetAlert2 Arabic Support */
 .swal2-arabic {
-    font-family: 'Cairo', sans-serif;
-    direction: rtl;
+  font-family: "Cairo", sans-serif;
+  direction: rtl;
 }
 
 .swal2-arabic .swal2-title {
-    font-size: 1.5rem;
-    font-weight: bold;
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
 .swal2-arabic .swal2-content {
-    font-size: 1.1rem;
+  font-size: 1.1rem;
 }
 
 .swal2-arabic .swal2-confirm {
-    font-size: 1rem;
-    padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  padding: 0.5rem 1.5rem;
 }
 
 .swal2-arabic .swal2-cancel {
-    font-size: 1rem;
-    padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  padding: 0.5rem 1.5rem;
 }
 
+.section-gradient-title,
+h1.section-gradient-title,
+h2.section-gradient-title,
+h3.section-gradient-title,
+h4.section-gradient-title,
+h5.section-gradient-title {
+  background: linear-gradient(90deg, #d4af37 0%, #ffd700 50%, #bfa14a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  font-weight: bold;
+  display: inline-block;
+}

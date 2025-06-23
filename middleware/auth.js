@@ -5,6 +5,6 @@ const isAuthenticated = (req, res, next) => {
   res.status(401).json({ error: "Unauthorized - Please login first" });
 };
 
-module.exports = {
+export default {
   isAuthenticated
 }; 

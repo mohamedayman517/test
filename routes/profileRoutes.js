@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const Project = require("../models/projectSchema");
+const Package = require("../models/packageSchema");
 const User = require("../models/userSchema");
-const client = require("../models/clientSchema")
+const Client = require("../models/clientSchema");
 const multer = require("multer");
 const path = require("path");
 const Joi = require("joi");
+const bcrypt = require("bcrypt");
 
 const storage = multer.diskStorage({
   destination: "./public/uploads/",
@@ -27,37 +29,38 @@ const ratingSchema = Joi.object({
 
 router.get("/profile/:id", async (req, res) => {
   try {
-    const fromShowMore = req.query.fromShowMore === "true";
-    const engineerId = req.params.id;
+    const profile = await User.findById(req.params.id);
+    const projects = await Project.find({ engID: req.params.id });
+    const packages = await Package.find({ engID: req.params.id });
 
-    const engData = await User.findOne({ _id: engineerId }).lean();
-    const projects = await Project.find({ engID: engineerId }).lean();
-    if (!engData) return res.status(404).send("Engineer not found");
-
-    // Ensure the profile photo path is correct
-    if (engData.profilePhoto && !engData.profilePhoto.startsWith('/uploads/')) {
-      engData.profilePhoto = '/uploads/' + engData.profilePhoto;
+    if (!profile) {
+      return res.status(404).json({
+        success: false,
+        message: "Profile not found",
+      });
     }
 
     res.render("profile", {
-      
-      projects,
-      engData,
-      badges: engData.badges,
-      booking: engData.bookings,
-      fromShowMore,
-      user: req.session.user || null,
-      
+      title: `${profile.firstName} ${profile.lastName} - Profile`,
+      engData: profile,
+      projects: projects,
+      packages: packages,
+
+      user: req.session.user,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Server error");
+    console.error("Error fetching profile:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error loading profile",
+    });
   }
 });
 
 router.get("/eng", async (req, res) => {
   try {
-    const clientUser =  req.session.user;
+    const clientUser = req.session.user;
+
     const occasion = req.query.occasion;
 
     let engineers;
@@ -81,36 +84,35 @@ router.get("/eng", async (req, res) => {
     if (occasion) {
       engineers = await Promise.all(
         engineers.map(async (engineer) => {
-          const projects = await Project.find({
+          const packages = await Package.find({
             engID: engineer._id.toString(),
             type: new RegExp(`^${occasion}$`, "i"),
           })
             .limit(4)
             .lean();
 
-          engineer.projects = projects;
+          engineer.packages = packages;
           engineer.bookings = engineer.bookings;
 
-          return projects.length > 0 ? engineer : null;
+          return engineer;
         })
       );
-
-      engineers = engineers.filter(Boolean);
     } else {
       for (let engineer of engineers) {
-        engineer.projects = await Project.find({
+        engineer.packages = await Package.find({
           engID: engineer._id.toString(),
         })
           .limit(4)
           .lean();
       }
 
-      engineers = engineers.filter((engineer) => engineer.projects.length > 0); // Filter engineers with no projects
+      engineers = engineers.filter((engineer) => engineer.packages.length > 0); // Filter engineers with no projects
     }
 
     res.render("eng", {
-      user :clientUser,
+      user: clientUser,
       engineers,
+      isAuthenticated: !!clientUser,
       occasion: occasion || "All Occasions",
     });
   } catch (error) {
@@ -118,6 +120,93 @@ router.get("/eng", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
+
+// معالجة تسجيل الدخول
+router.post("/payment/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await Client.findOne({ email });
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid password" });
+    }
+
+    req.session.user = user;
+    res.json({
+      success: true,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+// معالجة التسجيل
+router.post(
+  "/payment/register",
+  upload.single("profilePhoto"),
+  async (req, res) => {
+    try {
+      const { name, email, password, phone, bio } = req.body;
+
+      // Check if user already exists
+      const existingUser = await Client.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          message: "Email already exists",
+        });
+      }
+
+      // Hash password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      // Create new user
+      const newUser = new Client({
+        name,
+        email,
+        password: hashedPassword,
+        phone,
+        bio,
+        role: "user",
+        profilePhoto: req.file
+          ? `/uploads/${req.file.filename}`
+          : "/uploads/default.png",
+      });
+
+      await newUser.save();
+      req.session.user = newUser;
+
+      res.json({
+        success: true,
+        user: {
+          _id: newUser._id,
+          name: newUser.name,
+          email: newUser.email,
+          profilePhoto: newUser.profilePhoto,
+        },
+      });
+    } catch (error) {
+      console.error("Registration error:", error);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
+  }
+);
 
 // POST /rate-engineer
 router.post("/rate", async (req, res) => {
@@ -172,22 +261,30 @@ router.delete("/delete-booking/:id", async (req, res) => {
   try {
     const bookingId = req.params.id;
 
-    const updatedUser = await User.findOneAndUpdate(
-      { "bookings._id": bookingId },
-      { $pull: { bookings: { _id: bookingId } } },
+    // Delete from Engineer's bookings
+    const updatedEngineer = await User.findOneAndUpdate(
+      { "bookings.bookingId": bookingId },
+      { $pull: { bookings: { bookingId: bookingId } } },
       { new: true }
     );
 
-    if (!updatedUser) {
+    // Delete from Client's bookings
+    const updatedClient = await Client.findOneAndUpdate(
+      { "bookings.bookingId": bookingId },
+      { $pull: { bookings: { bookingId: bookingId } } },
+      { new: true }
+    );
+
+    if (!updatedEngineer && !updatedClient) {
       return res
         .status(404)
-        .json({ success: false, message: " Booking Not Found " });
+        .json({ success: false, message: "Booking not found" });
     }
 
-    res.json({ success: true, message: " Success Delete " });
+    res.json({ success: true, message: "Booking deleted successfully" });
   } catch (error) {
     console.error("Error deleting booking:", error);
-    res.status(500).json({ success: false, message: "  Error During Delete " });
+    res.status(500).json({ success: false, message: "Error deleting booking" });
   }
 });
 
@@ -215,7 +312,9 @@ router.post(
       }).lean();
 
       if (!updateUser) {
-        return res.status(404).json({ success: false, error: "User not found" });
+        return res
+          .status(404)
+          .json({ success: false, error: "User not found" });
       }
 
       // Update session with new user data
@@ -223,32 +322,32 @@ router.post(
         id: updateUser._id,
         email: updateUser.email,
         role: updateUser.role,
-        name: `${updateUser.firstName} ${updateUser.lastName}`
+        name: `${updateUser.firstName} ${updateUser.lastName}`,
       };
 
       // Ensure the profile photo path is correct
       const userWithPhoto = {
         ...updateUser,
-        profilePhoto: updateUser.profilePhoto.startsWith('/uploads/') 
-          ? updateUser.profilePhoto 
-          : '/uploads/' + updateUser.profilePhoto
+        profilePhoto: updateUser.profilePhoto.startsWith("/uploads/")
+          ? updateUser.profilePhoto
+          : "/uploads/" + updateUser.profilePhoto,
       };
 
-      res.status(200).json({ 
-        success: true, 
+      res.status(200).json({
+        success: true,
         message: "Profile updated successfully",
         user: {
           firstName: userWithPhoto.firstName,
           lastName: userWithPhoto.lastName,
           bio: userWithPhoto.bio,
-          profilePhoto: userWithPhoto.profilePhoto
-        }
+          profilePhoto: userWithPhoto.profilePhoto,
+        },
       });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ 
-        success: false, 
-        error: "Error updating profile" 
+      res.status(500).json({
+        success: false,
+        error: "Error updating profile",
       });
     }
   }

@@ -62,6 +62,9 @@
       href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+
   </head>
 
 
@@ -70,7 +73,15 @@
   </head>
   <body>
     <style>
- 
+
+      .logo-hero {
+  font-family: 'Dancing Script', cursive !important;
+}
+
+.section-gradient-title {
+  font-family: 'Dancing Script', cursive !important;
+}
+
 .dropdown {
     position: relative;
 }
@@ -103,17 +114,61 @@
     display: flex;
 }
 
+.logo-header {
+    color: #d4af37 !important;
+    font-weight: bold;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: unset !important;
+}
+
+.logo-hero {
+    background: linear-gradient(90deg, #d4af37 0%, #ffd700 50%, #bfa14a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
+
+.section-gradient-title {
+    background: linear-gradient(90deg, #d4af37 0%, #ffd700 60%, #bfa14a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    font-weight: bold;
+    display: inline-block;
+}
+.logo-img {
+  height: 150px;
+  width: auto;
+  vertical-align: middle;
+  display: block;
+  margin: 0;
+  filter: none;
+  border-radius: 0;
+  box-shadow: none;
+  object-fit: unset;
+  transition: none;
+}
+
+
+
 </style>
 
     <div class="container" data-aos="zoom-in" data-aos-duration="1200">
       <div class="row">
         <div
           class="navv-bar py-4 d-flex justify-content-between align-items-center">
-          <!-- Logo Section -->
-          <div class="logo" style="font-size: 35px;" data-aos="fade-down"
-            data-aos-duration="1200">
-            Decore&More
-          </div>
+        
+<!-- Logo Section -->
+<div class="logo logo-header d-flex align-items-center" style="font-size: 45px;" data-aos="fade-down" data-aos-duration="1200">
+  <img src="/images/Decor&More Logo.png" alt="Decor & More Logo" class="logo-img me-2"> <!-- تم إزالة التنسيق المضمن للاعتماد على تعريف CSS -->
+  <!-- <span class="fw-bold text-warning">Decore&More</span> -->
+</div>
+
+
           <!-- Menu Button -->
           <div class="menu-btn d-lg-none" data-aos="fade-up"
             data-aos-duration="1200">
@@ -127,26 +182,38 @@
               <li><a href="#op" class="nav-link">About</a></li>
               <li class="dropdown"><a href="#od" class="nav-link">Services</a>
               <div class="dropdown-menu">
-                <a href="/eng?occasion=Birthday" class="nav-link">Birthday</a>
-                <a href="/eng?occasion=Wedding" class="nav-link">Wedding</a>
-                <a href="/eng?occasion=Engagement" class="nav-link">Engagement</a>
-                <a href="/eng?occasion=BabyShower" class="nav-link">BabyShower</a>
+                <a href="/packages/by-occasion?occasion=Birthday" class="nav-link">Birthday</a>
+                <a href="/packages/by-occasion?occasion=Wedding" class="nav-link">Wedding</a>
+                <a href="/packages/by-occasion?occasion=Engagement" class="nav-link">Engagement</a>
+                <a href="/packages/by-occasion?occasion=BabyShower" class="nav-link">BabyShower</a>
               </div>
               </li>
               <li><a href="/designers" class="nav-link">Designers</a></li>
+              <% if (!user || !user.name) { %>
               <li class="dropdown">
-                <a href="/eng" class="nav-link">Engineers</a>
+                <a href="#" class="nav-link">Register</a>
                 <div class="dropdown-menu">
-                  <a href="/login">Log In</a>
-                  <a href="/register">Register</a>
-
+                  <a href="/registerCustomer">Customer</a>
+                  <a href="/register">Engineer</a>
                 </div>
               </li>
-              <li><a href="/contact" class="nav-link">Contact</a></li>
-              <li><a href="/Favorite" class="nav-link">Favorite</a></li>
-              
+              <% } %>
 
-            
+                <% if (!user || !user.name) { %>
+              <li class="dropdown">
+                <a href="#" class="nav-link">Login</a>
+                <div class="dropdown-menu">
+                  <a href="/login">Customer</a>
+                  <a href="/login">Engineer</a>
+                </div>
+              </li>
+              <% } %>
+
+              <li><a href="/contact" class="nav-link">Contact</a></li>
+
+
+
+
                     <% if (user && user.name) { %>
                       <li class="dropdown">
                         <a href="#" class="nav-link d-flex align-items-center">
@@ -154,7 +221,7 @@
                           <span><%= user.name %></span>
                         </a>
                         <div class="dropdown-menu">
-                          <a href="/userProfile/<%= user._id %>" class="nav-link">
+                          <a href="/userProfile/<%= user.id %>" class="nav-link">
                             <i class="fas fa-user me-2"></i>Profile
                           </a>
                           <a href="#" class="nav-link" onclick="logout()">
@@ -162,12 +229,11 @@
                           </a>
                         </div>
                       </li>
-                      <% }else{ %>  
-                        <li><a href="/login" class="nav-link"><i
-                          class="fa-solid fa-user"></i></a></li>
+                      <% }else{ %>
+                      
                     <% } %>
-                    <button onclick="toggleDarkMode()" class="dark-mode">
-                      <i class="fa-solid fa-moon"></i>
+                    <button onclick="toggleDarkMode()" class="dark-mode" aria-label="Toggle dark mode">
+                      <i class="fa-solid fa-moon" aria-hidden="true" title="Toggle to dark mode"></i>
                     </button>
 
             </ul>
@@ -181,7 +247,7 @@
     <!-- start first section  -->
 
     <div class="home-img">
-      <h1 class="d-flex  justify-content-center align-items-center h-75 pt-5"
+      <h1 class="d-flex justify-content-center align-items-center h-75 pt-5 logo-hero"
         style="font-size: 100px;">
         Decore&More
       </h1>
@@ -204,7 +270,7 @@
             </div>
             <div class="col-lg-6">
               <div class="content-wrapper text-center text-lg-start">
-                <h2 class="display-4 mb-4" style="color: #E4A598;">About Us</h2>
+                <h2 class="display-4 mb-4 section-gradient-title">About Us</h2>
                 <p class="leadd mb-4">We are an innovative platform that bridges
                   the gap between clients and professional event designers. Our
                   goal is to simplify the process of finding and booking event
@@ -229,7 +295,7 @@
             </div>
             <div class="col-lg-6 order-lg-1">
               <div class="content-wrapper text-center text-lg-start">
-                <h2 class="display-4 mb-4" style="color: #E4A598;">Our Goal</h2>
+                <h2 class="display-4 mb-4 section-gradient-title">Our Goal</h2>
                 <p class="leadd mb-4">Our mission is to connect clients with the
                   most talented event designers to transform their special
                   occasions into unforgettable memories.</p>
@@ -244,7 +310,7 @@
     </main>
 
     <section class="services-section" id="od">
-      <h2>Our Services</h2>
+      <h2 class="section-gradient-title">Our Services</h2>
       <p>Life's special moments deserve to be celebrated in style. Whether it's
         a magical wedding, a joyful engagement, a memorable birthday, or the
         sweet celebration of a newborn, we've got you covered. Choose your
@@ -257,26 +323,26 @@
           <h3>Birthday</h3>
           <p>Make your birthday special with beautiful decorations that match
             your style!</p>
-          <a href="/eng?occasion=Birthday" class="booking-button">Book Now</a>
+          <a href="/packages/by-occasion?occasion=Birthday" class="booking-button" class="booking-button">Book Now</a>
         </div>
         <div class="service-item">
           <span>💍</span>
           <h3>Wedding</h3>
           <p>Timeless elegance for a wedding as unique as your love!</p>
-          <a href="/eng?occasion=Wedding" class="booking-button">Book Now</a>
+          <a href="/packages/by-occasion?occasion=Wedding" class="booking-button" class="booking-button">Book Now</a>
         </div>
         <div class="service-item">
           <span>💕</span>
           <h3>Engagement</h3>
           <p>Elegant and stylish decorations to celebrate your love story!</p>
-          <a href="/eng?occasion=Engagement" class="booking-button mt-3">Book
+          <a href="/packages/by-occasion?occasion=Engagement" class="booking-button" class="booking-button mt-3">Book
             Now</a>
         </div>
         <div class="service-item">
           <span>🍼</span>
           <h3>Baby Shower</h3>
           <p>Welcome your little one with soft and charming decorations</p>
-          <a href="/eng?occasion=BabyShower" class="booking-button">Book Now</a>
+          <a href="/packages/by-occasion?occasion=BabyShower" class="booking-button" class="booking-button">Book Now</a>
         </div>
       </div>
     </section>
@@ -330,11 +396,11 @@ footer .container {
     footer h2.display-4 {
         font-size: 2.5rem;
     }
-    
+
     footer .col-md-4 {
         text-align: center;
     }
-    
+
     footer .d-flex.gap-3 {
         justify-content: center;
     }
@@ -369,10 +435,12 @@ footer .container {
                   class="text-warning text-decoration-none">Home</a></li>
               <li class="mb-2"><a href="#op"
                   class="text-warning text-decoration-none">About</a></li>
-              <li class="mb-2"><a href="/login"
-                  class="text-warning text-decoration-none">login</a></li>
-              <li class="mb-2"><a href="/register"
-                  class="text-warning text-decoration-none">register</a></li>
+                  <% if (!user) { %>
+                    <li class="mb-2"><a href="/login"
+                        class="text-warning text-decoration-none">login</a></li>
+                    <li class="mb-2"><a href="/register"
+                        class="text-warning text-decoration-none">register</a></li>
+                        <% } %>
             </ul>
           </div>
           <div class="col-md-4">

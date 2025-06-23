@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engineer Subscription Payment - Decor And More</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/darkMode.css" rel="stylesheet">
+    <script src="/js/darkMode.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            text-align: center;
+            padding: 25px;
+            border: none;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+        }
+
+        #card-element {
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+        }
+
+        #card-element.StripeElement--focus {
+            border-color: #FFD700;
+            box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.25);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            border: none;
+            padding: 12px 35px;
+            border-radius: 30px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .subscription-details {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        body.dark-mode .subscription-details {
+            background: #232323 !important;
+            color: #ffd700 !important;
+        }
+        body.dark-mode .subscription-details h5,
+        body.dark-mode .subscription-details li {
+            color: #ffd700 !important;
+        }
+        body.dark-mode .subscription-details .text-success {
+            color: #aaffaa !important;
+        }
+
+        .error-message {
+            color: #dc3545;
+            background-color: #ffe0e3;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .payment-status {
+            display: none;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .payment-status.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .payment-status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .loading .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Engineer Subscription</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-crown fa-3x text-warning mb-3"></i>
+                            <h4>Welcome, <%= engineerName %></h4>
+                            <p class="text-muted">Complete your subscription payment to access all features</p>
+                        </div>
+
+                        <div class="subscription-details">
+                            <h5 class="mb-3">Subscription Details</h5>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check-circle text-success me-2"></i> Monthly subscription fee: 1500 EGP</li>
+                                <li><i class="fas fa-check-circle text-success me-2"></i> Access to all platform features</li>
+                                <li><i class="fas fa-check-circle text-success me-2"></i> Secure payment processing</li>
+                                <li><i class="fas fa-check-circle text-success me-2"></i> Cancel anytime</li>
+                            </ul>
+                        </div>
+
+                        <form id="payment-form">
+                            <input type="hidden" id="engineerId" value="<%= engineerId %>">
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Card Information</label>
+                                <div id="card-element"></div>
+                                <div id="card-errors" class="error-message" role="alert"></div>
+                            </div>
+
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary btn-lg" id="submit-button">
+                                    <span id="button-text">Subscribe Now</span>
+                                    <span class="spinner-border spinner-border-sm ms-2 d-none" id="spinner"></span>
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="payment-status" id="payment-status"></div>
+
+                        <div class="loading">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Processing your payment...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Initialize Stripe
+        const stripe = Stripe('<%= stripePublishableKey %>'); // Use the key passed from the router
+        const elements = stripe.elements();
+
+        // Create card Element
+        const cardElement = elements.create('card', {
+            style: {
+                base: {
+                    fontSize: '16px',
+                    color: '#32325d',
+                    '::placeholder': {
+                        color: '#aab7c4'
+                    }
+                },
+                invalid: {
+                    color: '#dc3545',
+                    iconColor: '#dc3545'
+                }
+            }
+        });
+
+        // Mount the card Element
+        cardElement.mount('#card-element');
+
+        // Handle form submission
+        const form = document.getElementById('payment-form');
+        const submitButton = document.getElementById('submit-button');
+        const buttonText = document.getElementById('button-text');
+        const spinner = document.getElementById('spinner');
+        const engineerId = document.getElementById('engineerId').value;
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            setLoading(true);
+
+            try {
+                const { paymentMethod, error } = await stripe.createPaymentMethod({
+                    type: 'card',
+                    card: cardElement,
+                });
+
+                if (error) {
+                    showError(error.message);
+                    setLoading(false);
+                    return;
+                }
+
+                // Send paymentMethod.id to your server
+                const response = await fetch('/payment-engineer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        engineerId: engineerId,
+                        paymentMethodId: paymentMethod.id
+                    }),
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Your subscription has been activated successfully!',
+                        icon: 'success',
+                        confirmButtonText: 'Go to Login',
+                        allowOutsideClick: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/login';
+                        }
+                    });
+                } else {
+                    showError(result.message);
+                }
+            } catch (error) {
+                showError('An unexpected error occurred. Please try again.');
+                console.error('Payment error:', error);
+            }
+
+            setLoading(false);
+        });
+
+        // Handle card Element errors
+        cardElement.addEventListener('change', ({error}) => {
+            const displayError = document.getElementById('card-errors');
+            if (error) {
+                displayError.textContent = error.message;
+                displayError.style.display = 'block';
+            } else {
+                displayError.textContent = '';
+                displayError.style.display = 'none';
+            }
+        });
+
+        function setLoading(isLoading) {
+            if (isLoading) {
+                submitButton.disabled = true;
+                spinner.classList.remove('d-none');
+                buttonText.textContent = 'Processing...';
+            } else {
+                submitButton.disabled = false;
+                spinner.classList.add('d-none');
+                buttonText.textContent = 'Subscribe Now';
+            }
+        }
+
+        function showError(message) {
+            const errorElement = document.getElementById('card-errors');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
+

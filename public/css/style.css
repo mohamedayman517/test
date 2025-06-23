@@ -1,10 +1,69 @@
 body {
-  font-family: "Poppins", sans-serif;
+  font-family: 'Roboto', 'Segoe UI', 'Open Sans', Arial, sans-serif;
   background-color: #f4f4f4;
-  color: #333;
+  color: #222;
   margin: 0;
   padding: 0;
 }
+
+/* Modal Package Upload Styles */
+.modal-package-upload {
+  font-family: 'Roboto', 'Segoe UI', 'Open Sans', Arial, sans-serif;
+  color: #222;
+}
+.modal-package-upload .modal-title {
+  font-size: 1.45rem;
+  font-weight: 500;
+  color: #222;
+  letter-spacing: 0.2px;
+}
+.modal-package-upload .package-card {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 16px 12px 12px 12px;
+  background: #fff;
+  margin-bottom: 10px;
+}
+.modal-package-upload .package-card h5 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #222;
+  margin-bottom: 10px;
+}
+.modal-package-upload label {
+  font-size: 0.97rem;
+  color: #222;
+  font-weight: 400;
+}
+.modal-package-upload input,
+.modal-package-upload textarea {
+  font-family: 'Roboto', 'Segoe UI', 'Open Sans', Arial, sans-serif;
+  font-size: 1rem;
+  color: #222;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  margin-bottom: 8px;
+}
+.modal-package-upload .btn-primary {
+  background: #fdbe2d;
+  color: #222;
+  font-weight: 500;
+  border: none;
+}
+.modal-package-upload .btn-primary:hover {
+  background: #f1a700;
+  color: #fff;
+}
+.modal-package-upload .btn-secondary {
+  background: #eee;
+  color: #222;
+  border: none;
+}
+.modal-package-upload .btn-secondary:hover {
+  background: #ccc;
+  color: #222;
+}
+
 
 form {
   max-width: 400px;
@@ -54,5 +113,11 @@ button:hover {
   input[type="text"],
   input[type="password"] {
     font-size: 14px;
+  }
+  .modal-package-upload .package-card {
+    padding: 10px 5px;
+  }
+  .modal-package-upload .modal-title {
+    font-size: 1.1rem;
   }
 }

@@ -37,14 +37,45 @@ const clientSchema = new mongoose.Schema({
   profilePhoto: { type: String, trim: true, default: "/uploads/default.png" },
   bookings: [
     {
-      clientName: String,
-      phone: String,
-      projectType: String,
-      paymentMethod: String,
-      date: Date,
-      status: String,
-    },
+      bookingId: { type: String, required: true },
+      engineerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+      },
+      engineerName: { type: String, required: true },
+      profileImage:{  type: String },
+      projectType: { type: String, required: true },
+      packageName: { type: String, required: true },
+      price: { type: Number, required: true },
+      deposit: { type: Number, required: true },
+      date: { type: Date, required: true },
+      status: { 
+        type: String, 
+        enum: ['Pending', 'Confirmed', 'Completed', 'Cancelled'],
+        default: 'Pending'
+      },
+      rating: { type: Number, min: 1, max: 5 },
+      review: { type: String },
+      paymentStatus: { 
+        type: String, 
+        enum: ['Paid', 'Pending'],
+        default: 'Pending'
+      },
+      paymentId: { type: String }
+    }
   ],
+  favoriteEngineers: [
+    {
+      engineerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+      },
+      engineerName: String,
+      profilePhoto: String,
+      bio: String
+    }
+  ]
 });
 
 module.exports = mongoose.model("Client", clientSchema); 

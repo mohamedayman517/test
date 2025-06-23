@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interior Design Portfolio</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <title>User Profile | Decor&More</title>
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
@@ -29,14 +30,75 @@
 
     <link rel="stylesheet" href="/css/public.css">
     <link rel="stylesheet" href="/css/darkMode.css">
+    <style>
+        .profile-section {
+            padding: 2rem;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .section-title {
+            color: #e4a853;
+            font-family: cursive;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e4a853;
+            padding-bottom: 0.5rem;
+        }
+        .booking-card {
+            border: 1px solid #eee;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .status-badge {
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        .status-completed {
+            background: #28a745;
+            color: white;
+        }
+        .favorite-item {
+            border-left: 3px solid #e4a853;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: #fafafa;
+        }
+        .remove-btn {
+            color: #dc3545;
+            border: 1px solid #dc3545;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            background: white;
+            transition: all 0.3s;
+        }
+        .remove-btn:hover {
+            background: #dc3545;
+            color: white;
+        }
+        .rating {
+            color: #ffc107;
+        }
+        .engineer-link {
+            color: #e4a853;
+            text-decoration: none;
+        }
+        .engineer-link:hover {
+            text-decoration: underline;
+        }
+    </style>
   </head>
   <body>
     <style>
- 
+
       .dropdown {
           position: relative;
       }
-      
+
       .dropdown-menu {
           position: absolute;
           top: 100%;
@@ -48,23 +110,23 @@
           flex-direction: column;
           min-width: 150px;
       }
-      
+
       .dropdown-menu a {
           display: block;
           padding: 10px;
           color: black;
           text-decoration: none;
       }
-      
+
       .dropdown-menu a:hover {
           background: #f4f4f4;
       }
-      
-      
+
+
       .dropdown:hover .dropdown-menu {
           display: flex;
       }
-      
+
       </style>
     <style>
   .profile-image-container {
@@ -76,8 +138,8 @@
     position: absolute;
     bottom: 10px;
     right: 20px;
-    background-color: #007bff;
-    border: none;
+    background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%);
+    border: 2px solid #bfa14a;
     font-size: 16px;
     line-height: 1;
     z-index: 10;
@@ -87,17 +149,29 @@
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(218, 165, 32, 0.18);
+    color: #222 !important;
+    font-weight: bold;
   }
 
   .edit-profile-btn:hover {
-    background-color: #0056b3;
+    background: linear-gradient(135deg, #ffe066 0%, #d4af37 100%);
+    color: #000 !important;
     transform: scale(1.1);
   }
 
   .col-md-4 {
     position: relative;
   }
+  
+      .logo-hero {
+    background: linear-gradient(90deg, #d4af37 0%, #ffd700 50%, #bfa14a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
 </style>
 
     <div class="container" data-aos="zoom-in" data-aos-duration="1200">
@@ -106,11 +180,12 @@
           class="navv-bar py-4 d-flex justify-content-between align-items-center">
           <div class="d-flex align-items-center gap-3">
             <% if (!user || (user && user.id !== userData._id.toString())) { %>
-              <a href="javascript:history.back()" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left"></i>
-              </a>
+            <a href="javascript:history.back()"
+              class="btn btn-outline-secondary">
+              <i class="fas fa-arrow-left"></i>
+            </a>
             <% } %>
-            <div class="logo" style="font-size: 35px;" data-aos="fade-down"
+            <div class="logo-hero" style="font-size: 35px;" data-aos="fade-down"
               data-aos-duration="1200">
               Decore&More
             </div>
@@ -121,56 +196,55 @@
           </div>
           <div class="nav-links" data-aos="fade-up" data-aos-duration="1200">
             <ul class="list-unstyled m-0">
-              <% if (!user) { %>
+              <% if (user) { %>
               <li><a href="/" class="nav-link">Home</a></li>
               <li><a href="/#op" class="nav-link">About</a></li>
               <li class="dropdown">
                 <a href="/#od" class="nav-link">Services</a>
-              <div class="dropdown-menu">
-                <a href="/eng?occasion=Birthday" class="nav-link">Birthday</a>
-                <a href="/eng?occasion=Wedding" class="nav-link">Wedding</a>
-                <a href="/eng?occasion=Engagement" class="nav-link">Engagement</a>
-                <a href="/eng?occasion=BabyShower" class="nav-link">BabyShower</a>
-              </div>
+                <div class="dropdown-menu">
+                  <a href="/packages/by-occasion?occasion=Birthday"
+                    class="nav-link">Birthday</a>
+                  <a href="/packages/by-occasion?occasion=Wedding"
+                    class="nav-link">Wedding</a>
+                  <a href="/packages/by-occasion?occasion=Engagement"
+                    class="nav-link">Engagement</a>
+                  <a href="/packages/by-occasion?occasion=BabyShower"
+                    class="nav-link">BabyShower</a>
+                </div>
               </li>
               <li><a href="/designers" class="nav-link">Designers</a></li>
-              <li class="dropdown">
-                <a href="/eng" class="nav-link">Enginners</a>
-              <div class="dropdown-menu">
-                <a href="/login">Log In</a>
-                <a href="/register">Register</a>
-              </div>
-              </li>
+
               <li><a href="/contact" class="nav-link">Contact</a></li>
-              <li><a href="/Favorite" class="nav-link">Favorite</a></li>
+
               <% } %>
 
               <li>
                 <% if (user) { %>
+
                 <button class="btn" onclick="logout()">Logout</button>
                 <% } %>
               </li>
-              <button onclick="toggleDarkMode()" class="dark-mode">
-                <li class="fa-solid fa-moon"></li>
+              <button onclick="toggleDarkMode()" class="dark-mode"
+                aria-label="Toggle dark mode">
+                <i class="fa-solid fa-moon" aria-hidden="true"
+                  title="Toggle to dark mode"></i>
               </button>
-          
+
             </ul>
           </div>
         </div>
       </div>
     </div>
 
-  
-
     <section id="profile" class="py-5 d-flex align-items-center">
       <div class="container">
         <div class="row align-items-center">
           <div class="col-md-4" position-relative>
             <div class="profile-image-container">
-              <img src="<%= userData.profilePhoto || 'images/team-img2.jpg' %>"
+              <img src="<%= userData.profilePhoto || '/uploads/default.png' %>"
                 class="img-fluid rounded-circle" alt="<%= userData.name %>">
-              <% if (user) { %>
-              <button class="btn btn-primary edit-profile-btn"
+              <% if (user && user.id === userData._id.toString()) { %>
+              <button class="btn btn-gold edit-profile-btn"
                 data-bs-toggle="modal" data-bs-target="#editProfileModal">
                 <i class="fas fa-pen"></i>
               </button>
@@ -178,20 +252,26 @@
             </div>
           </div>
           <div class="col-md-8">
-            <h1 id="userName"><%= userData.name %>
-            </h1>
-            
-            <p id="userBio" class="lead"><%= userData.bio %></p>
-          
-          
+            <div class="d-flex justify-content-between align-items-start mb-4">
+              <div>
+                <h1 id="userName"><%= userData.name %></h1>
+                <p id="userBio" class="lead"><%= userData.bio %></p>
+              </div>
+              <% if (user && user.role === 'user' && userData.role ===
+              'Engineer' && user.id !== userData._id.toString()) { %>
+              <button id="addToFavoriteBtn"
+                onclick="toggleFavorite('<%= userData._id %>')"
+                class="btn btn-outline-warning">
+                <i class="bi bi-heart me-2"></i>
+                <span>Add to Favorites</span>
+              </button>
+              <% } %>
+            </div>
           </div>
         </div>
       </div>
     </section>
-  
 
-    
-  
     <style>
       .rating-section {
           text-align: center;
@@ -233,7 +313,7 @@
           display: block;
           width: 15%;
           padding: 10px;
-      
+
           color: #fff;
           border: none;
           border-radius: 5px;
@@ -274,140 +354,90 @@
   </style>
     <!-- Rating Section -->
 
-  
-
-  
-
     <!-- Upload Modal -->
-  
+
     <style>
-      
 
 
 
 
 
-        
+
+
       footer a:hover {
           opacity: 0.8;
           transition: all 0.3s ease;
       }
-      
+
       footer {
           border-top: 2px solid var(--border);
       }
-      
+
       footer h5 {
           font-weight: 600;
           letter-spacing: 1px;
       }
-      
+
       footer .social-links a:hover {
           transform: translateY(-3px);
       }
-      
+
       footer .list-unstyled li a:hover {
           padding-left: 5px;
       }
-      
+
       footer .container {
           max-width: 1200px;
       }
-      
+
       @media (max-width: 768px) {
           footer h2.display-4 {
               font-size: 2.5rem;
           }
-          
+
           footer .col-md-4 {
               text-align: center;
           }
-          
+
           footer .d-flex.gap-3 {
               justify-content: center;
           }
       }
       </style>
 
-    <footer class="bg-dark text-warning py-5">
-      <div class="container">
-        <div class="row g-4">
-          <div class="col-12 text-center mb-4">
-            <h2 class="display-4 fw-bold">Decor&More</h2>
-          </div>
-          <div class="col-md-4">
-            <h5 class="border-bottom border-warning pb-2">Contact Us</h5>
-            <div class="mt-3">
-              <p><i
-                  class="bi bi-envelope-fill me-2"></i>info@decorandmore.com</p>
-              <a href="https://web.whatsapp.com/send?phone=201556159175"
-                target="_blank">
-                <p><i class="bi bi-telephone-fill me-2"></i>+20 1556159175</p>
-              </a>
-              <p><i class="bi bi-geo-alt-fill me-2"></i>123 Decor Street, Design
-                City</p>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <h5 class="border-bottom border-warning pb-2">Quick Links</h5>
-            <ul class="list-unstyled mt-3">
-              <li class="mb-2"><a href="/"
-                  class="text-warning text-decoration-none">Home</a></li>
-              <li class="mb-2"><a href="/#op"
-                  class="text-warning text-decoration-none">About</a></li>
-              <li class="mb-2"><a href="/login"
-                  class="text-warning text-decoration-none">login</a></li>
-              <li class="mb-2"><a href="/register"
-                  class="text-warning text-decoration-none">register</a></li>
-            </ul>
-          </div>
-          <div class="col-md-4">
-            <h5 class="border-bottom border-warning pb-2">Follow Us</h5>
-            <div class="mt-3 d-flex gap-3">
-              <a href="#" class="text-warning fs-4" aria-label="Facebook"><i
-                  class="bi bi-facebook"></i></a>
-              <a href="#" class="text-warning fs-4" aria-label="Instagram"><i
-                  class="bi bi-instagram"></i></a>
-              <a href="#" class="text-warning fs-4" aria-label="Twitter"><i
-                  class="bi bi-twitter-x"></i></a>
-              <a href="#" class="text-warning fs-4" aria-label="LinkedIn"><i
-                  class="bi bi-linkedin"></i></a>
-            </div>
-          </div>
-          <div class="col-12">
-            <hr class="border-warning">
-            <p class="text-center mb-0">&copy; 2024 Decor&More. All rights
-              reserved.</p>
-          </div>
-        </div>
-      </div>
-    </footer>
-
     <!-- Edit Profile Modal -->
-    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editProfileModal" tabindex="-1"
+      aria-labelledby="editProfileModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+              aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <form id="editProfileForm">
               <div class="mb-3">
                 <label for="editName" class="form-label">Name</label>
-                <input type="text" class="form-control" id="editName" name="name" required>
+                <input type="text" class="form-control" id="editName"
+                  name="name" required>
               </div>
               <div class="mb-3">
                 <label for="editBio" class="form-label">Bio</label>
-                <textarea class="form-control" id="editBio" name="bio" rows="3"></textarea>
+                <textarea class="form-control" id="editBio" name="bio"
+                  rows="3"></textarea>
               </div>
               <div class="mb-3">
-                <label for="editProfilePhoto" class="form-label">Profile Photo</label>
-                <input type="file" class="form-control" id="editProfilePhoto" name="profilePhoto" accept="image/*">
+                <label for="editProfilePhoto" class="form-label">Profile
+                  Photo</label>
+                <input type="file" class="form-control" id="editProfilePhoto"
+                  name="profilePhoto" accept="image/*">
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <button type="button" class="btn btn-secondary"
+                  data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-gold">Save
+                  Changes</button>
               </div>
             </form>
           </div>
@@ -418,11 +448,8 @@
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
-
     <script src="../user/create.js"></script>
     <script src="/js/darkMode.js"></script>
-
     <script src="../user/login.js"></script>
 
     <script>
@@ -437,12 +464,12 @@
         // Initialize edit profile form
         const editProfileForm = document.getElementById("editProfileForm");
         const editProfileModal = document.getElementById('editProfileModal');
-        
+
         if (editProfileForm && editProfileModal) {
           // Set initial values
           document.getElementById("editName").value = user.name;
           document.getElementById("editBio").value = user.bio;
-          
+
           // Initialize the modal with error handling
           let modalInstance;
           try {
@@ -454,21 +481,21 @@
           } catch (error) {
             console.error('Error initializing modal:', error);
           }
-          
+
           editProfileForm.addEventListener("submit", async function (event) {
             event.preventDefault();
-            
+
             const formData = new FormData();
             formData.append("name", document.getElementById("editName").value);
             formData.append("bio", document.getElementById("editBio").value);
-            
+
             const fileInput = document.getElementById("editProfilePhoto");
             if (fileInput && fileInput.files.length > 0) {
               formData.append("profilePhoto", fileInput.files[0]);
             }
 
             try {
-              const response = await fetch("/updateProfile", {
+              const response = await fetch("/update", {
                 method: "POST",
                 body: formData,
                 credentials: 'include'
@@ -483,13 +510,13 @@
 
                 if (nameElement) nameElement.textContent = result.user.name;
                 if (bioElement) bioElement.textContent = result.user.bio;
-                
+
                 // Update profile photo if changed
                 if (result.user.profilePhoto && profileImage) {
                   profileImage.src = result.user.profilePhoto;
                 }
 
-                // Show success message
+                // Show success message using SweetAlert2
                 Swal.fire({
                   title: 'Success!',
                   text: 'Profile updated successfully',
@@ -499,7 +526,7 @@
                   position: 'top-end',
                   toast: true
                 });
-                
+
                 // Close the modal
                 if (modalInstance) {
                   modalInstance.hide();
@@ -509,6 +536,7 @@
                   if (modal) modal.hide();
                 }
               } else {
+                // Show error message using SweetAlert2
                 Swal.fire({
                   title: 'Error!',
                   text: result.message || 'Error updating profile',
@@ -521,6 +549,7 @@
               }
             } catch (error) {
               console.error('Error:', error);
+              // Show error message using SweetAlert2
               Swal.fire({
                 title: 'Error!',
                 text: 'Error updating profile. Please try again.',
@@ -548,12 +577,715 @@
       });
     }
     </script>
+
+    <div class="container py-5">
+      <div class="row">
+        <div class="col-lg-8">
+          <!-- Past Bookings Section -->
+          <div class="profile-section">
+            <h2 class="section-title section-gradient-title">My Past
+              Bookings</h2>
+            <% if (userData.bookings && userData.bookings.length > 0) { %>
+            <% userData.bookings.forEach(booking => { %>
+            <div class="booking-card mb-4 p-3 border rounded">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="d-flex gap-3">
+                  <img
+                    src="<%= booking.profileImage || '/uploads/default.png' %>"
+                    alt="Engineer Photo"
+                    class="rounded-circle"
+                    style="width: 60px; height: 60px; object-fit: cover;">
+                  <div>
+                    <h4 class="mb-1"><%= booking.packageName %></h4>
+                    <p class="text-muted mb-1">
+                      <i class="bi bi-calendar-event me-1"></i>
+                      Event Type: <%= booking.projectType %>
+                    </p>
+                    <p class="mb-1">
+                      <i class="bi bi-currency-dollar me-1"></i>
+                      Price: <%= booking.price %> EGP
+                    </p>
+                    <p class="mb-1">
+                      <i class="bi bi-calendar me-1"></i>
+                      Date: <%= new
+                      Date(booking.date).toLocaleDateString("en-US") %>
+                    </p>
+                    <p class="mb-1">
+                      <i class="bi bi-person-circle me-1"></i>
+                      Service Provider: <a
+                        href="/profile/<%= booking.engineerId %>"
+                        class="engineer-link"><%= booking.engineerName %></a>
+                    </p>
+                    <% if (booking.rating) { %>
+                    <div class="rating mb-1">
+                      <% for(let i = 0; i < Math.floor(booking.rating); i++) {
+                      %>
+                      <i class="bi bi-star-fill text-warning"></i>
+                      <% } %>
+                      <% if(booking.rating % 1 !== 0) { %>
+                      <i class="bi bi-star-half text-warning"></i>
+                      <% } %>
+                      <span class="ms-1"><%= booking.rating %></span>
+                    </div>
+                    <% } %>
+                    <% if (booking.review) { %>
+                    <p class="mt-2"><em>"<%= booking.review %>"</em></p>
+                    <% } %>
+                  </div>
+                </div>
+                <div>
+                  <span
+                    class="badge <%= booking.paymentStatus === 'Paid' ? 'bg-success' : 'bg-warning' %>">
+                    <%= booking.paymentStatus %>
+                  </span>
+                </div>
+              </div>
+              <div class="mt-3">
+                <a href="/profile/<%= booking.engineerId%>"
+                  class="btn btn-gold-outline">View Engineer's Profile</a>
+
+                <% if (booking.status === 'Confirmed' && booking.paymentStatus
+                === 'Paid') { %>
+                <button class="btn btn-danger"
+                  onclick="deleteBooking('<%= booking.bookingId %>')">
+                  <i class="bi bi-trash"></i> Cancel Booking
+                </button>
+                <% } %>
+
+                <% if (booking.status === 'Completed' && !booking.rating) { %>
+                <button class="btn btn-success"
+                  onclick="openReviewModal('<%= booking.bookingId %>')">
+                  Leave Review
+                </button>
+                <% } %>
+              </div>
+            </div>
+            <% }) %>
+            <% } else { %>
+            <div class="alert alert-info">
+              <p>No bookings found. <a href="/eng"
+                  class="alert-link">Browse our engineers</a> to make your first
+                booking!</p>
+            </div>
+            <% } %>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <!-- Favorites Section -->
+          <div class="profile-section">
+            <h2 class="section-title section-gradient-title">
+              FavoriteEngineers</h2>
+            <% if (userData.favoriteEngineers &&
+            userData.favoriteEngineers.length > 0) { %>
+            <% userData.favoriteEngineers.forEach(engineer => { %>
+            <div class="favorite-item"
+              data-engineer-id="<%= engineer.engineerId %>">
+
+              <div class="d-flex align-items-center gap-3">
+                <img
+                  src="<%= engineer.profilePhoto || '/images/default-profile.jpg' %>"
+                  alt="<%= engineer.engineerName %>"
+                  class="rounded-circle"
+                  style="width: 50px; height: 50px; object-fit: cover;">
+                <div class="flex-grow-1">
+                  <h5 class="mb-1"><%= engineer.engineerName %></h5>
+                  <p class="text-muted mb-0"><%= engineer.bio %></p>
+                </div>
+                <div class="d-flex gap-2">
+                  <a href="/profile/<%= engineer.engineerId%>"
+                    class="btn btn-gold-outline btn-sm"> Show Profile </a>
+                  <button class="remove-btn"
+                    onclick="removeFromFavorites('<%= engineer.engineerId %>')">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <% }) %>
+            <% } else { %>
+            <div class="text-center py-4">
+              <i class="bi bi-heart"
+                style="font-size: 2rem; color: #e4a853;"></i>
+              <p class="mt-3">No Favourite</p>
+            </div>
+            <% } %>
+          </div>
+
+          <!-- Account Settings Section -->
+          <div class="profile-section">
+            <h2 class="section-title section-gradient-title">Account
+              Settings</h2>
+            <div class="list-group">
+              <button class="list-group-item list-group-item-action"
+                data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                <i class="bi bi-person-circle me-2"></i> Edit Profile
+              </button>
+              <button class="list-group-item list-group-item-action"
+                data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                <i class="bi bi-key me-2"></i> Change Password
+              </button>
+              <button class="list-group-item list-group-item-action text-danger"
+                onclick="confirmDeleteAccount()">
+                <i class="bi bi-trash me-2"></i> Delete Account
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <footer class="bg-dark text-warning py-5">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-12 text-center mb-4">
+            <h2 class="display-4 fw-bold">Decor&More</h2>
+          </div>
+          <div class="col-md-4">
+            <h5 class="border-bottom border-warning pb-2">Contact Us</h5>
+            <div class="mt-3">
+              <p><i
+                  class="bi bi-envelope-fill me-2"></i>info@decorandmore.com</p>
+              <a href="https://web.whatsapp.com/send?phone=201556159175"
+                target="_blank">
+                <p><i class="bi bi-telephone-fill me-2"></i>+20 1556159175</p>
+              </a>
+              <p><i class="bi bi-geo-alt-fill me-2"></i>123 Decor Street, Design
+                City</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <h5 class="border-bottom border-warning pb-2">Quick Links</h5>
+            <ul class="list-unstyled mt-3">
+              <li class="mb-2"><a href="/"
+                  class="text-warning text-decoration-none">Home</a></li>
+              <li class="mb-2"><a href="/#op"
+                  class="text-warning text-decoration-none">About</a></li>
+              <% if (!user || (user && !['user',
+              'Engineer'].includes(user.role))) { %>
+              <li class="mb-2">
+                <a href="/login"
+                  class="text-warning text-decoration-none">login</a>
+              </li>
+              <li class="mb-2">
+                <a href="/register"
+                  class="text-warning text-decoration-none">register</a>
+              </li>
+              <% } %>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <h5 class="border-bottom border-warning pb-2">Follow Us</h5>
+            <div class="mt-3 d-flex gap-3">
+              <a href="#" class="text-warning fs-4" aria-label="Facebook"><i
+                  class="bi bi-facebook"></i></a>
+              <a href="#" class="text-warning fs-4" aria-label="Instagram"><i
+                  class="bi bi-instagram"></i></a>
+              <a href="#" class="text-warning fs-4" aria-label="Twitter"><i
+                  class="bi bi-twitter-x"></i></a>
+              <a href="#" class="text-warning fs-4" aria-label="LinkedIn"><i
+                  class="bi bi-linkedin"></i></a>
+            </div>
+          </div>
+          <div class="col-12">
+            <hr class="border-warning">
+            <p class="text-center mb-0">&copy; 2024 Decor&More. All rights
+              reserved.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+    async function removeFromFavorites(engineerId) {
+        try {
+            const response = await fetch('/api/favorites/remove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ engineerId })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Remove the favorite item from the DOM
+                const favoriteItem = document.querySelector(`[data-engineer-id="${engineerId}"]`);
+                if (favoriteItem) {
+                    favoriteItem.remove();
+                }
+
+                // Show success message
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Engineer removed from favorites',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    position: 'top-end',
+                    toast: true
+                });
+
+                // Refresh the page if no more favorites
+                if (data.favorites.length === 0) {
+                  const sections = document.querySelectorAll('.profile-section');
+sections.forEach(section => {
+    const title = section.querySelector('.section-title');
+    if (title && title.textContent.includes('FavoriteEngineers')) {
+        section.innerHTML = `
+            <div class="text-center py-4">
+                <i class="bi bi-heart" style="font-size: 2rem; color: #e4a853;"></i>
+                <p class="mt-3">No Favourite</p>
+            </div>
+        `;
+    }
+});
+                }
+
+            } else {
+                throw new Error(data.error);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                title: 'Error!',
+                text: 'An error occurred while removing the engineer from favorites',
+                icon: 'error',
+                timer: 2000,
+                showConfirmButton: false,
+                position: 'top-end',
+                toast: true
+            });
+        }
+    }
+    </script>
+
+    <script>
+    async function toggleFavorite(engineerId) {
+        try {
+            const response = await fetch('/api/favorites/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ engineerId })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Show success message
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Engineer added to favorites',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    position: 'top-end',
+                    toast: true,
+                    background: '#28a745',
+                    color: 'white'
+                });
+
+                // Update button state
+                const btn = document.getElementById('addToFavoriteBtn');
+                if (btn) {
+                    btn.classList.remove('btn-outline-warning');
+                    btn.classList.add('btn-warning');
+                    btn.innerHTML = '<i class="bi bi-heart-fill me-2"></i><span>Added to Favorites</span>';
+                    btn.disabled = true;
+                }
+            } else {
+                if (response.status === 400) {
+                    Swal.fire({
+                        title: 'Info',
+                        text: 'Engineer is already in favorites',
+                        icon: 'info',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        position: 'top-end',
+                        toast: true,
+                        background: '#17a2b8',
+                        color: 'white'
+                    });
+                } else {
+                    throw new Error(data.error || 'Error adding to favorites');
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                title: 'Error!',
+                text: 'Failed to add engineer to favorites',
+                icon: 'error',
+                timer: 2000,
+                showConfirmButton: false,
+                position: 'top-end',
+                toast: true,
+                background: '#dc3545',
+                color: 'white'
+            });
+        }
+    }
+
+    // Check if engineer is already in favorites when page loads
+    async function checkFavoriteStatus(engineerId) {
+        try {
+            const response = await fetch('/api/favorites');
+            if (!response.ok) {
+                throw new Error('Failed to fetch favorites');
+            }
+
+            const favorites = await response.json();
+            const isAlreadyFavorite = favorites.some(fav => fav.engineerId === engineerId);
+
+            const btn = document.getElementById('addToFavoriteBtn');
+            if (btn && isAlreadyFavorite) {
+                btn.classList.remove('btn-outline-warning');
+                btn.classList.add('btn-warning');
+                btn.innerHTML = '<i class="bi bi-heart-fill me-2"></i><span>Added to Favorites</span>';
+                btn.disabled = true;
+            }
+        } catch (error) {
+            console.error('Error checking favorite status:', error);
+        }
+    }
+
+    // Call checkFavoriteStatus when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        const engineerId = '<%= userData._id %>';
+        if (engineerId) {
+            checkFavoriteStatus(engineerId);
+        }
+    });
+    </script>
+
+    <script>
+async function deleteBooking(bookingId) {
+  const confirmResult = await Swal.fire({
+    title: 'Are you sure?',
+    text: 'This will cancel the booking and refund the amount to your account.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Yes, cancel booking',
+    cancelButtonText: 'Cancel'
+  });
+
+  if (!confirmResult.isConfirmed) return;
+
+  try {
+    const res = await fetch(`/delete-booking/${bookingId}`, {
+      method: 'DELETE',
+    });
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      Swal.fire({
+        title:'Cancelled!',
+        text: 'The amount has been refunded to your account.',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      }).then(() => {
+        window.location.reload();
+      });
+    } else {
+      throw new Error(data.message || 'Failed to cancel booking');
+    }
+  } catch (err) {
+    Swal.fire({
+      title: 'Error!',
+      text: err.message || 'An error occurred while cancelling the booking.',
+      icon: 'error'
+    });
+  }
+}
+</script>
+
+    <!-- Review Modal -->
+    <div class="modal fade" id="reviewModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Leave a Review</h5>
+            <button type="button" class="btn-close"
+              data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="reviewForm">
+              <input type="hidden" id="bookingId" name="bookingId">
+              <div class="mb-3">
+                <label class="form-label">Rating</label>
+                <div class="rating">
+                  <% for(let i = 5; i >= 1; i--) { %>
+                  <input type="radio" id="star<%= i %>" name="rating"
+                    value="<%= i %>">
+                  <label for="star<%= i %>">☆</label>
+                  <% } %>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="review" class="form-label">Your Review</label>
+                <textarea class="form-control" id="review" name="review"
+                  rows="3" required></textarea>
+              </div>
+              <div id="reviewError" class="alert alert-danger d-none"></div>
+              <button type="submit" class="btn btn-gold">Submit
+                Review</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <style>
+    .rating {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+    }
+
+    .rating input {
+      display: none;
+    }
+
+    .rating label {
+      cursor: pointer;
+      font-size: 30px;
+      color: #ddd;
+      padding: 5px;
+    }
+
+    .rating label:before {
+      content: '★';
+    }
+
+    .rating input:checked ~ label {
+      color: #ffd700;
+    }
+
+    .rating label:hover,
+    .rating label:hover ~ label {
+      color: #ffd700;
+    }
+    </style>
+
+    <script>
+    function openReviewModal(bookingId) {
+      document.getElementById('bookingId').value = bookingId;
+      document.getElementById('reviewError').classList.add('d-none');
+      const modal = new bootstrap.Modal(document.getElementById('reviewModal'));
+      modal.show();
+    }
+
+    document.getElementById('reviewForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const data = {
+        bookingId: formData.get('bookingId'),
+        rating: parseInt(formData.get('rating')),
+        review: formData.get('review')
+      };
+
+      try {
+        const response = await fetch('/submit-review', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          const errorDiv = document.getElementById('reviewError');
+          errorDiv.textContent = result.error || 'Failed to submit review';
+          errorDiv.classList.remove('d-none');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        const errorDiv = document.getElementById('reviewError');
+        errorDiv.textContent = 'An error occurred while submitting your review';
+        errorDiv.classList.remove('d-none');
+      }
+    });
+    </script>
+
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Change Password</h5>
+            <button type="button" class="btn-close"
+              data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="changePasswordForm">
+              <div class="mb-3">
+                <label for="currentPassword" class="form-label">Current
+                  Password</label>
+                <input type="password" class="form-control" id="currentPassword"
+                  required>
+              </div>
+              <div class="mb-3">
+                <label for="newPassword" class="form-label">New Password</label>
+                <input type="password" class="form-control" id="newPassword"
+                  required>
+              </div>
+              <div class="mb-3">
+                <label for="confirmPassword" class="form-label">Confirm New
+                  Password</label>
+                <input type="password" class="form-control" id="confirmPassword"
+                  required>
+              </div>
+              <div class="alert alert-danger d-none" id="passwordError"></div>
+              <button type="submit" class="btn btn-gold">Change
+                Password</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+    // Change Password Functionality
+    document.getElementById('changePasswordForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const errorDiv = document.getElementById('passwordError');
+
+        if (newPassword !== confirmPassword) {
+            errorDiv.textContent = 'New passwords do not match';
+            errorDiv.classList.remove('d-none');
+            return;
+        }
+
+        try {
+            const response = await fetch('/change-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    currentPassword,
+                    newPassword
+                }),
+                credentials: 'include'
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Hide modal
+                bootstrap.Modal.getInstance(document.getElementById('changePasswordModal')).hide();
+
+                // Show success message
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Password changed successfully',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+
+                // Clear form
+                e.target.reset();
+            } else {
+                errorDiv.textContent = data.error;
+                errorDiv.classList.remove('d-none');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            errorDiv.textContent = 'An error occurred while changing password';
+            errorDiv.classList.remove('d-none');
+        }
+    });
+
+    // Delete Account Functionality
+    function confirmDeleteAccount() {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This action cannot be undone. All your data will be permanently deleted.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, delete my account',
+            cancelButtonText: 'Cancel'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch('/delete-account', {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        Swal.fire({
+                            title: 'Deleted!',
+                            text: 'Your account has been deleted.',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.href = '/';
+                        });
+                    } else {
+                        const data = await response.json();
+                        throw new Error(data.error);
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: error.message || 'Failed to delete account',
+                        icon: 'error'
+                    });
+                }
+            }
+        });
+    }
+    </script>
   </body>
   <% if (user && user.role === 'user') { %>
-    <script>
+  <script>
       window.engineerData = {
         id: '<%= userData._id %>'
       };
     </script>
   <% } %>
 </html>
+
+<style>
+  .btn-gold, .btn-gold:active, .btn-gold:focus, .btn-gold:visited {
+    background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%) !important;
+    border: 2px solid #bfa14a !important;
+    color: #222 !important;
+    font-weight: bold !important;
+    box-shadow: 0 2px 5px rgba(218, 165, 32, 0.18) !important;
+    transition: background 0.3s, color 0.3s, transform 0.2s !important;
+  }
+  .btn-gold:hover, .btn-gold:focus, .btn-gold:active {
+    background: linear-gradient(135deg, #ffe066 0%, #d4af37 100%) !important;
+    color: #000 !important;
+    transform: scale(1.05) !important;
+  }
+  .btn-gold-outline {
+    background: transparent !important;
+    color: #d4af37 !important;
+    border: 2px solid #d4af37 !important;
+    font-weight: bold;
+    transition: all 0.3s;
+  }
+  .btn-gold-outline:hover, .btn-gold-outline:focus {
+    background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%) !important;
+    color: #222 !important;
+    border: 2px solid #bfa14a !important;
+  }
+</style>

@@ -1,9 +1,18 @@
+let isSubmitting = false;
+
 document.addEventListener("DOMContentLoaded", function () {
-  const projectForm = document.getElementById("projectForm");
+  const projectForm = document.getElementById("createProjectForm");
   
   if (projectForm) {
     projectForm.addEventListener("submit", async function (e) {
       e.preventDefault();
+      
+      // Prevent multiple submissions
+      if (isSubmitting) {
+        return;
+      }
+      
+      isSubmitting = true;
       
       // Get form data
       const formData = new FormData(this);
@@ -15,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
       console.log("📸 Project Image:", formData.get("projectImage"));
 
       try {
-        const response = await fetch("/create", {
+        const response = await fetch("/projects/create", {
           method: "POST",
           body: formData,
         });
@@ -24,7 +33,11 @@ document.addEventListener("DOMContentLoaded", function () {
         
         if (response.status === 401) {
           // Handle unauthorized access
-          showErrorAlert("Please log in to create a project");
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Please log in to create a project'
+          });
           setTimeout(() => {
             window.location.href = "/login";
           }, 1500);
@@ -32,16 +45,31 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (result.success) {
-          showSuccessAlert("Project created successfully!");
-          setTimeout(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: 'Project created successfully!',
+            showConfirmButton: false,
+            timer: 1500
+          }).then(() => {
             window.location.reload();
-          }, 1500);
+          });
         } else {
-          showErrorAlert(result.message || "Error creating project");
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: result.message || 'Error creating project'
+          });
         }
       } catch (error) {
         console.error("Error:", error);
-        showErrorAlert("An error occurred while creating the project");
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'An error occurred while creating the project'
+        });
+      } finally {
+        isSubmitting = false;
       }
     });
   }

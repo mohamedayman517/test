@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interior Design Portfolio</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
@@ -12,16 +13,12 @@
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
       rel="stylesheet">
-    <link
-      href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"
-      rel="stylesheet">
+
     <link rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Belleza&display=swap"
       rel="stylesheet">
-    <link
-      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap"
-      rel="stylesheet">
+
     <link rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet"
@@ -29,14 +26,29 @@
 
     <link rel="stylesheet" href="/css/public.css">
     <link rel="stylesheet" href="/css/darkMode.css">
+
+    <!-- Bootstrap JavaScript (Added to fix modal errors) -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom modal initialization script -->
+    <script src="/js/modal-init.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap"
+      rel="stylesheet">
+    <!-- International Telephone Input CSS -->
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css">
+    <!-- International Telephone Input JS -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
   </head>
   <body>
     <style>
- 
+
       .dropdown {
           position: relative;
       }
-      
+
       .dropdown-menu {
           position: absolute;
           top: 100%;
@@ -48,23 +60,23 @@
           flex-direction: column;
           min-width: 150px;
       }
-      
+
       .dropdown-menu a {
           display: block;
           padding: 10px;
           color: black;
           text-decoration: none;
       }
-      
+
       .dropdown-menu a:hover {
           background: #f4f4f4;
       }
-      
-      
+
+
       .dropdown:hover .dropdown-menu {
           display: flex;
       }
-      
+
       </style>
     <style>
   .profile-image-container {
@@ -76,8 +88,8 @@
     position: absolute;
     bottom: 10px;
     right: 20px;
-    background-color: #007bff;
-    border: none;
+    background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%);
+    border: 2px solid #bfa14a;
     font-size: 16px;
     line-height: 1;
     z-index: 10;
@@ -87,18 +99,46 @@
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(218, 165, 32, 0.18);
+    color: #222 !important;
+    font-weight: bold;
   }
 
   .edit-profile-btn:hover {
-    background-color: #0056b3;
+    background: linear-gradient(135deg, #ffe066 0%, #d4af37 100%);
+    color: #000 !important;
     transform: scale(1.1);
   }
 
   .col-md-4 {
     position: relative;
   }
-</style>
+  
+      .logo-hero {
+    background: linear-gradient(90deg, #d4af37 0%, #ffd700 50%, #bfa14a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
+
+  style>
+    .card-header.bg-light {
+      background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%) !important;
+      color: #222 !important;
+      font-weight: bold;
+      border-radius: 6px 6px 0 0;
+      text-align: center;
+      font-size: 1.2rem;
+      border-bottom: 1px solid #bfa14a;
+    }
+    .card-header.bg-light h5 {
+      color: #222 !important;
+      font-weight: bold;
+      margin: 0;
+    }
+  </style>
 
     <div class="container" data-aos="zoom-in" data-aos-duration="1200">
       <div class="row">
@@ -106,11 +146,12 @@
           class="navv-bar py-4 d-flex justify-content-between align-items-center">
           <div class="d-flex align-items-center gap-3">
             <% if (!user || (user && user.id !== engData._id.toString())) { %>
-              <a href="javascript:history.back()" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left"></i>
-              </a>
+            <a href="javascript:history.back()"
+              class="btn btn-outline-secondary">
+              <i class="fas fa-arrow-left"></i>
+            </a>
             <% } %>
-            <div class="logo" style="font-size: 35px;" data-aos="fade-down"
+            <div class="logo-hero" style="font-size: 35px;" data-aos="fade-down"
               data-aos-duration="1200">
               Decore&More
             </div>
@@ -122,236 +163,445 @@
           <div class="nav-links" data-aos="fade-up" data-aos-duration="1200">
             <ul class="list-unstyled m-0">
               <% if (user && user.role === 'user') { %>
-                <li><a href="/" class="nav-link">Home</a></li>
-                <li><a href="/#op" class="nav-link">About</a></li>
-                <li class="dropdown">
-                  <a href="/#od" class="nav-link">Services</a>
-                  <div class="dropdown-menu">
-                    <a href="/eng?occasion=Birthday" class="nav-link">Birthday</a>
-                    <a href="/eng?occasion=Wedding" class="nav-link">Wedding</a>
-                    <a href="/eng?occasion=Engagement" class="nav-link">Engagement</a>
-                    <a href="/eng?occasion=BabyShower" class="nav-link">BabyShower</a>
-                  </div>
-                </li>
-                <li><a href="/designers" class="nav-link">Designers</a></li>
-                <li class="dropdown">
-                  <a href="/eng" class="nav-link">Engineers</a>
-                  <div class="dropdown-menu">
-                    <a href="/login">Log In</a>
-                    <a href="/register">Register</a>
-                  </div>
-                  <% if (user && user.name) { %>
-                    <li class="dropdown">
-                      <a href="#" class="nav-link d-flex align-items-center">
-                        <i class="fa-solid fa-user"></i>
-                        <span><%= user.name %></span>
-                      </a>
-                      <div class="dropdown-menu">
-                        <a href="/userProfile/<%= user._id %>" class="nav-link">
-                          <i class="fas fa-user me-2"></i>Profile
-                        </a>
-                        <a href="#" class="nav-link" onclick="logout()">
-                          <i class="fas fa-sign-out-alt me-2"></i>Logout
-                        </a>
-                      </div>
-                    </li>
-                  <% } %>
-
-                </li>
-                <li><a href="/contact" class="nav-link">Contact</a></li>
-
-                 
-                <% } else if(user && user.role === 'Engineer') { %>
-
-
-
-                  <li>
-                    <button class="btn" onclick="logout()">Logout</button>
-                  </li>
-                  <li>
-                    <button onclick="toggleDarkMode()" class="dark-mode">
-                      <i class="fa-solid fa-moon"></i>
-                    </button>
-                  </li>
-                  <li class="notification-icon">
-                    <button class="btn position-relative" id="notificationBtn">
-                      <i class="fas fa-bell"></i>
-                      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-count" id="notificationCount">
-                        0
-                      </span>
-                    </button>
-                  </li>
-
-
-
-                  <% } else { %>
-                
               <li><a href="/" class="nav-link">Home</a></li>
-                <li><a href="/#op" class="nav-link">About</a></li>
-                <li class="dropdown">
-                  <a href="/#od" class="nav-link">Services</a>
-                  <div class="dropdown-menu">
-                    <a href="/eng?occasion=Birthday" class="nav-link">Birthday</a>
-                    <a href="/eng?occasion=Wedding" class="nav-link">Wedding</a>
-                    <a href="/eng?occasion=Engagement" class="nav-link">Engagement</a>
-                    <a href="/eng?occasion=BabyShower" class="nav-link">BabyShower</a>
-                  </div>
-                </li>
-                <li><a href="/designers" class="nav-link">Designers</a></li>
-                <li class="dropdown">
-                  <a href="/eng" class="nav-link">Engineers</a>
-                  <div class="dropdown-menu">
-                    <a href="/login">Log In</a>
-                    <a href="/register">Register</a>
-                  </div>
-                  <li>
-                    <button onclick="toggleDarkMode()" class="dark-mode">
-                      <i class="fa-solid fa-moon"></i>
-                    </button>
-                  </li>
-                  <% } %>
-              <% if (user && user.role === 'user') { %>
-                <li><a href="/Favorite" class="nav-link">Favorite</a></li>
+              <li><a href="/#op" class="nav-link">About</a></li>
+              <li class="dropdown">
+                <a href="/#od" class="nav-link">Services</a>
+                <div class="dropdown-menu">
+                  <a href="/eng?occasion=Birthday" class="nav-link">Birthday</a>
+                  <a href="/eng?occasion=Wedding" class="nav-link">Wedding</a>
+                  <a href="/eng?occasion=Engagement"
+                    class="nav-link">Engagement</a>
+                  <a href="/eng?occasion=BabyShower"
+                    class="nav-link">BabyShower</a>
+                </div>
+              </li>
+              <li><a href="/designers" class="nav-link">Designers</a></li>
+
+              <% if (!user || !user.name) { %>
+              <li class="dropdown">
+                <a href="#" class="nav-link">Engineers</a>
+                <div class="dropdown-menu">
+                  <a href="/login">Log In</a>
+                  <a href="/register">Register</a>
+                </div>
+              </li>
+              <% } %>
+              <% if (user && user.name) { %>
+              <li class="dropdown">
+                <a href="#" class="nav-link d-flex align-items-center">
+                  <i class="fa-solid fa-user"></i>
+                  <span><%= user.name %></span>
+                </a>
+                <div class="dropdown-menu">
+                  <a href="/userProfile/<%= user.id %>" class="nav-link">
+                    <i class="fas fa-user me-2"></i>Profile
+                  </a>
+                  <a href="#" class="nav-link" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                  </a>
+                </div>
+              </li>
               <% } %>
 
-              
-            </ul>
-          </div>
+            </li>
+            <li><a href="/contact" class="nav-link">Contact</a></li>
+
+            <% } else if(user && user.role === 'Engineer') { %>
+
+            <li>
+              <button class="btn" onclick="logout()">Logout</button>
+            </li>
+            <li>
+              <button onclick="toggleDarkMode()" class="dark-mode">
+                <i class="fa-solid fa-moon"></i>
+              </button>
+            </li>
+            <!-- <li class="notification-icon">
+              <button class="btn position-relative" id="notificationBtn">
+                <i class="fas fa-bell"></i>
+                <span
+                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-count"
+                  id="notificationCount">
+                  0
+                </span>
+              </button>
+            </li> -->
+
+            <% } else { %>
+
+            <li><a href="/" class="nav-link">Home</a></li>
+            <li><a href="/#op" class="nav-link">About</a></li>
+            <li class="dropdown">
+              <a href="/#od" class="nav-link">Services</a>
+              <div class="dropdown-menu">
+                <a href="/packages/by-occasion?occasion=Birthday"
+                  class="nav-link">Birthday</a>
+                <a href="/packages/by-occasion?occasion=Wedding"
+                  class="nav-link">Wedding</a>
+                <a href="/packages/by-occasion?occasion=Engagement"
+                  class="nav-link">Engagement</a>
+                <a href="/packages/by-occasion?occasion=BabyShower"
+                  class="nav-link">BabyShower</a>
+              </div>
+            </li>
+            <li><a href="/designers" class="nav-link">Designers</a></li>
+            <li class="dropdown">
+              <a href="#" class="nav-link">Register</a>
+              <div class="dropdown-menu">
+                <a href="/registerCustomer">Customer</a>
+                <a href="/register">Engineer</a>
+              </div>
+            </li>
+
+            <li class="dropdown">
+              <a href="#" class="nav-link">Login</a>
+              <div class="dropdown-menu">
+                <a href="/login">Customer</a>
+                <a href="/login">Engineer</a>
+              </div>
+            </li>
+
+            <li>
+              <button onclick="toggleDarkMode()" class="dark-mode">
+                <i class="fa-solid fa-moon"></i>
+              </button>
+            </li>
+            <% } %>
+
+          </ul>
         </div>
       </div>
     </div>
+  </div>
 
-    <h1 class="text-center mt-5"
-      style="font-family: Dancing Script; letter-spacing: 2px; font-weight: bolder;">
-      Discover the creative world of <%= engData.firstName %>.
-    </h1>
+  <h1 class="text-center mt-5 "
+   >
+    Discover the creative world of <%= engData.firstName %>.
+  </h1>
 
-    <section id="profile" class="py-5 d-flex align-items-center">
-      <div class="container">
-        <div class="row align-items-center">
-          <div class="col-md-4" position-relative>
-            <div class="profile-image-container">
-              <img src="<%= engData.profilePhoto || 'images/team-img2.jpg' %>"
-                class="img-fluid rounded-circle" alt="<%= engData.firstName %>">
-            
-                <% if (user && user.role === 'Engineer') { %>
-              <button class="btn btn-primary edit-profile-btn"
-                data-bs-toggle="modal" data-bs-target="#editProfileModal">
-                <i class="fas fa-pen"></i>
+  <section id="profile" class="py-5 d-flex align-items-center">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-4" position-relative>
+          <div class="profile-image-container">
+            <img src="<%= engData.profilePhoto || 'images/team-img2.jpg' %>"
+              class="img-fluid rounded-circle"
+              alt="<%= engData.firstName %>">
+
+            <% if (user && user.role === 'Engineer') { %>
+            <button class="btn edit-profile-btn"
+              data-bs-toggle="modal" data-bs-target="#editProfileModal">
+              <i class="fas fa-pen"></i>
+            </button>
+            <% } %>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div
+            class="d-flex justify-content-between align-items-start mb-4">
+            <div>
+              <h1 id="engineerName"><%= engData.firstName %> <%=
+                engData.lastName %></h1>
+              <p id="engineerBio" class="lead"><%= engData.bio %></p>
+              <% if (user && user.role === 'user') { %>
+              <button id="addToFavoriteBtn"
+                onclick="toggleFavorite('<%= engData._id %>')"
+                class="btn btn-outline-warning mt-2 mb-2">
+                <i class="bi bi-heart-fill me-2"></i>
+                <span>Add to Favorites</span>
               </button>
               <% } %>
             </div>
           </div>
-          <div class="col-md-8">
-            <h1 id="engineerName"><%= engData.firstName %><%= engData.lastName
-              %></h1>
-            <h3 class="py-4"><%= engData.title %></h3>
-            <p id="engineerBio" class="lead"><%= engData.bio %></p>
-            <% if (user && user.role === 'user') { %>
-            <button id="addToFavoritesBtn" class="btn btn-warning">Add to
-              Favorites</button>
-            <% } %>
-            <div class="mt-4" style="font-family: sans-serif;">
-              <% engData.badges.forEach(badge => { %>
-              <span class="badge bg-secondary me-2"><%= badge %></span>
-              <% }) %>
-            </div>
+          <h3 class="py-4"><%= engData.title %></h3>
+
+          <div class="mt-4" style="font-family: sans-serif;">
+            <% engData.badges.forEach(function(badge) { %>
+            <span class="badge bg-secondary me-2"><%= badge %></span>
+            <% }) %>
           </div>
         </div>
       </div>
-    </section>
-    <% if (user && user.role === 'Engineer') { %>
-    <div id="chatLauncher" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
-      <button class="chat-button" onclick="startChat()" style="background-color: #007bff; color: white; border: none; padding: 12px 16px; border-radius: 50%; font-size: 20px; cursor: pointer;">
+    </div>
+  </section>
+  <% if (user && user.role === 'Engineer') { %>
+  <!-- <div id="chatLauncher"
+      style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+      <button class="chat-button" onclick="startChat()"
+        style="background-color: #007bff; color: white; border: none; padding: 12px 16px; border-radius: 50%; font-size: 20px; cursor: pointer;">
         💬
       </button>
-    </div>
+    </div> -->
 
-    <!-- Chat iframe -->
-    <iframe id="chatFrame" src="" style="display:none; position: fixed; bottom: 80px; right: 20px; width: 350px; height: 500px; border: 1px solid #ccc; border-radius: 10px; z-index: 1000; background-color: white;"></iframe>
-    <% } %>
+  <!-- Chat iframe -->
+  <!-- <iframe id="chatFrame" src
+      style="display:none; position: fixed; bottom: 80px; right: 20px; width: 350px; height: 500px; border: 1px solid #ccc; border-radius: 10px; z-index: 1000; background-color: white;"></iframe> -->
+  <% } %>
 
-    <div class="container-lg py-5">
-      <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold mb-3">What Our Clients Say</h1>
-        <p class="text-muted fs-5">Trusted by thousands of satisfied customers
-          worldwide</p>
+  <!-- Packages Section -->
+  <section id="packages" class="py-5" style="background-color: #f9f9f9;">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-5">
+        <h2 class="section-title section-gradient-title"
+          style="font-family: 'Dancing Script', cursive;">Our Packages</h2>
+        <% if (user && user.role === 'Engineer' && user.id ===
+        engData._id.toString()) { %>
+        <button class="btn"
+          style="background-color: goldenrod; color: white; font-family: sans-serif;"
+          data-bs-toggle="modal" data-bs-target="#addPackageModal">
+          <i class="bi bi-upload"></i> Upload Packages
+        </button>
+        <% } %>
       </div>
-      <div class="row g-4">
-        <% engData.testimonials.forEach(testimonial => { %>
-        <div class="col-md-4">
-          <div class="card h-100 testimonial-card">
-            <div class="card-body p-4">
-              <div class="d-flex align-items-center mb-4">
-                <div>
-                  <h5 class="mb-1"><%= testimonial.name %></h5>
-                  <p class="text-muted mb-0"><%= testimonial.rating %>⭐</p>
-                </div>
-              </div>
-              <p class="mb-0"><%= testimonial.comment %></p>
-            </div>
-          </div>
-        </div>
-        <% }) %>
-      </div>
-    </div>
-    <% if (user && user.role === 'Engineer') { %>
-    <section id="bookings" class="py-5" style="font-family: sans-serif;">
-      <div class="container">
-        <h2 class="mb-4">Project Bookings</h2>
-        <div class="card">
-          <div class="card-body">
-            <% if (engData.bookings.length > 0) { %>
-            <div class="table-responsive">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Client Name</th>
-                    <th>Phone</th>
-                    <th>Project Type</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% engData.bookings.forEach(booking => { %>
-                  <tr>
-                    <td><%= booking.clientName %></td>
-                    <td><%= booking.phone %></td>
-                    <td><%= booking.projectType %></td>
-                    <td><%= new Date(booking.date).toLocaleString("en-GB", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: true
-                      }).replace(/,\s.*$/, '') %></td>
-                    <td><span
-                        class="badge bg-<%= booking.status === 'Active' ? 'success' : 'warning' %>"><%=
-                        booking.status %></span></td>
 
-                    <td>
-                      <button class="btn btn-danger btn-sm"
-                        onclick="deleteBooking('<%= booking._id %>')">
-                        <i class="bi bi-trash"></i> Delete
-                      </button>
-                    </td>
-                  </tr>
-
-                  <% }) %>
-                </tbody>
-              </table>
+      <div class="row">
+        <%
+        // استخرج كل أنواع الأحداث الفريدة الموجودة في الباكدجات
+        var eventTypes = [];
+        packages.forEach(function(pkg) {
+        if (pkg.eventType && eventTypes.indexOf(pkg.eventType) === -1) {
+        eventTypes.push(pkg.eventType);
+        }
+        });
+        eventTypes.forEach(function(eventType) {
+        %>
+        <div class="col-md-6 col-lg-3">
+          <h3 class="occasion-title"><%= eventType %></h3>
+          <% packages.filter(function(pkg) { return pkg.eventType ===
+          eventType; }).forEach(function(pkg) { %>
+          <div class="package-card">
+            <div class="package-title"><%= pkg.name %></div>
+            <div class="package-price"><%= pkg.price %>EGP</div>
+            <div class="package-services">
+              <p>Includes services:</p>
+              <ul>
+                <% pkg.essentialItems.forEach(function(item) { %>
+                <li><%= item %></li>
+                <% }); %>
+              </ul>
             </div>
-            <% } else { %>
-              <p class="text-center text-muted">No bookings available</p>
+
+            <% if (!user || user.role !== 'Engineer' || user.id !==
+            engData._id.toString()) { %>
+            <button class="book-now-btn"
+              data-engineer-id="<%= engData._id %>"
+              data-package-id="<%= pkg._id %>"
+              data-event-type="<%= pkg.eventType %>">Book Now</button>
+            <% } %>
+
+            <% if (user && user.role === 'Engineer' && user.id ===
+            engData._id.toString()) { %>
+            <div class="mt-3">
+              <button class="btn btn-gold btn-sm me-2" style="background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%) !important; color: #222 !important; border: 2px solid #bfa14a; font-weight: bold;" onclick="editPackage('<%= pkg._id %>')">
+                <i class="fas fa-edit"></i> Edit
+              </button>
+              <button class="btn btn-danger btn-sm"
+                onclick="deletePackage('<%= pkg._id %>')">
+                <i class="fas fa-trash"></i> Delete
+              </button>
+            </div>
             <% } %>
           </div>
+          <% }); %>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <div class="container-lg py-5">
+    <div class="text-center mb-5">
+      <h1 class="display-4 fw-bold mb-3 section-gradient-title">What Our Clients Say</h1>
+      <p class="text-muted fs-5">Trusted by thousands of satisfied customers
+        worldwide</p>
+    </div>
+    <div class="row g-4">
+      <% engData.testimonials.forEach(function(testimonial) { %>
+      <div class="col-md-4">
+        <div class="card h-100 testimonial-card">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center mb-4">
+              <div>
+                <h5 class="mb-1"><%= testimonial.name %></h5>
+                <p class="text-muted mb-0"><%= testimonial.rating %>⭐</p>
+              </div>
+            </div>
+            <p class="mb-0"><%= testimonial.comment %></p>
+          </div>
         </div>
       </div>
-    </section>
-    <% } %>
-    <style>
+      <% }) %>
+    </div>
+  </div>
+  <% if (user && user.role === 'Engineer') { %>
+  <section id="bookings" class="py-5" style="font-family: sans-serif;">
+    <div class="container">
+      <h2 class="mb-4 section-gradient-title">Project Bookings</h2>
+
+      <!-- Booking Stats -->
+      <div class="row mb-4  justify-content-center text-center">
+        <div class="col-md-3">
+          <div class="card booking-stat-card"
+            style="background: linear-gradient(145deg, #111, #333); border: 1px solid #444; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+            <div class="card-body text-center">
+              <h5 class="card-title" style="color: #ffd700;">Total
+                Bookings</h5>
+              <h3 class="mb-0" style="color: #fff;"><%= engData.bookings ?
+                engData.bookings.length : 0 %></h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card booking-stat-card"
+            style="background: linear-gradient(145deg, #111, #333); border: 1px solid #444; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+            <div class="card-body text-center">
+              <h5 class="card-title" style="color: #ffd700;">Active
+                Bookings</h5>
+              <h3 class="mb-0" style="color: #fff;"><%= engData.bookings ?
+                engData.bookings.filter(b => b.status === 'Active').length :
+                0 %></h3>
+            </div>
+          </div>
+        </div>
+      
+        
+      </div>
+
+      <div class="card"
+        style="background: #181818; border: 1px solid #444; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+        <div class="card-header"
+          style="background: #111; border-bottom: 1px solid #ffd700;">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0" style="color: #ffd700;">Booking Details</h5>
+            <div class="input-group" style="width: 300px;">
+              <input type="text" class="form-control" id="bookingSearch"
+                placeholder="Search bookings..."
+                style="background: #333; color: #fff; border: 1px solid #555;">
+              <button class="btn"
+                style="background-color: #ffd700; color: #111;"
+                type="button" onclick="searchBookings()">
+                <i class="bi bi-search"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <% if (engData.bookings && engData.bookings.length > 0) { %>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-light">
+                <tr>
+                  <!-- <th>Booking ID</th> -->
+                  <th>Client Name</th>
+                  <th>Phone</th>
+                  <th>Package</th>
+                  <th>Project Type</th>
+                  <th>Event Date</th>
+                  <th>Total Price</th>
+                  <th>Deposit</th>
+                  <th>Commission</th>
+                  <th>Net Deposit After Commission</th> 
+                  <th>Remaining</th> 
+                  <th>Payment Method</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% engData.bookings.forEach(function(booking) { %>
+                <tr data-booking-id="<%= booking.bookingId %>">
+                  <!-- Booking ID hidden -->
+                  <td><%= booking.clientName || 'N/A' %></td>
+                  <td><a href="tel:<%= booking.phone %>"
+                      class="text-decoration-none"><%= booking.phone
+                      %></a></td>
+                  <td><%= booking.packageName || 'N/A' %></td>
+                  <td><%= booking.projectType %></td>
+                  <td><%= booking.eventDate ? new
+                    Date(booking.eventDate).toLocaleDateString("en-US") :
+                    'N/A'
+                    %></td>
+                      <td><%= booking.totalPrice ? booking.totalPrice + ' EGP' : 'N/A'
+                    %></td>
+                  <td><%= booking.deposit ? booking.deposit + ' EGP' : 'N/A'
+                    %></td>
+                      <td><%= booking.commission ? booking.commission + ' EGP' : 'N/A' %></td>
+                  <td><%= booking.priceAfterCommission ? booking.priceAfterCommission + ' EGP' : 'N/A' %></td> 
+                  <td><%= booking.remaining ? booking.remaining + ' EGP' : 'N/A' %></td>
+
+                  <td>
+                    <span class="badge bg-info text-white">
+                      <i class="bi bi-credit-card me-1"></i> Visa
+                    </span>
+                  </td>
+                  <td>
+                    <span
+                      class="badge bg-<%= booking.status === 'Active' ? 'success' : (booking.status === 'Confirmed' ? 'primary' : 'warning') %>">
+                      <%= booking.status %>
+                    </span>
+                  </td>
+                  <td>
+                    <div class="btn-group">
+                      <button class="btn btn-sm me-1"
+                        style="background-color: #ffd700; color: #111;"
+                        onclick="viewBookingDetails('<%= booking.bookingId %>')">
+                        <i class="bi bi-eye"></i>
+                      </button>
+                      <button class="btn btn-sm"
+                        style="background-color: #d33; color: #fff;"
+                        onclick="deleteBooking('<%= booking.bookingId %>')">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+          <% } else { %>
+          <div class="text-center py-5">
+            <i class="bi bi-calendar-x"
+              style="font-size: 3rem; color: #ccc;"></i>
+            <p class="text-muted mt-3">No bookings available</p>
+            <p class="small text-muted">When clients book your services,
+              they will appear here</p>
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Booking Details Modal -->
+  <div class="modal fade" id="bookingDetailsModal" tabindex="-1"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content"
+        style="background: #181818; border: 1px solid #444; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+        <div class="modal-header"
+          style="background: #111; border-bottom: 1px solid #ffd700;">
+          <h5 class="modal-title" style="color: #ffd700;">Booking
+            Details</h5>
+          <button type="button" class="btn-close btn-close-white"
+            data-bs-dismiss="modal"
+            aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="bookingDetailsContent"
+          style="color: #fff;">
+          <!-- Content will be filled dynamically -->
+        </div>
+        <div class="modal-footer" style="border-top: 1px solid #444;">
+          <button type="button" class="btn"
+            style="background-color: #ffd700; color: #111;"
+            data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% } %>
+  <style>
       .rating-section {
           text-align: center;
           margin: 20px 0;
@@ -392,7 +642,7 @@
           display: block;
           width: 15%;
           padding: 10px;
-      
+
           color: #fff;
           border: none;
           border-radius: 5px;
@@ -431,251 +681,424 @@
           z-index: 999;
       }
   </style>
-    <!-- Rating Section -->
-    <% if (user && user.role === 'user') { %>
-    <div class="rating-section" id="ratingStars">
-      <h2 class="h2">Rate the Engineer</h2>
-      <div class="rating-stars">
-        <span class="star" data-value="1">★</span>
-        <span class="star" data-value="2">★</span>
-        <span class="star" data-value="3">★</span>
-        <span class="star" data-value="4">★</span>
-        <span class="star" data-value="5">★</span>
-      </div>
+  <!-- Rating Section -->
+  <% if (user && user.role === 'user') { %>
+  <div class="rating-section" id="ratingStars">
+    <h2 class="h2 section-gradient-title">Rate the Engineer</h2>
+    <div class="rating-stars">
+      <span class="star" data-value="1">★</span>
+      <span class="star" data-value="2">★</span>
+      <span class="star" data-value="3">★</span>
+      <span class="star" data-value="4">★</span>
+      <span class="star" data-value="5">★</span>
     </div>
+  </div>
 
-    <!-- Feedback Form -->
-    <form id="feedbackForm" method="post" action="/rate">
-      <input type="hidden" name="engineerId" value="<%= engData._id %>">
-      <div class="form-group">
-        <label for="name" style="font-family: sans-serif;">Your Name:</label>
-        <input type="text" name="name" style="font-family: sans-serif;"
-          id="name" placeholder="Enter your name" required>
-      </div>
-      <div class="form-group">
-        <label for="comment" style="font-family: sans-serif;">Your
-          Comment:</label>
-        <textarea id="comment" name="comment" style="font-family: sans-serif;"
-          placeholder="Leave your feedback here..." required></textarea>
-      </div>
-      <button type="submit" class="submit-btn"
-        style="background-color: goldenrod; font-family: sans-serif;">Submit
-        Feedback</button>
-    </form>
-    <% } %>
-    <!-- Pop-up -->
-    <div class="overlay" id="overlay"></div>
-    <div class="popup" id="popup">
-      <p>Thank you for your feedback!</p>
-      <button onclick="closePopup()">OK</button>
+  <!-- Feedback Form -->
+  <form id="feedbackForm" method="post" action="/rate">
+    <input type="hidden" name="engineerId" value="<%= engData._id %>">
+    <div class="form-group">
+      <label for="name" style="font-family: sans-serif;">Your Name:</label>
+      <input type="text" name="name" style="font-family: sans-serif;"
+        id="name" placeholder="Enter your name" required>
     </div>
+    <div class="form-group">
+      <label for="comment" style="font-family: sans-serif;">Your
+        Comment:</label>
+      <textarea id="comment" name="comment" style="font-family: sans-serif;"
+        placeholder="Leave your feedback here..." required></textarea>
+    </div>
+    <button type="submit" class="submit-btn"
+      style="background-color: goldenrod; font-family: sans-serif;">Submit
+      Feedback</button>
+  </form>
+  <% } %>
+  <!-- Pop-up -->
+  <div class="overlay" id="overlay"></div>
+  <div class="popup" id="popup">
+    <p>Thank you for your feedback!</p>
+    <button onclick="closePopup()">OK</button>
+  </div>
 
-    <section id="portfolio" class="py-5">
-      <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <h2>Portfolio</h2>
-          <% if (user && user.role === 'Engineer') { %>
-          <button class="btn"
-            style="background-color: goldenrod; color: white; font-family: sans-serif;"
-            data-bs-toggle="modal" data-bs-target="#uploadModal">
-            <i class="bi bi-upload"></i> Upload New
-          </button>
-          <% } %>
-        </div>
-        <div class="row g-4" id="p">
-          <% projects.forEach(project => { %>
-          <div class="col-md-4">
-            <div class="portfolio-item">
-              <% if (user && user.role === 'user') { %>
-              <a
-                href="/payment?engineerId=<%= engData._id %>&projectId=<%= project._id %>"><img
-                  src="<%= project.image %>" class="img-fluid"
-                  alt="<%= project.name %>"></a>
-            
-                  <% } else if (user && user.role === "Engineer") { %>
-              <img src="<%= project.image %>" class="img-fluid"
-                alt="<%= project.name %>">
-                <% } else { %>
-                  <a
-                  href="/payment?engineerId=<%= engData._id %>&projectId=<%= project._id %>"><img
-                    src="<%= project.image %>" class="img-fluid"
-                    alt="<%= project.name %>"></a>
+  <section id="portfolio" class="py-5">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="section-gradient-title">Portfolio</h2>
+        <% if (user && user.role === 'Engineer') { %>
+        <button class="btn"
+          style="background-color: goldenrod; color: white; font-family: sans-serif;"
+          data-bs-toggle="modal" data-bs-target="#uploadModal">
+          <i class="bi bi-upload"></i> Upload New
+        </button>
+        <% } %>
+      </div>
+      <div class="row g-4" id="p">
+        <% projects.forEach(function(project) { %>
+        <div class="col-md-4">
+          <div class="portfolio-item">
+            <% if (user && user.role === 'user') { %>
+            <img
+              src="<%= project.image %>" class="img-fluid"
+              alt="<%= project.name %>">
+
+            <% } else if (user && user.role === "Engineer") { %>
+            <img src="<%= project.image %>" class="img-fluid"
+              alt="<%= project.name %>">
+            <% } else { %>
+            <img
+              src="<%= project.image %>" class="img-fluid"
+              alt="<%= project.name %>">
+            <% } %>
+
+            <div class="portfolio-overlay">
+              <h5><%= project.name %></h5>
+              <p style="font-size: 18px;"><%= project.price %> EGP</p>
+              <p><%= project.area %> m²</p>
+              <% if (user && user.role === 'Engineer') { %>
+              <button onclick="deleteProject('<%= project._id %>')"
+                class="btn btn-danger btn-sm">Delete</button>
+              <button onclick="editProject('<%= project._id %>')"
+                class="btn btn-dark btn-sm">Edit</button>
               <% } %>
-
-              <div class="portfolio-overlay">
-                <h5><%= project.name %></h5>
-                <p style="font-size: 18px;"><%= project.price %> EGP</p>
-                <p><%= project.area %> m²</p>
-                <% if (user && user.role === 'Engineer') { %>
-                <button onclick="deleteProject('<%= project._id %>')"
-                  class="btn btn-danger btn-sm">Delete</button>
-                <button onclick="editProject('<%= project._id %>')"
-                  class="btn btn-dark btn-sm">Edit</button>
-                <% } %>
-              </div>
             </div>
           </div>
-          <% }) %>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+
+  <style>
+      .package-card {
+        border: none;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .package-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .package-card .card-header {
+        background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%) !important;
+        color: #222 !important;
+        border: none;
+        padding: 15px;
+        font-weight: bold;
+        border-radius: 6px 6px 0 0;
+        text-align: center;
+        font-size: 1.2rem;
+      }
+
+      .package-images {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+      }
+
+      .package-images img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 5px;
+        transition: transform 0.3s ease;
+      }
+
+      .package-images img:hover {
+        transform: scale(1.1);
+        cursor: pointer;
+      }
+
+      .section-title {
+        position: relative;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+      }
+
+      .section-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(135deg, #6B73FF 0%, #000DFF 100%);
+      }
+    </style>
+
+  <script>
+      let basicElementsCount = 1;
+
+      function addBasicElement() {
+        const container = document.querySelector('.basic-elements');
+        const element = document.createElement('div');
+        element.className = 'element-item mb-2';
+        element.innerHTML = `
+          <div class="row">
+            <div class="col">
+              <input type="text" class="form-control" name="basicElements[${basicElementsCount}][name]" placeholder="Element Name">
+            </div>
+            <div class="col">
+              <input type="number" class="form-control" name="basicElements[${basicElementsCount}][price]" placeholder="Price">
+            </div>
+            <div class="col-auto">
+              <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.parentElement.parentElement.remove()">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(element);
+        basicElementsCount++;
+      }
+
+      async function submitPackage() {
+        const form = document.getElementById('packageForm');
+        const formData = new FormData(form);
+
+        // Collect basic elements
+        const basicElements = [];
+        form.querySelectorAll('.element-item').forEach((item, index) => {
+          const name = item.querySelector('input[name^="basicElements"][name$="[name]"]').value;
+          const price = item.querySelector('input[name^="basicElements"][name$="[price]"]').value;
+          if (name && price) {
+            basicElements.push({ name, price: Number(price) });
+          }
+        });
+        formData.set('basicElements', JSON.stringify(basicElements));
+
+        try {
+          const response = await fetch('/engineer/add-package', {
+            method: 'POST',
+            body: formData
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Package added successfully',
+              showConfirmButton: false,
+              timer: 1500
+            }).then(() => {
+              location.reload();
+            });
+          } else {
+            throw new Error(data.message || 'Error adding package');
+          }
+        } catch (error) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message
+          });
+        }
+      }
+
+      async function deletePackage(packageId) {
+        const result = await Swal.fire({
+          title: 'Are you sure?',
+          text: 'This package will be permanently deleted',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes, delete it',
+          cancelButtonText: 'Cancel'
+        });
+
+        if (result.isConfirmed) {
+          try {
+            const response = await fetch(`/engineer/delete-package/${packageId}`, {
+              method: 'DELETE'
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              Swal.fire({
+                icon: 'success',
+                title: 'Package deleted successfully',
+                showConfirmButton: false,
+                timer: 1500
+              }).then(() => {
+                location.reload();
+              });
+            } else {
+              throw new Error(data.message || 'Error deleting package');
+            }
+          } catch (error) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: error.message
+            });
+          }
+        }
+      }
+
+      // Enlarge images on click
+      document.querySelectorAll('.package-images img').forEach(img => {
+        img.addEventListener('click', function() {
+          Swal.fire({
+            imageUrl: this.src,
+            imageAlt: 'Package Image',
+            showConfirmButton: false,
+            width: '80%'
+          });
+        });
+      });
+    </script>
+
+  <footer class="bg-dark text-warning py-5">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-12 text-center mb-4">
+          <h2 class="display-4 fw-bold">Decor&More</h2>
+        </div>
+        <div class="col-md-4">
+          <h5 class="border-bottom border-warning pb-2">Contact Us</h5>
+          <div class="mt-3">
+            <p><i
+                class="bi bi-envelope-fill me-2"></i>info@decorandmore.com</p>
+            <a href="https://web.whatsapp.com/send?phone=201556159175"
+              target="_blank">
+              <p><i class="bi bi-telephone-fill me-2"></i>+20 1556159175</p>
+            </a>
+            <p><i class="bi bi-geo-alt-fill me-2"></i>123 Decor Street,
+              Design
+              City</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <h5 class="border-bottom border-warning pb-2">Quick Links</h5>
+          <ul class="list-unstyled mt-3">
+            <li class="mb-2"><a href="/"
+                class="text-warning text-decoration-none">Home</a></li>
+            <li class="mb-2"><a href="/#op"
+                class="text-warning text-decoration-none">About</a></li>
+            <% if (!user || (user && !['user',
+            'Engineer'].includes(user.role))) { %>
+            <li class="mb-2">
+              <a href="/login"
+                class="text-warning text-decoration-none">login</a>
+            </li>
+            <li class="mb-2">
+              <a href="/register"
+                class="text-warning text-decoration-none">register</a>
+            </li>
+            <% } %>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <h5 class="border-bottom border-warning pb-2">Follow Us</h5>
+          <div class="mt-3 d-flex gap-3">
+            <a href="#" class="text-warning fs-4" aria-label="Facebook"><i
+                class="bi bi-facebook"></i></a>
+            <a href="#" class="text-warning fs-4" aria-label="Instagram"><i
+                class="bi bi-instagram"></i></a>
+            <a href="#" class="text-warning fs-4" aria-label="Twitter"><i
+                class="bi bi-twitter-x"></i></a>
+            <a href="#" class="text-warning fs-4" aria-label="LinkedIn"><i
+                class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+        <div class="col-12">
+          <hr class="border-warning">
+          <p class="text-center mb-0">&copy; 2024 Decor&More. All rights
+            reserved.</p>
         </div>
       </div>
-    </section>
-
-    <!-- Upload Modal -->
-    <div class="modal fade" id="uploadModal" tabindex="-1"
-      style="font-family: sans-serif;">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <% if (user && user.role === 'Engineer') { %>
-          <div class="modal-header">
-            <h5 class="modal-title">Upload New Project</h5>
-            <button type="submit" class="btn-close"
-              data-bs-dismiss="modal"></button>
-          </div>
-          <% } %>
-          <div class="modal-body">
-            <form id="createProjectForm" action="/create" method="post" enctype="multipart/form-data">
+    </div>
+  </footer>
+  <!-- Add this modal for login/register -->
+  <div class="modal fade" id="authModal" tabindex="-1"
+    aria-labelledby="authModalLabel" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="authModalLabel">Login or Register</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"
+            aria-label="Close" role="button"></button>
+        </div>
+        <div class="modal-body">
+          <div id="loginForm" style="display: none;">
+            <form id="loginFormData" class="mt-3">
               <div class="mb-3">
-                <label class="form-label">Project Title</label>
-                <input id="projectName" name="projectName" type="text" class="form-control" required>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Project Type</label>
-                <select id="projectType" name="projectType" class="form-select" required>
-                  <option value disabled selected>Select</option>
-                  <option>Birthday</option>
-                  <option>Wedding</option>
-                  <option>BabyShower</option>
-                  <option>Engagement</option>
-                </select>
+                <label for="loginEmail" class="form-label">Email</label>
+                <input type="email" class="form-control" id="loginEmail"
+                  required>
               </div>
               <div class="mb-3">
-                <label class="form-label">Project Image</label>
-                <input id="projectImage" name="projectImage" type="file" class="form-control" accept="image/*" required>
+                <label for="loginPassword"
+                  class="form-label">Password</label>
+                <input type="password" class="form-control"
+                  id="loginPassword"
+                  required>
               </div>
-              <div class="mb-3">
-                <label class="form-label">Project Area (m²)</label>
-                <input id="projectArea" name="projectArea" type="number" class="form-control" required>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Price</label>
-                <input id="projectPrice" name="projectPrice" type="number" class="form-control" required>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary">Upload</button>
-              </div>
+              <button type="submit" class="btn btn-gold">Login</button>
             </form>
           </div>
-
+          <div id="registerForm" style="display: none;">
+            <form id="registerFormData" class="mt-3">
+              <div class="mb-3">
+                <label for="registerName" class="form-label">Name</label>
+                <input type="text" class="form-control" id="registerName"
+                  required minlength="2">
+                <span id="nameError" class="error-message"></span>
+              </div>
+              <div class="mb-3">
+                <label for="registerEmail" class="form-label">Email</label>
+                <input type="email" class="form-control" id="registerEmail"
+                  required>
+                <span id="emailError" class="error-message"></span>
+              </div>
+              <div class="mb-3 position-relative">
+                <label for="registerPassword"
+                  class="form-label">Password</label>
+                <input type="password" class="form-control"
+                  id="registerPassword" required minlength="6">
+                <i class="bi bi-eye password-toggle"
+                  onclick="togglePasswordVisibility('registerPassword')"></i>
+                <span id="passwordError" class="error-message"></span>
+              </div>
+              <div class="mb-3">
+                <label for="bio" class="form-label">Bio</label>
+                <input type="text" class="form-control" id="bio"
+                  minlength="5">
+                <span id="bioError" class="error-message"></span>
+              </div>
+              <div class="mb-3">
+                <label for="registerPhone" class="form-label">Phone</label>
+                <input type="tel" class="form-control" id="registerPhone"
+                  required>
+                <span id="phoneError" class="error-message"></span>
+              </div>
+              <div class="col-12">
+                <label class="form-label"
+                  style="font-family: sans-serif;">Profile Photo</label>
+                <div class="drop-zone">
+                  <span class="drop-zone__prompt"
+                    style="font-family: sans-serif;">Drop file here or click
+                    to upload</span>
+                  <input type="file" name="profilePhoto"
+                    class="drop-zone__input"
+                    style="font-family: sans-serif;" accept=".jpg,.png"
+                    onchange="previewProfilePhoto(event)">
+                  <div class="profile-preview rounded-circle"></div>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-gold">Register</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
-    <style>
-      
-
-
-
-
-
-        
-      footer a:hover {
-          opacity: 0.8;
-          transition: all 0.3s ease;
-      }
-      
-      footer {
-          border-top: 2px solid var(--border);
-      }
-      
-      footer h5 {
-          font-weight: 600;
-          letter-spacing: 1px;
-      }
-      
-      footer .social-links a:hover {
-          transform: translateY(-3px);
-      }
-      
-      footer .list-unstyled li a:hover {
-          padding-left: 5px;
-      }
-      
-      footer .container {
-          max-width: 1200px;
-      }
-      
-      @media (max-width: 768px) {
-          footer h2.display-4 {
-              font-size: 2.5rem;
-          }
-          
-          footer .col-md-4 {
-              text-align: center;
-          }
-          
-          footer .d-flex.gap-3 {
-              justify-content: center;
-          }
-      }
-      </style>
-
-    <footer class="bg-dark text-warning py-5">
-      <div class="container">
-        <div class="row g-4">
-          <div class="col-12 text-center mb-4">
-            <h2 class="display-4 fw-bold">Decor&More</h2>
-          </div>
-          <div class="col-md-4">
-            <h5 class="border-bottom border-warning pb-2">Contact Us</h5>
-            <div class="mt-3">
-              <p><i
-                  class="bi bi-envelope-fill me-2"></i>info@decorandmore.com</p>
-              <a href="https://web.whatsapp.com/send?phone=201556159175"
-                target="_blank">
-                <p><i class="bi bi-telephone-fill me-2"></i>+20 1556159175</p>
-              </a>
-              <p><i class="bi bi-geo-alt-fill me-2"></i>123 Decor Street, Design
-                City</p>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <h5 class="border-bottom border-warning pb-2">Quick Links</h5>
-            <ul class="list-unstyled mt-3">
-              <li class="mb-2"><a href="/"
-                  class="text-warning text-decoration-none">Home</a></li>
-              <li class="mb-2"><a href="/#op"
-                  class="text-warning text-decoration-none">About</a></li>
-              <li class="mb-2"><a href="/login"
-                  class="text-warning text-decoration-none">login</a></li>
-              <li class="mb-2"><a href="/register"
-                  class="text-warning text-decoration-none">register</a></li>
-            </ul>
-          </div>
-          <div class="col-md-4">
-            <h5 class="border-bottom border-warning pb-2">Follow Us</h5>
-            <div class="mt-3 d-flex gap-3">
-              <a href="#" class="text-warning fs-4" aria-label="Facebook"><i
-                  class="bi bi-facebook"></i></a>
-              <a href="#" class="text-warning fs-4" aria-label="Instagram"><i
-                  class="bi bi-instagram"></i></a>
-              <a href="#" class="text-warning fs-4" aria-label="Twitter"><i
-                  class="bi bi-twitter-x"></i></a>
-              <a href="#" class="text-warning fs-4" aria-label="LinkedIn"><i
-                  class="bi bi-linkedin"></i></a>
-            </div>
-          </div>
-          <div class="col-12">
-            <hr class="border-warning">
-            <p class="text-center mb-0">&copy; 2024 Decor&More. All rights
-              reserved.</p>
-          </div>
-        </div>
-      </div>
-    </footer>
-
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+  </div>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
         // JavaScript for Star Rating and Pop-up
         document.addEventListener("DOMContentLoaded", function () {
             const stars = document.querySelectorAll('.rating-stars .star');
@@ -757,14 +1180,49 @@
             }
         });
     </script>
-    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+  <script src="/js/darkMode.js"></script>
+  <script src="/js/login.js"></script>
+  <script src="/js/package.js"></script>
 
-    <script src="../user/create.js"></script>
-    <script src="/js/darkMode.js"></script>
+  <style>
+      .input-error {
+        border: 2px solid red;
+        background-color: #ffe6e6;
+      }
 
-    <script src="../user/login.js"></script>
+      .error-message {
+        color: red;
+        font-size: 14px;
+        display: block;
+        margin-top: 5px;
+      }
 
-    <script>
+      .password-toggle {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        z-index: 10;
+      }
+
+      /* International Telephone Input Styling */
+      .iti {
+        width: 100%;
+      }
+
+      .iti__flag {
+        background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/img/flags.png");
+      }
+
+      @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+        .iti__flag {
+          background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/img/flags@2x.png");
+        }
+      }
+    </style>
+
+  <script>
       document.addEventListener("DOMContentLoaded", function() {
         const engineer = {
           _id: "<%= engData._id %>",
@@ -773,13 +1231,13 @@
           bio: "<%= engData.bio %>",
           profilePhoto: "<%= engData.profilePhoto || 'images/team-img2.jpg' %>"
         };
-    
-        const addToFavoritesBtn = document.getElementById("addToFavoritesBtn");
-        
+
+        const addToFavoritesBtn = document.getElementById("addToFavoriteBtn");
+
         if (addToFavoritesBtn) {
           addToFavoritesBtn.addEventListener("click", function() {
             let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-            
+
             if (!favorites.includes(engineer._id)) {
               favorites.push(engineer._id);
               localStorage.setItem("favorites", JSON.stringify(favorites));
@@ -814,110 +1272,304 @@
       });
     </script>
 
-    <script>
-      function deleteBooking(bookingId) {
-        const dialog = document.createElement('div');
-        dialog.className = 'custom-confirm-dialog';
-        dialog.innerHTML = `
-          <div class="dialog-header">
-            <i class="fas fa-exclamation-triangle dialog-icon"></i>
-            <div class="dialog-title">Delete Booking</div>
-          </div>
-          <div class="dialog-message">
-            Are you sure you want to delete this booking? This action cannot be undone.
-          </div>
-          <div class="dialog-buttons">
-            <button class="btn btn-cancel">Cancel</button>
-            <button class="btn btn-delete">Delete</button>
+  <script>
+      // Notification function
+      function showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+        notification.setAttribute('role', 'alert');
+        notification.innerHTML = `
+          ${message}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        document.body.appendChild(notification);
+
+        // Auto dismiss after 5 seconds
+        setTimeout(() => {
+          notification.remove();
+        }, 5000);
+      }
+
+      // Function to view booking details
+      function viewBookingDetails(bookingId) {
+        // Find the booking in the DOM
+        const bookingRow = document.querySelector(`tr[data-booking-id="${bookingId}"]`);
+        if (!bookingRow) return;
+
+        // Get booking data from the row
+        const clientName = bookingRow.cells[0].textContent;
+        const phone = bookingRow.cells[1].textContent;
+        const packageName = bookingRow.cells[2].textContent;
+        const projectType = bookingRow.cells[3].textContent;
+        const eventDate = bookingRow.cells[4].textContent;
+
+      const totalPrice = bookingRow.cells[5].textContent;
+        const price  = bookingRow.cells[6].textContent;
+        const commission = bookingRow.cells[7].textContent;
+          const priceAfterCommission = bookingRow.cells[8].textContent; // Assuming commission is in the 10th cell (index 9)
+        const remaining = bookingRow.cells[9].textContent;
+        const paymentMethod = bookingRow.cells[10].textContent;
+        const status = bookingRow.cells[11].textContent.trim();
+
+        // Create HTML content for the modal
+        const modalContent = `
+          <div class="booking-details-container">
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <h6 style="color: #aaa; margin-bottom: 0.5rem;">Booking ID</h6>
+                <p style="font-weight: bold; color: #fff;">${bookingId}</p>
+              </div>
+              <div class="col-md-6 text-md-end">
+                <span class="badge bg-${status === 'Active' ? 'success' : (status === 'Confirmed' ? 'primary' : 'warning')}">${status}</span>
+              </div>
+            </div>
+
+            <div class="row g-4">
+              <div class="col-md-6">
+                <div class="card h-100" style="background: #232323; border: 1px solid #444; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+                  <div class="card-header" style="background: #111; border-bottom: 1px solid #ffd700;">
+                    <h5 class="mb-0" style="color: #ffd700;">Client Information</h5>
+                  </div>
+                  <div class="card-body" style="color: #fff;">
+                    <p><strong style="color: #ffd700;">Name:</strong> ${clientName}</p>
+                    <p><strong style="color: #ffd700;">Phone:</strong> ${phone}</p>
+                    <p><a href="tel:${phone}" class="btn btn-sm" style="background-color: #ffd700; color: #111;"><i class="bi bi-telephone"></i> Call Client</a></p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="card h-100" style="background: #232323; border: 1px solid #444; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+                  <div class="card-header" style="background: #111; border-bottom: 1px solid #ffd700;">
+                    <h5 class="mb-0" style="color: #ffd700;">Event Details</h5>
+                  </div>
+                  <div class="card-body" style="color: #fff;">
+                    <p><strong style="color: #ffd700;">Package:</strong> ${packageName}</p>
+                    <p><strong style="color: #ffd700;">Event Type:</strong> ${projectType}</p>
+                    <p><strong style="color: #ffd700;">Date:</strong> ${eventDate}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mt-4">
+              <div class="col-12">
+                <div class="card" style="background: #232323; border: 1px solid #444; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+                  <div class="card-header" style="background: #111; border-bottom: 1px solid #ffd700;">
+                    <h5 class="mb-0" style="color: #ffd700;">Payment Information</h5>
+                  </div>
+                  <div class="card-body" style="color: #fff;">
+                    <div class="row">
+                      <div class="col-md-6">
+                          <p><strong style="color: #ffd700;">TotalPrice:</strong> ${totalPrice}</p>
+                        <p><strong style="color: #ffd700;">Deposit:</strong> ${price}</p>
+                        <p><strong style="color: #ffd700;">Commission:</strong> ${commission}</p>
+                        <p><strong style="color: #ffd700;">Net Deposit After Commission:</strong> ${priceAfterCommission}</p>
+                        <p><strong style="color: #ffd700;">Remaining:</strong> ${remaining}</p>
+                        <p><strong style="color: #ffd700;">Payment Method:</strong>
+                          <span class="badge bg-info text-white"><i class="bi bi-credit-card me-1"></i> Visa</span>
+                        </p>
+                      </div>
+                      <div class="col-md-6">
+                        <p><strong style="color: #ffd700;">Payment Status:</strong> <span class="badge bg-success">Paid</span></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         `;
 
-        const overlay = document.createElement('div');
-        overlay.className = 'dialog-overlay';
+        // Set the modal content and show the modal
+        document.getElementById('bookingDetailsContent').innerHTML = modalContent;
+        const bookingModal = new bootstrap.Modal(document.getElementById('bookingDetailsModal'));
+        bookingModal.show();
+      }
 
-        document.body.appendChild(overlay);
-        document.body.appendChild(dialog);
+      // Function to search bookings
+      function searchBookings() {
+        const searchTerm = document.getElementById('bookingSearch').value.toLowerCase();
+        const bookingRows = document.querySelectorAll('tr[data-booking-id]');
 
-        const cancelBtn = dialog.querySelector('.btn-cancel');
-        const deleteBtn = dialog.querySelector('.btn-delete');
+        // If search term is empty, show all bookings
+        if (!searchTerm.trim()) {
+          bookingRows.forEach(row => {
+            row.style.display = '';
+          });
+          return;
+        }
 
-        cancelBtn.addEventListener('click', () => {
-          document.body.removeChild(overlay);
-          document.body.removeChild(dialog);
-        });
+        // Filter bookings based on search term
+        bookingRows.forEach(row => {
+          const clientName = row.cells[0].textContent.toLowerCase();
+          const phone = row.cells[1].textContent.toLowerCase();
+          const packageName = row.cells[2].textContent.toLowerCase();
+          const projectType = row.cells[3].textContent.toLowerCase();
+          const eventDate = row.cells[4].textContent.toLowerCase();
 
-        deleteBtn.addEventListener('click', async () => {
-          try {
-            const response = await fetch(`/delete-booking/${bookingId}`, {
-              method: "DELETE",
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-              showAlert('Booking deleted successfully!', 'success');
-              setTimeout(() => {
-                window.location.reload();
-              }, 1500);
-            } else {
-              showAlert(data.message || 'Error deleting booking', 'error');
-            }
-          } catch (error) {
-            console.error('Error:', error);
-            showAlert('Error deleting booking. Please try again.', 'error');
-          } finally {
-            document.body.removeChild(overlay);
-            document.body.removeChild(dialog);
+          // Check if any field contains the search term
+          if (clientName.includes(searchTerm) ||
+              phone.includes(searchTerm) ||
+              packageName.includes(searchTerm) ||
+              projectType.includes(searchTerm) ||
+              eventDate.includes(searchTerm)) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
           }
         });
       }
+
+      // Add event listener for search input
+      document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('bookingSearch');
+        if (searchInput) {
+          searchInput.addEventListener('keyup', searchBookings);
+        }
+      });
+
+      async function deleteBooking(bookingId) {
+        // Show confirmation dialog using SweetAlert2
+        const result = await Swal.fire({
+          title: 'Are you sure?',
+          text: "You won't be able to revert this!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes, delete it!',
+          cancelButtonText: 'Cancel'
+        });
+
+        if (result.isConfirmed) {
+          try {
+            const response = await fetch(`/delete-booking/${bookingId}`, {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+              // Remove the booking row from the table
+              const bookingRow = document.querySelector(`tr[data-booking-id="${bookingId}"]`);
+              if (bookingRow) {
+                bookingRow.remove();
+              }
+
+              // Show success message
+              Swal.fire({
+                title: 'Deleted!',
+                text: 'Booking has been deleted.',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false,
+                position: 'top-end',
+                toast: true
+              });
+            } else {
+              // Show error message
+              Swal.fire({
+                title: 'Error!',
+                text: data.message || 'Error deleting booking',
+                icon: 'error',
+                timer: 2000,
+                showConfirmButton: false,
+                position: 'top-end',
+                toast: true
+              });
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            // Show error message
+            Swal.fire({
+              title: 'Error!',
+              text: 'Error deleting booking',
+              icon: 'error',
+              timer: 2000,
+              showConfirmButton: false,
+              position: 'top-end',
+              toast: true
+            });
+          }
+        }
+      }
     </script>
 
-    <div class="modal fade" id="editProfileModal" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Edit Profile</h5>
-            <button type="button" class="btn-close"
-              data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <form id="editProfileForm">
-              <div class="mb-3">
-                <input type="hidden" name="id" id="id"
-                  value="<%= engData._id %>">
-                <label class="form-label">First Name</label>
-                <input type="text" class="form-control" id="editFirstName"
-                  name="firstName">
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Last Name</label>
-                <input type="text" class="form-control" id="editLastName"
-                  name="lastName">
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Bio</label>
-                <textarea class="form-control" id="editBio"
-                  name="bio"></textarea>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Profile Photo</label>
-                <input type="file" class="form-control" id="editProfilePhoto"
-                  name="profilePhoto" accept="image/*">
-              </div>
-              <button type="submit" class="btn btn-success">Save
-                Changes</button>
-            </form>
-          </div>
+  <script>
+      // Initialize auth modal using Bootstrap 5
+      var authModal = new bootstrap.Modal(document.getElementById('authModal'));
+
+      // Function to toggle password visibility
+      function togglePasswordVisibility(inputId) {
+        const passwordField = document.getElementById(inputId);
+        const type = passwordField.type === 'password' ? 'text' : 'password';
+        passwordField.type = type;
+      }
+
+      // Initialize international telephone input
+      document.addEventListener('DOMContentLoaded', function() {
+        const phoneInput = document.getElementById('registerPhone');
+        if (phoneInput) {
+          const iti = window.intlTelInput(phoneInput, {
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+            preferredCountries: ['eg', 'us', 'gb', 'sa', 'ae'],
+            separateDialCode: true,
+            initialCountry: "eg"
+          });
+
+          // Store the iti instance globally
+          window.phoneInputInstance = iti;
+        }
+      });
+    </script>
+  <div class="modal fade" id="editProfileModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Profile</h5>
+          <button type="button" class="btn-close"
+            data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editProfileForm">
+            <div class="mb-3">
+              <input type="hidden" name="id" id="id"
+                value="<%= engData._id %>">
+              <label class="form-label">First Name</label>
+              <input type="text" class="form-control" id="editFirstName"
+                name="firstName">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Last Name</label>
+              <input type="text" class="form-control" id="editLastName"
+                name="lastName">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Bio</label>
+              <textarea class="form-control" id="editBio"
+                name="bio"></textarea>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Profile Photo</label>
+              <input type="file" class="form-control" id="editProfilePhoto"
+                name="profilePhoto" accept="image/*">
+            </div>
+            <button type="submit" class="btn btn-gold">Save Changes</button>
+          </form>
         </div>
       </div>
     </div>
+  </div>
 
-    <script>
+  <script>
       document.addEventListener("DOMContentLoaded", function () {
         const editProfileForm = document.getElementById("editProfileForm");
         const editProfileModal = document.getElementById('editProfileModal');
-        
+
         // Only proceed if both the form and modal exist
         if (editProfileForm && editProfileModal) {
           // Set initial values
@@ -933,13 +1585,13 @@
 
           editProfileForm.addEventListener("submit", async function (event) {
             event.preventDefault();
-            
+
             const formData = new FormData();
             formData.append("id", "<%= engData._id %>");
             formData.append("firstName", firstNameInput.value);
             formData.append("lastName", lastNameInput.value);
             formData.append("bio", bioInput.value);
-            
+
             const fileInput = document.getElementById("editProfilePhoto");
             if (fileInput && fileInput.files.length > 0) {
               formData.append("profilePhoto", fileInput.files[0]);
@@ -959,119 +1611,989 @@
                 const bioElement = document.getElementById("engineerBio");
                 const profileImage = document.querySelector(".img-fluid.rounded-circle");
 
-                if (nameElement) nameElement.textContent = result.user.firstName + result.user.lastName;
+                if (nameElement) nameElement.textContent = result.user.firstName + " " + result.user.lastName;
                 if (bioElement) bioElement.textContent = result.user.bio;
-                
+
                 // Update profile photo if changed
                 if (result.user.profilePhoto && profileImage) {
                   profileImage.src = result.user.profilePhoto;
                 }
 
-                showAlert('Profile updated successfully!', 'success');
-                
-                // Close the modal
-                const modal = bootstrap.Modal.getInstance(editProfileModal);
-                if (modal) modal.hide();
+                // Show success message using SweetAlert2
+                Swal.fire({
+  title: 'Success!',
+  text: 'Profile updated successfully',
+  icon: 'success',
+  timer: 1500,
+  showConfirmButton: false
+}).then(() => {
+  // Close the modal after SweetAlert disappears
+  const modal = bootstrap.Modal.getInstance(editProfileModal);
+  if (modal) modal.hide();
+  // Reload page to avoid any overlay/freeze
+  window.location.reload();
+});
               } else {
-                showAlert(result.message || 'Error updating profile!', 'error');
+                // Show error message using SweetAlert2
+                Swal.fire({
+                  title: 'Error!',
+                  text: result.message || 'Error updating profile',
+                  icon: 'error',
+                  timer: 2000,
+                  showConfirmButton: false,
+                  position: 'top-end',
+                  toast: true
+                });
               }
             } catch (error) {
               console.error('Error:', error);
-              showAlert('Error updating profile. Please try again.', 'error');
+              // Show error message using SweetAlert2
+              Swal.fire({
+                title: 'Error!',
+                text: 'Error updating profile. Please try again.',
+                icon: 'error',
+                timer: 2000,
+                showConfirmButton: false,
+                position: 'top-end',
+                toast: true
+              });
             }
           });
         }
       });
     </script>
 
-<% if (user && user.role === 'Engineer') { %>
-    <script>  
+  <% if (user && user.role === 'Engineer') { %>
+  <script>
     function logout() {
     fetch("/logout", { method: "POST" }).then(() => (window.location.href = "/login"));
   }
 </script>
-<% } %>
+  <% } %>
 
-<% if (user && user.role === 'user') { %>
-  <script>  
+  <% if (user && user.role === 'user') { %>
+  <script>
     function logout() {
     fetch("/logout", { method: "POST" }).then(() => (window.location.href = "/"));
   }
 </script>
   <% } %>
-  
-  </body>
-  <% if (user && user.role === 'Engineer') { %>
-    <script>
+
+  <!-- Add Package Modal -->
+  <div class="modal fade modal-package-upload" id="addPackageModal"
+    tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="packageModalTitle">Add New
+            Packages</h5>
+          <button type="button" class="btn-close"
+            data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="packageForm">
+            <input type="hidden" id="packageId" name="packageId">
+            <div class="mb-4">
+              <label class="form-label fw-bold">Occasion Type</label>
+              <select class="form-select" name="occasionType" required>
+                <option value>Select Event Type</option>
+                <% if (engData.specialties && engData.specialties.length > 0) { %>
+                  <% engData.specialties.forEach(function(specialty) { %>
+                    <option value="<%= specialty %>"><%= specialty %></option>
+                  <% }) %>
+                <% } %>
+              </select>
+            </div>
+
+            <div class="row g-4">
+              <!-- Basic Package -->
+              <div class="col-md-4">
+                <div class="package-card h-100">
+                  <div class="card-header bg-light">
+                    <h5>Basic Package</h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <label class="form-label">Price ($)</label>
+                      <input type="number" class="form-control"
+                        name="basicPrice" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Services</label>
+                      <textarea class="form-control" name="basicServices"
+                        rows="5" required></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Premium Package -->
+              <div class="col-md-4">
+                <div class="package-card h-100">
+                  <div class="card-header bg-light">
+                    <h5>Premium Package</h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <label class="form-label">Price ($)</label>
+                      <input type="number" class="form-control"
+                        name="premiumPrice" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Services</label>
+                      <textarea class="form-control" name="premiumServices"
+                        rows="5" required></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Luxury Package -->
+              <div class="col-md-4">
+                <div class="package-card h-100">
+                  <div class="card-header bg-light">
+                    <h5>Luxury Package</h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <label class="form-label">Price ($)</label>
+                      <input type="number" class="form-control"
+                        name="luxuryPrice" required>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Services</label>
+                      <textarea class="form-control" name="luxuryServices"
+                        rows="5" required></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary"
+            data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary"
+            onclick="submitPackages()"
+            style="background-color: goldenrod; border-color: goldenrod;">Save
+            Packages</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Package Modal -->
+  <div class="modal fade" id="editPackageModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Package</h5>
+          <button type="button" class="btn-close"
+            data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editPackageForm">
+            <input type="hidden" name="id" id="editPackageId">
+            <div class="mb-3">
+              <label class="form-label">Package Name</label>
+              <input type="text" class="form-control" name="name"
+                id="editPackageName" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Price ($)</label>
+              <input type="number" class="form-control" name="price"
+                id="editPackagePrice" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Description</label>
+              <textarea class="form-control" name="description"
+                id="editPackageDescription" required></textarea>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Essential Items</label>
+              <div id="editEssentialItems"></div>
+              <button type="button"
+                class="btn btn-sm "
+                 style="background-color: goldenrod; color: white; font-weight: bold;"
+                id="addEssentialItem">
+                <i class="fas fa-plus"></i> Add Item
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary"
+            data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn" 
+           style="background-color: goldenrod; color: white; font-weight: bold;"
+            onclick="updatePackage()">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CSS Styles -->
+  <style>
+  .occasion-title {
+    color: #d4a017;
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 18px;
+    margin-top: 12px;
+    letter-spacing: 0.5px;
+  }
+  .package-card {
+    border: 1px solid #eee;
+    border-radius: 10px;
+    box-shadow: none;
+    padding: 20px 18px 16px 18px;
+    background: #fff;
+    margin-bottom: 18px;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .package-card:hover {
+    box-shadow: 0 4px 18px rgba(220, 170, 23, 0.09);
+    transform: translateY(-4px);
+  }
+  .package-title {
+    color: #d4a017;
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .package-price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 8px;
+  }
+  .package-services p {
+    margin-bottom: 4px;
+    color: #444;
+    font-weight: 500;
+    font-size: 1.02rem;
+  }
+  .package-services ul {
+    padding-left: 18px;
+    margin-bottom: 12px;
+  }
+  .package-services li {
+    color: #222;
+    font-size: 1rem;
+    margin-bottom: 3px;
+  }
+  .book-now-btn {
+    background: #fdbe2d;
+    color: #222;
+    font-weight: 600;
+    border: none;
+    border-radius: 5px;
+    padding: 7px 22px;
+    font-size: 1.05rem;
+    transition: background 0.15s, color 0.15s;
+    margin-top: 8px;
+    margin-bottom: 0;
+    box-shadow: 0 2px 8px rgba(220, 170, 23, 0.04);
+  }
+  .book-now-btn:hover {
+    background: #f1a700;
+    color: #fff;
+  }
+  .btn-gold {
+    background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%) !important;
+    color: #222 !important;
+    border: 2px solid #bfa14a !important;
+    font-weight: bold !important;
+    transition: all 0.3s ease !important;
+  }
+  .btn-gold:hover, .btn-gold:focus {
+    background: linear-gradient(135deg, #ffe066 0%, #d4af37 100%) !important;
+    color: #000 !important;
+    box-shadow: 0 3px 10px rgba(218, 165, 32, 0.2) !important;
+  }
+  .btn-gold, .btn-gold:active, .btn-gold:focus, .btn-gold:visited {
+    background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%) !important;
+    border: 2px solid #bfa14a !important;
+    color: #222 !important;
+    font-weight: bold !important;
+    box-shadow: 0 2px 5px rgba(218, 165, 32, 0.18) !important;
+    transition: background 0.3s, color 0.3s, transform 0.2s !important;
+  }
+  .btn-gold:hover, .btn-gold:focus, .btn-gold:active {
+    background: linear-gradient(135deg, #ffe066 0%, #d4af37 100%) !important;
+    color: #000 !important;
+    transform: scale(1.05) !important;
+  }
+</style>
+  <script>
+  // Define showErrorAlert globally
+  function showErrorAlert(message) {
+    Swal.fire({
+      icon: 'error',
+      title: 'خطأ',
+      text: message || 'حدث خطأ غير متوقع'
+    });
+  }
+
+  var isAuthenticated = "<%= user ? 'true' : 'false' %>";
+
+  document.querySelectorAll('.book-now-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const engineerId = this.getAttribute('data-engineer-id');
+      const packageId = this.getAttribute('data-package-id') || '';
+      const eventType = this.getAttribute('data-event-type') || '';
+
+
+      // Store package information in localStorage
+      localStorage.setItem('bookingPackageId', packageId);
+      localStorage.setItem('bookingEventType', eventType);
+      localStorage.setItem('bookingEngineerId', engineerId);
+
+      if (isAuthenticated === "true") {
+        window.location.href = `/booking?engineerId=${engineerId}&packageId=${packageId}&eventType=${encodeURIComponent(eventType)}`;
+      } else {
+        Swal.fire({
+          title: 'Do you have an account?',
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'Yes, I have an account',
+            denyButtonText: 'No, I want to register',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+            authModal.show();
+            sessionStorage.setItem("postLoginRedirect", `/booking?engineerId=${engineerId}&packageId=${packageId}&eventType=${encodeURIComponent(eventType)}`);
+
+          }else if (result.isDenied) {
+              document.getElementById('registerForm').style.display = 'block';
+              document.getElementById('loginForm').style.display = 'none';
+              authModal.show();
+            }
+        });
+      }
+    });
+  });
+
+  document.getElementById('loginFormData').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    try {
+      const response = await fetch('/payment/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: document.getElementById('loginEmail').value,
+          password: document.getElementById('loginPassword').value
+        })
+      });
+      const data = await response.json();
+      if (data.success) {
+        authModal.hide();
+        // Check if we have booking information in localStorage
+        const packageId = localStorage.getItem('bookingPackageId');
+        const eventType = localStorage.getItem('bookingEventType');
+        const engineerId = localStorage.getItem('bookingEngineerId');
+
+        if (packageId && eventType) {
+          // If we have booking info, redirect to booking page with package info
+          window.location.href = `/booking?engineerId=${engineerId}&packageId=${packageId}&eventType=${encodeURIComponent(eventType)}`;
+        } else {
+          // Otherwise, use the default redirect path
+          const redirectUrl = sessionStorage.getItem("postLoginRedirect") || "/booking";
+          sessionStorage.removeItem("postLoginRedirect");
+          window.location.href = redirectUrl;
+        }
+      } else {
+        showErrorAlert(data.message);
+      }
+    } catch (error) {
+      showErrorAlert('Login failed');
+    }
+  });
+
+  document.getElementById('registerFormData').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    // Get form inputs
+    const nameInput = document.getElementById('registerName');
+    const emailInput = document.getElementById('registerEmail');
+    const passwordInput = document.getElementById('registerPassword');
+    const bioInput = document.getElementById('bio');
+    const phoneInput = document.getElementById('registerPhone');
+
+    // Get error elements
+    const nameError = document.getElementById('nameError');
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+    const bioError = document.getElementById('bioError');
+    const phoneError = document.getElementById('phoneError');
+
+    // Reset errors
+    nameError.textContent = '';
+    emailError.textContent = '';
+    passwordError.textContent = '';
+    bioError.textContent = '';
+    phoneError.textContent = '';
+
+    // Remove error styling
+    nameInput.classList.remove('input-error');
+    emailInput.classList.remove('input-error');
+    passwordInput.classList.remove('input-error');
+    bioInput.classList.remove('input-error');
+    phoneInput.classList.remove('input-error');
+
+    let hasError = false;
+
+    // Validate name
+    if (nameInput.value.trim().length < 2) {
+      nameError.textContent = '❌ Name must be at least 2 characters';
+      nameInput.classList.add('input-error');
+      hasError = true;
+    }
+
+    // Validate email
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if (!emailRegex.test(emailInput.value.trim())) {
+      emailError.textContent = '❌ Please enter a valid email address';
+      emailInput.classList.add('input-error');
+      hasError = true;
+    }
+
+    // Validate password
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{6,}$/;
+    if (!passwordRegex.test(passwordInput.value.trim())) {
+      passwordError.textContent = '❌ Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character';
+      passwordInput.classList.add('input-error');
+      hasError = true;
+    }
+
+    // Validate bio
+    if (bioInput.value.trim().length < 5) {
+      bioError.textContent = '❌ Bio must be at least 5 characters';
+      bioInput.classList.add('input-error');
+      hasError = true;
+    }
+
+    // Validate phone using intl-tel-input
+    if (window.phoneInputInstance) {
+      if (!window.phoneInputInstance.isValidNumber()) {
+        phoneError.textContent = '❌ Please enter a valid phone number';
+        phoneInput.classList.add('input-error');
+        hasError = true;
+      }
+    } else {
+      // Fallback validation if intl-tel-input is not initialized
+      const phoneRegex = /^\+?[0-9]{10,15}$/;
+      if (!phoneRegex.test(phoneInput.value.trim())) {
+        phoneError.textContent = '❌ Please enter a valid phone number';
+        phoneInput.classList.add('input-error');
+        hasError = true;
+      }
+    }
+
+    // If there are errors, don't submit
+    if (hasError) {
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('name', nameInput.value.trim());
+      formData.append('email', emailInput.value.trim());
+      formData.append('password', passwordInput.value.trim());
+
+      // Get full phone number with country code using intl-tel-input
+      let phoneNumber = phoneInput.value.trim();
+      if (window.phoneInputInstance) {
+        phoneNumber = window.phoneInputInstance.getNumber();
+      }
+      formData.append('phone', phoneNumber);
+
+      formData.append('bio', bioInput.value.trim());
+
+      const profilePhotoInput = document.querySelector('input[type="file"][name="profilePhoto"]');
+      if (profilePhotoInput && profilePhotoInput.files.length > 0) {
+        formData.append('profilePhoto', profilePhotoInput.files[0]);
+      }
+
+      const response = await fetch('/payment/register', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        // Show login form/modal after successful registration
+        document.getElementById('registerForm').style.display = 'none';
+        document.getElementById('loginForm').style.display = 'block';
+        authModal.show();
+        Swal.fire({
+          icon: 'success',
+          title: 'Registration Successful',
+          text: 'Please login to continue booking'
+        });
+      } else {
+        showErrorAlert(data.message);
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      showErrorAlert('Registration failed: ' + error.message);
+    }
+  });
+</script>
+
+</body>
+<% if (user && user.role === 'Engineer') { %>
+<script>
       window.engineerData = {
         id: '<%= engData._id %>'
       };
     </script>
-  <% } %>
-  <script>
+<% } %>
+<script>
     // All JavaScript functionality
-    document.addEventListener('DOMContentLoaded', function() {
-      // Notification functionality
-      const socket = io();
-      const notificationList = document.getElementById('notificationList');
-      const notificationBtn = document.getElementById('notificationBtn');
-      const notificationCount = document.getElementById('notificationCount');
-      const notificationModalElement = document.getElementById('notificationModal');
-      
-      let notificationModal;
-      if (notificationModalElement) {
-        try {
-          notificationModal = new bootstrap.Modal(notificationModalElement);
-        } catch (error) {
-          console.error('Error initializing notification modal:', error);
-        }
-      }
-      
-      if (notificationList && notificationBtn && notificationCount) {
-        socket.on('newMessage', function(data) {
-          const currentCount = parseInt(notificationCount.textContent) || 0;
-          notificationCount.textContent = currentCount + 1;
-          
-          const notificationItem = document.createElement('div');
-          notificationItem.className = 'notification-item';
-          notificationItem.innerHTML = `
-            <div class="sender">${data.senderName}</div>
-            <div class="message">${data.content}</div>
-            <div class="time">${new Date(data.timestamp).toLocaleString()}</div>
-          `;
-          
-          notificationItem.addEventListener('click', function() {
-            window.location.href = `/chat/${data.userId}/${data.engineerId}`;
-          });
-          
-          notificationList.prepend(notificationItem);
-        });
-        
-        notificationBtn.addEventListener('click', function() {
-          if (notificationModal) {
-            notificationModal.show();
-            notificationCount.textContent = '0';
-          }
-        });
-      }
-    });
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     // Notification functionality
+    //     const notificationList = document.getElementById('notificationList');
+    //     const notificationBtn = document.getElementById('notificationBtn');
+    //     const notificationCount = document.getElementById('notificationCount');
+    //     const notificationModalElement = document.getElementById('notificationModal');
+
+    //     let notificationModal;
+    //     if (notificationModalElement) {
+    //         try {
+    //             notificationModal = new bootstrap.Modal(notificationModalElement);
+    //         } catch (error) {
+    //             console.error('Error initializing notification modal:', error);
+    //         }
+    //     }
+
+    //     if (notificationList && notificationBtn && notificationCount) {
+    //         // Poll for new notifications every 30 seconds
+    //         async function checkNotifications() {
+    //             try {
+    //                 const response = await fetch('/api/notifications');
+    //                 if (!response.ok) {
+    //                     if (response.status === 401) {
+    //                         window.location.href = '/login';
+    //                         return;
+    //                     }
+    //                     throw new Error('Failed to fetch notifications');
+    //                 }
+
+    //                 const data = await response.json();
+    //                 if (data.notifications && data.notifications.length > 0) {
+    //                     notificationCount.textContent = data.notifications.length;
+
+    //                     // Update notification list
+    //                     notificationList.innerHTML = '';
+    //                     data.notifications.forEach(notification => {
+    //                         const notificationItem = document.createElement('div');
+    //                         notificationItem.className = 'notification-item';
+    //                         notificationItem.innerHTML = `
+    //                             <div class="sender">${notification.senderName}</div>
+    //                             <div class="message">${notification.content}</div>
+    //                             <div class="time">${new Date(notification.timestamp).toLocaleString()}</div>
+    //                         `;
+
+    //                         notificationItem.addEventListener('click', function() {
+    //                             window.location.href = `/chat/${notification.userId}/${notification.engineerId}`;
+    //                         });
+
+    //                         notificationList.prepend(notificationItem);
+    //                     });
+    //                 }
+    //             } catch (error) {
+    //                 console.error('Error checking notifications:', error);
+    //             }
+    //         }
+
+    //         // Check notifications immediately and then every 30 seconds
+    //         checkNotifications();
+    //         setInterval(checkNotifications, 30000);
+
+    //         notificationBtn.addEventListener('click', function() {
+    //             if (notificationModal) {
+    //                 notificationModal.show();
+    //                 notificationCount.textContent = '0';
+
+    //                 // Mark notifications as read
+    //                 fetch('/api/notifications/read', { method: 'POST' })
+    //                     .catch(error => console.error('Error marking notifications as read:', error));
+    //             }
+    //         });
+    //     }
+  //  });
 
     // Logout functionality
     function logout() {
-      fetch("/logout", { method: "POST" }).then(() => (window.location.href = "/login"));
+        fetch("/logout", { method: "POST" }).then(() => (window.location.href = "/login"));
     }
 
     // Chat functionality
-    function startChat() {
-      const chatFrame = document.getElementById('chatFrame');
-      if (chatFrame.style.display === 'none') {
-        chatFrame.style.display = 'block';
-        chatFrame.src = `/chat/<%= engData._id %>`;
+    // function startChat() {
+    //     const chatFrame = document.getElementById('chatFrame');
+    //     if (chatFrame.style.display === 'none') {
+    //         chatFrame.style.display = 'block';
+    //         chatFrame.src = `/chat/<%= engData._id %>`;
+    //     } else {
+    //         chatFrame.style.display = 'none';
+    //         chatFrame.src = '';
+    //     }
+    // }
+  </script>
+
+<!-- Modal for uploading projects -->
+<div class="modal fade" id="uploadModal" tabindex="-1"
+  style="font-family: sans-serif;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <% if (user && user.role === 'Engineer') { %>
+      <div class="modal-header">
+        <h5 class="modal-title">Upload New Project</h5>
+        <button type="submit" class="btn-close"
+          data-bs-dismiss="modal"></button>
+      </div>
+      <% } %>
+      <div class="modal-body">
+        <form id="createProjectForm" action="/projects/create" method="post"
+          enctype="multipart/form-data">
+          <div class="mb-3">
+            <label class="form-label">Project Title</label>
+            <input id="projectName" name="projectName" type="text"
+              class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Project Type</label>
+            <select id="projectType" name="projectType" class="form-select"
+              required>
+              <option value disabled selected>Select</option>
+              <% if (engData.specialties && engData.specialties.length > 0) { %>
+                <% engData.specialties.forEach(function(specialty) { %>
+                  <option value="<%= specialty %>"><%= specialty %></option>
+                <% }) %>
+              <% } %>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Project Image</label>
+            <input id="projectImage" name="projectImage" type="file"
+              class="form-control" accept="image/*" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Project Area (m²)</label>
+            <input id="projectArea" name="projectArea" type="number"
+              class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Price</label>
+            <input id="projectPrice" name="projectPrice" type="number"
+              class="form-control" required>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary"
+              data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-gold">Upload</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('createProjectForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append('projectName', document.getElementById('projectName').value);
+    formData.append('projectType', document.getElementById('projectType').value);
+    formData.append('projectArea', document.getElementById('projectArea').value);
+    formData.append('projectPrice', document.getElementById('projectPrice').value);
+    formData.append('projectImage', document.getElementById('projectImage').files[0]);
+
+    try {
+      const response = await fetch('/projects/create', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Project uploaded successfully',
+          showConfirmButton: false,
+          timer: 1500
+        }).then(() => {
+          location.reload();
+        });
       } else {
-        chatFrame.style.display = 'none';
-        chatFrame.src = '';
+        throw new Error(data.message || 'Error uploading project');
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message
+      });
+    }
+  });
+</script>
+
+<script>
+  // Delete Project Function
+  async function deleteProject(projectId) {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await fetch(`/projects/${projectId}`, {
+          method: 'DELETE'
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Project deleted successfully',
+            showConfirmButton: false,
+            timer: 1500
+          }).then(() => {
+            location.reload();
+          });
+        } else {
+          throw new Error(data.message || 'Error deleting project');
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.message
+        });
       }
     }
-  </script>
-</body>
-</html>
+  }
+
+  // Edit Project Function
+  async function editProject(projectId) {
+    try {
+      // Fetch project details
+      const response = await fetch(`/projects/${projectId}`);
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Error fetching project details');
+      }
+      
+      const project = data.project;
+
+      // Create and show edit modal
+      const modal = document.createElement('div');
+      modal.className = 'modal fade';
+      modal.id = 'editProjectModal';
+      modal.innerHTML = `
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Edit Project</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <form id="editProjectForm">
+                <input type="hidden" id="editProjectId" value="${projectId}">
+                <div class="mb-3">
+                  <label class="form-label">Project Title</label>
+                  <input type="text" class="form-control" id="editProjectName" value="${project.name}" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Project Type</label>
+                  <select class="form-select" id="editProjectType" required>
+                    <option value="Birthday" ${project.type === 'Birthday' ? 'selected' : ''}>Birthday</option>
+                    <option value="Wedding" ${project.type === 'Wedding' ? 'selected' : ''}>Wedding</option>
+                    <option value="BabyShower" ${project.type === 'BabyShower' ? 'selected' : ''}>BabyShower</option>
+                    <option value="Engagement" ${project.type === 'Engagement' ? 'selected' : ''}>Engagement</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Project Area (m²)</label>
+                  <input type="number" class="form-control" id="editProjectArea" value="${project.area}" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Price</label>
+                  <input type="number" class="form-control" id="editProjectPrice" value="${project.price}" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Project Image</label>
+                  <input type="file" class="form-control" id="editProjectImage" accept="image/*">
+                </div>
+                <button type="submit" class="btn btn-gold w-100" id="packageSubmitBtn">Update</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(modal);
+      const modalInstance = new bootstrap.Modal(modal);
+      modalInstance.show();
+
+      // Handle form submission
+      document.getElementById('editProjectForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const formData = new FormData();
+        formData.append('projectName', document.getElementById('editProjectName').value);
+        formData.append('projectType', document.getElementById('editProjectType').value);
+        formData.append('projectArea', document.getElementById('editProjectArea').value);
+        formData.append('projectPrice', document.getElementById('editProjectPrice').value);
+
+        const imageInput = document.getElementById('editProjectImage');
+        if (imageInput.files.length > 0) {
+          formData.append('projectImage', imageInput.files[0]);
+        }
+
+        try {
+          const updateResponse = await fetch(`/projects/${projectId}`, {
+            method: 'PUT',
+            body: formData
+          });
+
+          const data = await updateResponse.json();
+
+          if (updateResponse.ok) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Project updated successfully',
+              showConfirmButton: false,
+              timer: 1500
+            }).then(() => {
+              location.reload();
+            });
+          } else {
+            throw new Error(data.message || 'Error updating project');
+          }
+        } catch (error) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message
+          });
+        }
+      });
+
+      // Remove modal when closed
+      modal.addEventListener('hidden.bs.modal', function() {
+        document.body.removeChild(modal);
+      });
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message
+      });
+    }
+  }
+</script>
+
+<script>
+async function toggleFavorite(engineerId) {
+    try {
+        const response = await fetch('/api/favorites/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ engineerId })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // Show success message
+            Swal.fire({
+                title: 'Sucess!',
+                text: 'Engineer added to favorites',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false,
+                position: 'top-end',
+                toast: true
+            });
+
+            // Update button state
+            const btn = document.getElementById('addToFavoriteBtn');
+            btn.classList.remove('btn-outline-warning');
+            btn.classList.add('btn-warning');
+            btn.innerHTML = '<i class="bi bi-heart-fill me-2"></i><span>Engineer added to favorites</span>';
+            btn.disabled = true;
+        } else {
+            if (response.status === 400) {
+                Swal.fire({
+                    title: 'warning!',
+                    text: 'Engineer in Favourite',
+                    icon: 'info',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    position: 'top-end',
+                    toast: true
+                });
+            } else {
+                throw new Error(data.error);
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+            title: 'Error!',
+            text: 'Error during add to favourite',
+            icon: 'error',
+            timer: 2000,
+            showConfirmButton: false,
+            position: 'top-end',
+            toast: true
+        });
+    }
+}
+
+// Check if engineer is already in favorites when page loads
+async function checkFavoriteStatus(engineerId) {
+    try {
+        const response = await fetch('/api/favorites');
+        const favorites = await response.json();
+
+        const isAlreadyFavorite = favorites.some(fav => fav.engineerId === engineerId);
+
+        if (isAlreadyFavorite) {
+            const btn = document.getElementById('addToFavoriteBtn');
+            if (btn) {
+                btn.classList.remove('btn-outline-warning');
+                btn.classList.add('btn-warning');
+                btn.innerHTML = '<i class="bi bi-heart-fill me-2"></i><span>Engineer added to favorites</span>';
+                btn.disabled = true;
+            }
+        }
+    } catch (error) {
+        console.error('Error checking favorite status:', error);
+    }
+}
+
+// Call checkFavoriteStatus when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    const engineerId = '<%= engData._id %>';
+    checkFavoriteStatus(engineerId);
+});
+</script>

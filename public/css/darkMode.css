@@ -14,6 +14,45 @@
   --ring: #0d6efd;
   --radius: 0.5rem;
   --shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  --sun-color: #ffd700;
+  --moon-color: #6c757d;
+}
+
+/* تنسيق زر الدارك مود */
+button.dark-mode {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  margin-left: 10px;
+  padding: 0;
+}
+
+button.dark-mode:hover {
+  transform: scale(1.1);
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode button.dark-mode:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+button.dark-mode li,
+button.dark-mode i {
+  font-size: 1.2rem;
+  color: var(--moon-color);
+  transition: all 0.3s ease;
+}
+
+body.dark-mode button.dark-mode li,
+body.dark-mode button.dark-mode i {
+  color: var(--sun-color);
 }
 
 :root .dark-mode {
@@ -28,21 +67,585 @@
 }
 
 body.dark-mode {
-  background-color: var(--background);
-  color: var(--foreground);
+  background: #000000 !important;
+  background-color: #000000 !important;
+}
+body.dark-mode main,
+body.dark-mode .container,
+body.dark-mode .profile-section,
+body.dark-mode .booking-card,
+body.dark-mode .favorite-item,
+body.dark-mode .next-steps,
+body.dark-mode .confirmation-box,
+body.dark-mode .review-box,
+body.dark-mode .card,
+body.dark-mode .booking-details,
+body.dark-mode .order-summary,
+body.dark-mode .payment-summary,
+body.dark-mode .payment-box,
+body.dark-mode .summary-card {
+  background: #000000 !important;
+}
+body.dark-mode .success-container,
+body.dark-mode .success-card {
+  background: #000000 !important;
+  color: #ffd700 !important;
+  border: 1px solid #ffd700 !important;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.06);
+}
+body.dark-mode .success-message {
+  color: #aaffaa !important;
 }
 
-.card.dark-mode {
-  background: var(--card);
-  color: var(--card);
-  border-color: var(--border);
+body.dark-mode .summary-card .section-title {
+  color: #ffd700 !important;
+}
+body.dark-mode .summary-card .text-muted {
+  color: #cccccc !important;
+}
+body.dark-mode .summary-card .text-success,
+body.dark-mode .summary-card .fw-bold {
+  color: #aaffaa !important;
+}
+
+body.dark-mode .payment-box {
+  background: #000000 !important;
+  color: #ffd700 !important;
+  border: 1px solid #ffd700 !important;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.06);
+
+  body.dark-mode .order-summary *,
+  body.dark-mode .payment-summary *,
+  body.dark-mode .payment-box * {
+    color: #ffd700 !important;
+  }
+  body.dark-mode .order-summary .detail-value,
+  body.dark-mode .payment-summary .detail-value,
+  body.dark-mode .payment-box .detail-value {
+    color: #fff !important;
+  }
+
+  body.dark-mode input[type="text"],
+  body.dark-mode input[type="number"],
+  body.dark-mode input[type="password"],
+  body.dark-mode input[type="email"],
+  body.dark-mode .StripeElement {
+    background: #000000 !important;
+    color: #ffd700 !important;
+    border: 1px solid #ffd700 !important;
+  }
+  body.dark-mode input[type="text"]::placeholder,
+  body.dark-mode input[type="number"]::placeholder,
+  body.dark-mode input[type="password"]::placeholder,
+  body.dark-mode input[type="email"]::placeholder {
+    color: #ffd700cc !important;
+    opacity: 0.7;
+  }
+
+  background: #000000 !important;
+  color: #ffd700 !important;
+  border: 1px solid #ffd700 !important;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.06);
+}
+body.dark-mode .card .detail-label,
+body.dark-mode .booking-details .detail-label {
+  color: #ffd700 !important;
+}
+body.dark-mode .card .detail-value,
+body.dark-mode .booking-details .detail-value {
+  color: #fff !important;
+}
+body.dark-mode .card .detail-row,
+body.dark-mode .booking-details .detail-row {
+  border-bottom: 1px solid #ffd700 !important;
+}
+body.dark-mode .card .detail-row:last-child,
+body.dark-mode .booking-details .detail-row:last-child {
+  border-bottom: none !important;
+}
+body.dark-mode .section-bg,
+body.dark-mode .page-bg,
+body.dark-mode .background,
+body.dark-mode .bg-white,
+body.dark-mode section,
+body.dark-mode .row,
+body.dark-mode .package-card,
+body.dark-mode .testimonial-card,
+body.dark-mode .portfolio-item,
+body.dark-mode .card-body,
+body.dark-mode .modal-content,
+body.dark-mode .popup,
+body.dark-mode .dropdown-menu {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  color: #fff !important;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark-mode a {
+  color: #90caf9;
+  transition: color 0.3s;
+}
+body.dark-mode a:hover {
+  color: #ffd700;
+}
+
+body.dark-mode .navbar,
+.navbar.dark-mode {
+  background-color: #000000 !important;
+  color: #fff !important;
+  border-bottom: 1px solid #333;
+}
+
+body.dark-mode .footer,
+.footer.dark-mode,
+body.dark-mode footer,
+body.dark-mode footer.bg-dark {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  color: #ffd700 !important;
+  border-top: 1px solid #ffd700 !important;
+}
+body.dark-mode .footer a,
+body.dark-mode .footer .text-warning,
+body.dark-mode .footer .fs-4,
+body.dark-mode .footer .bi,
+body.dark-mode footer a,
+body.dark-mode footer .text-warning,
+body.dark-mode footer .fs-4,
+body.dark-mode footer .bi {
+  color: #ffd700 !important;
+}
+body.dark-mode .footer .text-center,
+body.dark-mode .footer .text-muted,
+body.dark-mode footer .text-center,
+body.dark-mode footer .text-muted {
+  color: #fff !important;
+}
+
+body.dark-mode .dropdown-menu {
+  background: #000000;
+  color: #fff;
+}
+body.dark-mode .dropdown-menu .nav-link,
+body.dark-mode .dropdown-menu a {
+  color: #fff;
+}
+body.dark-mode .dropdown-menu .nav-link:hover,
+body.dark-mode .dropdown-menu a:hover {
+  color: #ffd700;
+}
+
+body.dark-mode table,
+table.dark-mode {
+  background: #000000;
+  color: #fff;
+  border-color: #333;
+}
+body.dark-mode th,
+body.dark-mode td {
+  background: #000000;
+  color: #fff;
+  border-color: #444;
+}
+
+body.dark-mode .alert,
+.alert.dark-mode {
+  background: #000000;
+  color: #ffd700;
+  border-color: #ffd700;
+}
+
+body.dark-mode .form-control,
+.form-control.dark-mode,
+body.dark-mode .form-select,
+.form-select.dark-mode {
+  background-color: #000000;
+  border-color: #333;
+  color: #fff;
+}
+body.dark-mode .form-control:focus,
+body.dark-mode .form-select:focus {
+  border-color: #ffd700;
+  box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.2);
+}
+
+body.dark-mode .btn-primary,
+.btn-primary.dark-mode {
+  background-color: #ffd700 !important;
+  border-color: #ffd700 !important;
+  color: #181818 !important;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.12);
+}
+body.dark-mode .btn-primary:hover {
+  background-color: #e6c200 !important;
+  color: #181818 !important;
+}
+
+body.dark-mode .btn-show-more,
+.btn-show-more.dark-mode,
+body.dark-mode .show-more-btn {
+  background: none !important;
+  color: #181818 !important;
+  border: none !important;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.16);
+  transition: background 0.3s, color 0.3s;
+}
+body.dark-mode .btn-show-more:hover,
+.btn-show-more.dark-mode:hover,
+body.dark-mode .show-more-btn:hover {
+  background: #fff176 !important;
+  color: #181818 !important;
+}
+body.dark-mode .btn-primary:hover {
+  background-color: #e6c200;
+  color: #181818;
+}
+body.dark-mode .btn-secondary,
+.btn-secondary.dark-mode {
+  background-color: #333;
+  border-color: #444;
+  color: #ffd700;
+}
+body.dark-mode .btn-secondary:hover {
+  background-color: #444;
+  color: #fff;
+}
+
+body.dark-mode hr,
+body.dark-mode .border-warning,
+body.dark-mode .border-bottom,
+body.dark-mode .border-top {
+  border-color: #ffd700 !important;
+  background-color: #ffd700 !important;
+}
+
+body.dark-mode .list-group-item {
+  background: #000000;
+  color: #fff;
+  border-color: #333;
+}
+
+body.dark-mode .modal-content {
+  background: #000000;
+  color: #fff;
+  border-color: #333;
+}
+
+body.dark-mode .nav-link,
+.nav-link.dark-mode {
+  color: #ffd700 !important;
+}
+body.dark-mode .nav-link.active,
+.nav-link.dark-mode.active {
+  color: #fff !important;
+}
+
+body.dark-mode .form-label,
+.form-label.dark-mode {
+  color: #ffd700;
+}
+
+body.dark-mode .input-group-text {
+  background: #000000;
+  color: #ffd700;
+  border-color: #333;
+}
+
+body.dark-mode .card-header,
+.card-header.dark-mode {
+  background: #000000;
+  color: #ffd700;
+  border-bottom: 1px solid #ffd700;
+}
+
+body.dark-mode .card-footer,
+.card-footer.dark-mode {
+  background: #000000;
+  color: #ffd700;
+  border-top: 1px solid #333;
+}
+
+body.dark-mode .badge,
+.badge.dark-mode {
+  background: #ffd700;
+  color: #181818;
+}
+
+body.dark-mode .breadcrumb,
+.breadcrumb.dark-mode {
+  background: #000000;
+  color: #ffd700;
+}
+
+body.dark-mode .dropdown-item.active,
+.dropdown-item.active.dark-mode {
+  background: #ffd700;
+  color: #181818;
+}
+
+body.dark-mode .dropdown-item,
+.dropdown-item.dark-mode {
+  background: #000000;
+  color: #fff;
+}
+body.dark-mode .dropdown-item:hover {
+  background: #ffd700;
+  color: #181818;
+}
+
+body.dark-mode .progress-bar,
+.progress-bar.dark-mode {
+  background: #ffd700;
+  color: #181818;
+}
+
+body.dark-mode .navv-bar,
+.navv-bar.dark-mode {
+  background: #000000;
+  color: #ffd700;
+}
+
+body.dark-mode .about-section,
+.about-section.dark-mode {
+  background: #000000;
+  color: #fff;
+}
+
+body.dark-mode .services-section {
+  background-color: #000000;
+  color: #fff;
+}
+body.dark-mode .services-section h2 {
+  color: #ffd700;
+}
+body.dark-mode .services-section p {
+  color: #fff;
+}
+body.dark-mode .services-list {
+  background: linear-gradient(145deg, #000000, #000000);
+}
+body.dark-mode .service-item {
+  background: linear-gradient(145deg, #000000, #000000);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+body.dark-mode .service-item:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 16px rgba(255, 215, 0, 0.2);
+  background: linear-gradient(145deg, #000000, #000000);
+}
+
+.card.dark-mode,
+body.dark-mode .card,
+body.dark-mode .portfolio-overlay {
+  background: rgba(0, 0, 0, 0.97) !important;
+  color: #fff !important;
+}
+
+/* تحسين النصوص الثانوية والحواف في الدارك مود */
+body.dark-mode .text-muted,
+body.dark-mode .section-subtitle,
+body.dark-mode .lead {
+  color: #cccccc !important;
+  opacity: 0.85;
+}
+body.dark-mode .section-title {
+  color: #ffd700 !important;
+}
+body.dark-mode hr,
+body.dark-mode .border-warning,
+body.dark-mode .border-bottom,
+body.dark-mode .border-top {
+  border-color: #ffd700 !important;
+  background-color: #ffd700 !important;
+}
+body.dark-mode .footer,
+.footer.dark-mode {
+  background: #000000 !important;
+  color: #ffd700 !important;
+  border-top: 1px solid #ffd700 !important;
+}
+body.dark-mode .footer a,
+body.dark-mode .footer .text-warning,
+body.dark-mode .footer .fs-4,
+body.dark-mode .footer .bi {
+  color: #ffd700 !important;
+}
+body.dark-mode .footer .text-center,
+body.dark-mode .footer .text-muted {
+  color: #fff !important;
+}
+body.dark-mode .card-header,
+.card-header.dark-mode {
+  background: #000000;
+  color: #ffd700;
+  border-bottom: 1px solid #ffd700;
+}
+body.dark-mode .card,
+body.dark-mode .package-card {
+  border: 1px solid #444 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  transition: background 0.3s, color 0.3s;
+}
+
+body.dark-mode .card *,
+body.dark-mode .package-card *,
+.card.dark-mode *,
+.package-card.dark-mode * {
+  color: #fff !important;
+}
+body.dark-mode .card .card-title,
+body.dark-mode .card-title,
+body.dark-mode .package-card .card-title,
+body.dark-mode .package-title {
+  color: #ffd700 !important;
+}
+body.dark-mode .card .card-text,
+body.dark-mode .card-text,
+body.dark-mode .package-card .card-text,
+body.dark-mode .package-desc {
+  color: #fff !important;
+}
+body.dark-mode .card .card-title,
+body.dark-mode .card-title {
+  color: #ffd700 !important;
+}
+body.dark-mode .card .card-text,
+body.dark-mode .card-text {
+  color: #fff !important;
+}
+body.dark-mode .card .package-title {
+  color: #ffd700 !important;
+}
+body.dark-mode .card .package-desc {
+  color: #fff !important;
+}
+
+/* زر Logout في الدارك مود */
+body.dark-mode button.btn,
+body.dark-mode .btn {
+  background: transparent !important;
+  color: #ffd700 !important;
+  border: 1px solid #ffd700 !important;
+  font-weight: bold;
+  transition: background 0.2s, color 0.2s;
+}
+body.dark-mode button.btn:hover,
+body.dark-mode .btn:hover {
+  background: #ffd700 !important;
+  color: #181818 !important;
+}
+
+/* زر إزالة من المفضلة في الدارك مود */
+body.dark-mode .remove-btn {
+  background: transparent !important;
+  color: #ff4d4f !important;
+  border: 1.5px solid #ff4d4f !important;
+  border-radius: 50% !important;
+  transition: background 0.2s, color 0.2s;
+}
+body.dark-mode .remove-btn:hover {
+  background: #ff4d4f !important;
+  color: #fff !important;
+  border-color: #ff1a1a !important;
+}
+
+/* أزرار القائمة الجانبية في البروفايل */
+body.dark-mode .list-group-item {
+  background: #000000 !important;
+  color: #ffd700 !important;
+  border-color: #ffd700 !important;
+}
+body.dark-mode .list-group-item.text-danger {
+  color: #ff5555 !important;
+  border-color: #ff5555 !important;
+}
+body.dark-mode .list-group-item-action:active,
+body.dark-mode .list-group-item-action:focus {
+  background: #ffd700 !important;
+  color: #181818 !important;
+  border-color: #ffd700 !important;
 }
 
 .form-control.dark-mode,
-.form-select.dark-mode {
-  background-color: var(--input);
-  border-color: var(--border);
-  color: var(--foreground);
+.form-select.dark-mode,
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  background-color: #000000 !important;
+  border-color: #444 !important;
+  color: #fff !important;
+  transition: background 0.3s, color 0.3s;
+}
+body.dark-mode input::placeholder,
+body.dark-mode select::placeholder,
+body.dark-mode textarea::placeholder {
+  color: #bbb !important;
+  opacity: 1;
+}
+
+/* تحسين جميع حقول الإدخال في الدارك مود */
+body.dark-mode input.form-control,
+body.dark-mode select.form-select,
+body.dark-mode textarea.form-control {
+  background-color: #000000 !important;
+  color: #ffd700 !important;
+  border: 1px solid #ffd700 !important;
+  box-shadow: none !important;
+  font-weight: 500;
+}
+
+body.dark-mode input.form-control:focus,
+body.dark-mode select.form-select:focus,
+body.dark-mode textarea.form-control:focus {
+  border-color: #fff176 !important;
+  color: #fff !important;
+  background-color: #000000 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 0.1rem rgba(255, 215, 0, 0.25) !important;
+}
+
+body.dark-mode .form-floating label {
+  color: #ffd700 !important;
+  background: transparent !important;
+  opacity: 0.85;
+}
+
+body.dark-mode ::placeholder {
+  color: #cccccc !important;
+  opacity: 1 !important;
+}
+
+/* إصلاح مشكلة حقل التاريخ في الوضع الداكن */
+body.dark-mode input[type="date"] {
+  color: #ffd700 !important;
+}
+
+body.dark-mode input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(1.8) sepia(100%) saturate(10000%)
+    hue-rotate(20deg);
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+/* تغيير لون النص الافتراضي لحقل التاريخ */
+body.dark-mode input[type="date"]::-webkit-datetime-edit {
+  color: #ffd700 !important;
+}
+
+body.dark-mode input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+  color: #ffd700 !important;
+}
+
+body.dark-mode input[type="date"]::-webkit-datetime-edit-text {
+  color: #ffd700 !important;
+}
+
+body.dark-mode input[type="date"]::-webkit-datetime-edit-month-field,
+body.dark-mode input[type="date"]::-webkit-datetime-edit-day-field,
+body.dark-mode input[type="date"]::-webkit-datetime-edit-year-field {
+  color: #ffd700 !important;
 }
 
 .form-control.dark-mode:focus,
@@ -84,27 +687,76 @@ body.dark-mode {
   --primary-foreground: #121212;
   --foreground: #ffffff;
 }
+
+/* تجاوز قوي للـ footer في الوضع الداكن */
+body.dark-mode footer.bg-dark,
+body.dark-mode footer.bg-dark.text-warning,
+body.dark-mode footer.bg-dark.py-5 {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  color: #ffd700 !important;
+}
 .dark-mode .services-section {
-  background-color: #212121;
+  background-color: #000000;
   color: #fff;
 }
 .dark-mode .services-section h2 {
   color: #ffd700;
 }
 .dark-mode .services-section p {
-  color: #ffffff27;
+  color: #ffffff;
 }
 .dark-mode .services-list {
-  background: linear-gradient(145deg, #333, #111);
+  background: linear-gradient(145deg, #000000, #000000);
 }
 .dark-mode .service-item {
-  background: linear-gradient(145deg, #111, #333);
+  background: linear-gradient(145deg, #000000, #000000);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 .dark-mode .service-item:hover {
   transform: translateY(-10px);
   box-shadow: 0 8px 16px rgba(255, 215, 0, 0.2);
-  background: linear-gradient(145deg, #fff5e138, #faf8f51c);
+  background: linear-gradient(145deg, #000000, #000000);
 }
 
+body.dark-mode .package-card .card-header {
+  background: #000000 !important;
+  color: #ffd700 !important;
+}
+body.dark-mode .package-card .card-header h5 {
+  color: #ffd700 !important;
+}
+body.dark-mode .package-card .form-control,
+body.dark-mode .package-card textarea.form-control {
+  background: #000000 !important;
+  color: #fff !important;
+  border-color: #ffd700 !important;
+}
+body.dark-mode .package-card .form-control::placeholder,
+body.dark-mode .package-card textarea.form-control::placeholder {
+  color: #bbb !important;
+  opacity: 1;
+}
 
+body.dark-mode .footer-content,
+body.dark-mode footer.bg-dark {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  color: #ffd700 !important;
+}
+body.dark-mode .footer-content p,
+body.dark-mode footer.bg-dark p {
+  color: #ffd700 !important;
+}
+
+/* تحسين إضافي للـ footer في الوضع الداكن */
+body.dark-mode footer.bg-dark .border-warning {
+  border-color: #ffd700 !important;
+}
+body.dark-mode footer.bg-dark hr.border-warning {
+  background-color: #ffd700 !important;
+  opacity: 0.5;
+}
+body.dark-mode footer.bg-dark .text-warning {
+  color: #ffd700 !important;
+}

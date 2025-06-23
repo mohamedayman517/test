@@ -1,10 +1,10 @@
 // Custom alert functions using SweetAlert2
 function showSuccessAlert(message, callback) {
     Swal.fire({
-        title: 'نجاح!',
+        title: 'success!',
         text: message,
         icon: 'success',
-        confirmButtonText: 'حسناً',
+        confirmButtonText: 'OK',
         confirmButtonColor: '#3085d6',
         customClass: {
             popup: 'swal2-arabic'
@@ -16,10 +16,10 @@ function showSuccessAlert(message, callback) {
 
 function showErrorAlert(message, callback) {
     Swal.fire({
-        title: 'خطأ!',
+        title: 'error!',
         text: message,
         icon: 'error',
-        confirmButtonText: 'حسناً',
+        confirmButtonText: 'OK',
         confirmButtonColor: '#d33',
         customClass: {
             popup: 'swal2-arabic'
@@ -31,10 +31,10 @@ function showErrorAlert(message, callback) {
 
 function showWarningAlert(message, callback) {
     Swal.fire({
-        title: 'تحذير!',
+        title: 'warning!',
         text: message,
         icon: 'warning',
-        confirmButtonText: 'حسناً',
+        confirmButtonText: 'OK',
         confirmButtonColor: '#ffa500',
         customClass: {
             popup: 'swal2-arabic'
@@ -46,12 +46,12 @@ function showWarningAlert(message, callback) {
 
 function showConfirmAlert(message, callback) {
     Swal.fire({
-        title: 'هل أنت متأكد؟',
+        title: 'Are you sure ?',
         text: message,
         icon: 'question',
         showCancelButton: true,
-        confirmButtonText: 'نعم',
-        cancelButtonText: 'لا',
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         customClass: {

@@ -1,10 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
   const designerForm = document.getElementById("designerForm");
   const phoneInput = document.querySelector('input[name="phone"]');
-  
+
   const iti = window.intlTelInput(phoneInput, {
-    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-    preferredCountries: ['eg', 'sa', 'ae', 'us'], 
+    utilsScript:
+      "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+    preferredCountries: ["eg", "sa", "ae", "us"],
     separateDialCode: true,
     initialCountry: "auto",
     geoIpLookup: function (callback) {
@@ -12,9 +13,9 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((res) => res.json())
         .then((data) => callback(data.country_code))
         .catch(() => callback("eg"));
-    }
+    },
   });
-  
+
   if (designerForm) {
     designerForm.addEventListener("submit", async function (event) {
       event.preventDefault();
@@ -23,15 +24,15 @@ document.addEventListener("DOMContentLoaded", function () {
       const inputs = {
         email: document.querySelector('input[name="email"]'),
         password: document.querySelector('input[name="password"]'),
-        confirmPassword: document.querySelector('input[name="confirmPassword"]'),
+        confirmPassword: document.querySelector(
+          'input[name="confirmPassword"]'
+        ),
         firstName: document.querySelector('input[name="firstName"]'),
         lastName: document.querySelector('input[name="lastName"]'),
         phone: document.querySelector('input[name="phone"]'),
         bio: document.querySelector('textarea[name="bio"]'),
         role: document.getElementById("role"),
         termsAccepted: document.getElementById("termsAccepted"),
-    
-        
       };
 
       const errors = {
@@ -46,19 +47,42 @@ document.addEventListener("DOMContentLoaded", function () {
         termsAccepted: document.getElementById("termsAcceptedError"),
       };
 
-
       const specialtiesArray = Array.from(
         document.querySelectorAll('input[name="specialties"]:checked')
       ).map((e) => e.value);
 
-      const profilePhotoInput = document.querySelector('input[type="file"][name="profilePhoto"]');
-      const profilePhoto = profilePhotoInput.files.length > 0 ? profilePhotoInput.files[0] : null;
+      const profilePhotoInput = document.querySelector(
+        'input[type="file"][name="profilePhoto"]'
+      );
+      const profilePhoto =
+        profilePhotoInput.files.length > 0 ? profilePhotoInput.files[0] : null;
 
-      const idCardPhotoInput = document.querySelector('input[type="file"][name="idCardPhoto"]');
-      const idCardPhoto = idCardPhotoInput.files.length > 0 ? idCardPhotoInput.files[0] : null;
+      const idCardPhotoInput = document.querySelector(
+        'input[type="file"][name="idCardPhoto"]'
+      );
+      const idCardPhoto =
+        idCardPhotoInput.files.length > 0 ? idCardPhotoInput.files[0] : null;
 
+      // ✅ تحقق من الحقول الخاصة بالمهندسين فقط
+      if (inputs.role.value === "Engineer") {
+        // تحقق من التخصصات
+        if (specialtiesArray.length === 0) {
+          showMessage("❌ Please select at least one specialty.", "red");
+          hasError = true;
+        }
 
+        // تحقق من بطاقة الهوية
+        if (!idCardPhoto) {
+          showMessage("❌ Please upload your ID card photo.", "red");
+          hasError = true;
+        }
 
+        // تحقق من الصورة الشخصية (اختياري)
+        if (!profilePhoto) {
+          showMessage("❌ Please upload your profile photo.", "red");
+          hasError = true;
+        }
+      }
 
       // ✅ إعادة ضبط الأخطاء
       Object.keys(errors).forEach((key) => {
@@ -86,7 +110,9 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       // ✅ التحقق من تطابق كلمتي المرور
-      if (inputs.password.value.trim() !== inputs.confirmPassword.value.trim()) {
+      if (
+        inputs.password.value.trim() !== inputs.confirmPassword.value.trim()
+      ) {
         errors.confirmPassword.textContent = "❌ Passwords do not match.";
         inputs.confirmPassword.classList.add("input-error");
         hasError = true;
@@ -94,20 +120,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // ✅ التحقق من الاسم الأول والأخير
       if (inputs.firstName.value.trim().length < 2) {
-        errors.firstName.textContent = "❌ First name must be at least 2 characters.";
+        errors.firstName.textContent =
+          "❌ First name must be at least 2 characters.";
         inputs.firstName.classList.add("input-error");
         hasError = true;
       }
 
       if (inputs.lastName.value.trim().length < 2) {
-        errors.lastName.textContent = "❌ Last name must be at least 2 characters.";
+        errors.lastName.textContent =
+          "❌ Last name must be at least 2 characters.";
         inputs.lastName.classList.add("input-error");
         hasError = true;
       }
 
-
-  
-    
       if (!iti.isValidNumber()) {
         errors.phone.textContent = "❌ Enter a valid phone number.";
         inputs.phone.classList.add("input-error");
@@ -117,10 +142,8 @@ document.addEventListener("DOMContentLoaded", function () {
         inputs.phone.value = iti.getNumber();
       }
 
-  
-
       // ✅ التحقق من السيرة الذاتية (bio)
-      if (inputs.bio.value.trim().length < 5) {
+      if (inputs.role.value !== "Admin" && inputs.bio.value.trim().length < 5) {
         errors.bio.textContent = "❌ Bio must be at least 5 characters.";
         inputs.bio.classList.add("input-error");
         hasError = true;
@@ -133,17 +156,14 @@ document.addEventListener("DOMContentLoaded", function () {
         hasError = true;
       }
 
-
-
       // ✅ التحقق من قبول الشروط
-      if (!inputs.termsAccepted.checked) {
+      if (inputs.role.value !== "Admin" && !inputs.termsAccepted.checked) {
         errors.termsAccepted.textContent = "❌ You must accept the terms.";
         hasError = true;
       }
 
-
       // ✅ التحقق من قبول الشروط
-      if (!inputs.termsAccepted.checked) {
+      if (inputs.role.value !== "Admin" && !inputs.termsAccepted.checked) {
         errors.termsAccepted.textContent = "❌ You must accept the terms.";
         hasError = true;
       }
@@ -167,8 +187,11 @@ document.addEventListener("DOMContentLoaded", function () {
       formData.append("confirmPassword", inputs.confirmPassword.value.trim());
       formData.append("bio", inputs.bio.value.trim());
       formData.append("role", inputs.role.value);
-      formData.append("termsAccepted", inputs.termsAccepted.checked ? "true" : "false");
-      formData.append("specialties", JSON.stringify(specialtiesArray));
+      formData.append(
+        "termsAccepted",
+        inputs.termsAccepted.checked ? "true" : "false"
+      );
+      specialtiesArray.forEach(s => formData.append("specialties", s));
       if (profilePhoto) {
         formData.append("profilePhoto", profilePhoto);
       }
@@ -186,7 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
           showMessage("Successfully registered! Redirecting...", "green");
 
           setTimeout(() => {
-            window.location.href = data.redirectPath || "/login";
+            window.location.href = `/payment-policy?engineerId=${data.user._id}`;
           }, 2000);
         } else {
           const errorText = await response.text();

@@ -1,72 +1,363 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Enter Code</title>
-    <link rel="stylesheet" href="/css/public.css">
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/darkMode.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Belleza&display=swap" rel="stylesheet">
-    <style>
-      .dark-mode {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: transparent;
-        border: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-        z-index: 1000;
-        transition: transform 0.3s ease;
-        color: goldenrod;
+<head>
+  <title>Verify Code</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/darkMode.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Belleza&display=swap" rel="stylesheet">
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      font-family: sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    /* Light mode styles */
+    body:not(.dark-mode) {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: #333;
+    }
+
+    body:not(.dark-mode) .card {
+      background: #fff;
+      color: #333;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.1);
+    }
+
+    body:not(.dark-mode) .card-header {
+      background-color: #f8f9fa;
+      color: #333;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    body:not(.dark-mode) .verify-icon {
+      color: #ffd700;
+    }
+
+    body:not(.dark-mode) .card-body h4 {
+      color: #333;
+    }
+
+    body:not(.dark-mode) .card-body p.text-muted {
+      color: #6c757d !important;
+    }
+
+    body:not(.dark-mode) .form-control {
+      border: 1px solid #ced4da;
+      background: #fff;
+      color: #333;
+    }
+
+    body:not(.dark-mode) .form-control:focus {
+      box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.25);
+      border-color: #ffd700;
+    }
+
+    body:not(.dark-mode) .btn-primary {
+      background: #ffd700;
+      color: #333;
+    }
+
+    body:not(.dark-mode) a.text-decoration-none {
+      color: #ffd700;
+    }
+
+    /* Dark mode styles */
+    body.dark-mode {
+      background: linear-gradient(135deg, #232526 0%, #414345 100%);
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .card {
+      background: #18191a;
+      color: #ffd700;
+    }
+
+    body.dark-mode .card-header {
+      background-color: #343a40;
+      color: #ffd700;
+      border-bottom: 1px solid #ffd700;
+    }
+
+    body.dark-mode .verify-icon {
+      color: #ffd700;
+    }
+
+    body.dark-mode .card-body h4 {
+      color: #ffd700;
+    }
+
+    body.dark-mode .card-body p.text-muted {
+      color: #adb5bd !important;
+    }
+
+    body.dark-mode .form-control {
+      border: 1px solid #495057;
+      background: #2c2f33;
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .form-control::placeholder {
+      color: #6c757d;
+    }
+
+    body.dark-mode .form-control:focus {
+      box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.25);
+      border-color: #ffd700;
+      background: #2c2f33;
+    }
+
+    body.dark-mode .btn-primary {
+      background: #ffd700;
+      color: #18191a;
+    }
+
+    body.dark-mode .btn-primary:hover {
+      background: #e6c300;
+    }
+
+    body.dark-mode a.text-decoration-none {
+      color: #ffd700;
+    }
+
+    /* Common styles */
+    .card {
+      border: none;
+      border-radius: 22px;
+      overflow: hidden;
+      max-width: 400px;
+      width: 90%;
+      margin: 20px;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.18);
+    }
+
+    .card-header {
+      text-align: center;
+      padding: 20px 15px;
+    }
+
+    .card-header h3 {
+      margin: 0;
+      font-weight: 600;
+      font-size: 1.8rem;
+      font-family: 'Belleza', sans-serif;
+    }
+
+    .verify-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+    }
+
+    .card-body h4 {
+      font-weight: 700;
+      font-size: 1.3rem;
+      font-family: 'Belleza', sans-serif;
+    }
+
+    .form-control {
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 1.1rem;
+      text-align: center;
+      letter-spacing: 4px;
+    }
+
+    .btn-primary {
+      border: none;
+      padding: 12px 0;
+      border-radius: 30px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      font-size: 1.1rem;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+    }
+
+    #message {
+      min-height: 24px;
+      font-size: 0.95rem;
+      text-align: center;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .success-message {
+      background-color: rgba(40, 167, 69, 0.1);
+      color: #28a745;
+      border: 1px solid rgba(40, 167, 69, 0.2);
+    }
+
+    body.dark-mode .success-message {
+      background-color: rgba(40, 167, 69, 0.15);
+      color: #5cff8a;
+      border: 1px solid rgba(40, 167, 69, 0.3);
+    }
+
+    .error-message {
+      background-color: rgba(220, 53, 69, 0.1);
+      color: #dc3545;
+      border: 1px solid rgba(220, 53, 69, 0.2);
+    }
+
+    body.dark-mode .error-message {
+      background-color: rgba(220, 53, 69, 0.15);
+      color: #ff5c6a;
+      border: 1px solid rgba(220, 53, 69, 0.3);
+    }
+
+    a.text-decoration-none {
+      font-weight: 500;
+    }
+
+    a.text-decoration-none:hover {
+      text-decoration: underline;
+    }
+
+    /* Dark mode toggle button */
+    button.dark-mode {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      padding: 0;
+      z-index: 1000;
+    }
+
+    button.dark-mode:hover {
+      transform: scale(1.1);
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    body.dark-mode button.dark-mode:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    button.dark-mode i {
+      font-size: 1.2rem;
+      color: #6c757d;
+      transition: all 0.3s ease;
+    }
+
+    body.dark-mode button.dark-mode i {
+      color: #ffd700;
+    }
+  </style>
+</head>
+<body>
+  <!-- Dark mode toggle button -->
+  <button onclick="toggleDarkMode()" class="dark-mode" aria-label="Toggle dark mode">
+    <i class="fa-solid fa-moon" aria-hidden="true" title="Toggle to dark mode"></i>
+  </button>
+
+  <div class="card">
+    <div class="card-header">
+      <h3>Verify Code</h3>
+    </div>
+    <div class="card-body p-4">
+      <div class="text-center mb-4">
+        <i class="fas fa-shield-alt verify-icon"></i>
+        <h4 class="mb-3">Enter Verification Code</h4>
+        <p class="text-muted">Enter the code sent to <%= email %></p>
+      </div>
+      <form id="verifyForm">
+        <input type="hidden" id="email" value="<%= email %>" />
+        <div class="mb-4">
+          <input type="text" id="code" class="form-control" placeholder="000000" maxlength="6" required autocomplete="off">
+        </div>
+        <div id="message" class="mb-3"></div>
+        <div class="text-center mb-3">
+          <button type="submit" class="btn btn-primary btn-lg w-100">
+            <span class="spinner-border spinner-border-sm d-none me-2" role="status" aria-hidden="true"></span>
+            Verify
+            <i class="fas fa-check ms-2"></i>
+          </button>
+        </div>
+        <div class="text-center mt-3">
+          <a href="/forgetPassword" class="text-decoration-none">Back to Forgot Password</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script>
+    document.getElementById("verifyForm").addEventListener("submit", async function (event) {
+      event.preventDefault();
+      const email = document.getElementById("email").value;
+      const codeInput = document.getElementById("code");
+      const code = codeInput.value.trim();
+      const messageDiv = document.getElementById("message");
+      const submitButton = this.querySelector('button[type="submit"]');
+      const spinner = submitButton.querySelector('.spinner-border');
+      messageDiv.innerHTML = "";
+      messageDiv.className = "mb-3";
+      if (!code || code.length !== 6 || !/^[0-9]{6}$/.test(code)) {
+        messageDiv.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>Please enter a valid 6-digit code.';
+        messageDiv.classList.add("error-message");
+        codeInput.focus();
+        return;
       }
-      .dark-mode:hover {
-        transform: scale(1.1);
+      submitButton.disabled = true;
+      spinner.classList.remove('d-none');
+      try {
+        const response = await fetch("/verifyCode", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, code })
+        });
+        const data = await response.text();
+        if (response.ok) {
+          messageDiv.innerHTML = '<i class="fas fa-check-circle me-2"></i>Code verified successfully. Redirecting...';
+          messageDiv.classList.add("success-message");
+          setTimeout(() => window.location.href = `/resetPassword?email=${encodeURIComponent(email)}`, 2000);
+        } else {
+          let errorMessage = data;
+          try {
+            const errorJson = JSON.parse(data);
+            errorMessage = errorJson.message || data;
+          } catch (e) {}
+          messageDiv.innerHTML = `<i class="fas fa-exclamation-circle me-2"></i>Error: ${errorMessage}`;
+          messageDiv.classList.add("error-message");
+        }
+      } catch (error) {
+        messageDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>An unexpected error occurred. Please try again later.';
+        messageDiv.classList.add("error-message");
+      } finally {
+        submitButton.disabled = false;
+        spinner.classList.add('d-none');
       }
-      .dark-mode i {
-        transition: transform 0.3s ease;
-      }
-      .dark-mode:hover i {
-        transform: rotate(15deg);
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container-fluid vh-100">
-      <div class="row h-100 align-items-center justify-content-center">
-        <div class="col-11 col-sm-8 col-md-6 col-lg-4">
-          <div class="card border-0 shadow-lg">
-            <div class="card-body p-5">
-              <div class="text-center mb-4">
-                <h4 class="fw-bold">Verification Code</h4>
-                <p class="text-muted">Enter the code sent to <%= email %></p>
-              </div>
-              <form id="verifyForm" style="font-family: sans-serif;">
-                <input type="hidden" id="email" value="<%= email %>" />
-                <div class="form-floating mb-3">
-                  <input type="text" id="code" class="form-control" placeholder="Enter code" required>
-                  <label for="code"><i class="bi bi-shield-lock me-2"></i>Verification Code</label>
-                </div>
-                <button type="submit" class="btn w-100 mb-3" style="background-color: goldenrod; color: white;">
-                  <span class="spinner-border spinner-border-sm d-none me-2" role="status"></span>
-                  Verify
-                </button>
-                <div class="text-center">
-                  <a href="/forgetPassword" class="text-decoration-none">Back to Forgot Password</a>
-                </div>
-                <div id="message" class="mt-3 text-center" style="font-weight: bold;"></div>
-              </form>
+    });
+  </script>
+</body>
+</html>
+
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <button onclick="toggleDarkMode()" class="dark-mode">
-      <i class="fa-solid fa-moon"></i>
-    </button>
+
 
     <script>
       document.getElementById("verifyForm").addEventListener("submit", async function (event) {

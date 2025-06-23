@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- إضافة رابط Font Awesome -->
+    <!-- Add Font Awesome link -->
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
       rel="stylesheet">
@@ -26,6 +26,9 @@
 
     <link rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- fonts  -->
     <link href="https://fonts.googleapis.com/css2?family=Belleza&display=swap"
       rel="stylesheet">
@@ -162,7 +165,7 @@ body {
     .card-body {
         padding: 1.5rem;
     }
-    
+
     .events-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -174,46 +177,56 @@ body {
   </head>
   <body>
     <style>
- 
+
       .dropdown {
           position: relative;
       }
-      
+
       .dropdown-menu {
           position: absolute;
           top: 100%;
           left: 0;
           background: white;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
           border-radius: 5px;
           display: none;
           flex-direction: column;
           min-width: 150px;
       }
-      
+
       .dropdown-menu a {
           display: block;
           padding: 10px;
           color: black;
           text-decoration: none;
       }
-      
+
       .dropdown-menu a:hover {
-          background: #f4f4f4;
+          background: #000000;
+          color: #ffffff;
       }
-      
-      
+
+
       .dropdown:hover .dropdown-menu {
           display: flex;
       }
       
+      .logo-hero {
+    background: linear-gradient(90deg, #d4af37 0%, #ffd700 50%, #bfa14a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
+
       </style>
     <div class="container" data-aos="zoom-in" data-aos-duration="1200">
       <div class="row">
         <div
           class="navv-bar py-4 d-flex justify-content-between align-items-center">
           <!-- Logo Section -->
-          <div class="logo" style="font-size: 35px;" data-aos="fade-down"
+          <div class="logo-hero" style="font-size: 35px;" data-aos="fade-down"
             data-aos-duration="1200">
             Decore&More
           </div>
@@ -229,38 +242,62 @@ body {
               <li><a href="/#op" class="nav-link">About</a></li>
               <li class="dropdown">
                 <a href="/#od" class="nav-link">Services</a>
-              <div class="dropdown-menu">
-                <a href="/eng?occasion=Birthday" class="nav-link">Birthday</a>
-                <a href="/eng?occasion=Wedding" class="nav-link">Wedding</a>
-                <a href="/eng?occasion=Engagement" class="nav-link">Engagement</a>
-                <a href="/eng?occasion=BabyShower" class="nav-link">BabyShower</a>
-              </div>
+                <div class="dropdown-menu">
+                  <a href="/packages/by-occasion?occasion=Birthday"
+                    class="nav-link">Birthday</a>
+                  <a href="/packages/by-occasion?occasion=Wedding"
+                    class="nav-link">Wedding</a>
+                  <a href="/packages/by-occasion?occasion=Engagement"
+                    class="nav-link">Engagement</a>
+                  <a href="/packages/by-occasion?occasion=BabyShower"
+                    class="nav-link">BabyShower</a>
+                </div>
               </li>
               <li><a href="/designers" class="nav-link">Designers</a></li>
-              <li><a href="/eng" class="nav-link">Enginners</a></li>
-              <li><a href="/contact" class="nav-link">Contact</a></li>
-              <li><a href="/Favorite" class="nav-link">Favorite</a></li>
-              <% if (user && user.name) { %>
-                <li class="dropdown">
-                  <a href="#" class="nav-link d-flex align-items-center">
-                    <i class="fa-solid fa-user"></i>
-                    <span><%= user.name %></span>
-                  </a>
-                  <div class="dropdown-menu">
-                    <a href="/userProfile/<%= user._id %>" class="nav-link">
-                      <i class="fas fa-user me-2"></i>Profile
-                    </a>
-                    <a href="#" class="nav-link" onclick="logout()">
-                      <i class="fas fa-sign-out-alt me-2"></i>Logout
-                    </a>
-                  </div>
-                </li>
-                <% }else{ %>  
-                  <li><a href="/login" class="nav-link"><i
-                    class="fa-solid fa-user"></i></a></li>
+              <% if (!user || !user.name) { %>
+              <li class="dropdown">
+                <a href="#" class="nav-link">Register</a>
+                <div class="dropdown-menu">
+                  <a href="/registerCustomer">Customer</a>
+                  <a href="/register">Engineer</a>
+                </div>
+              </li>
               <% } %>
-              <button onclick="toggleDarkMode()" class="dark-mode">
-                <li class="fa-solid fa-moon"></li>
+
+              <% if (!user || !user.name) { %>
+              <li class="dropdown">
+                <a href="#" class="nav-link">Login</a>
+                <div class="dropdown-menu">
+                  <a href="/login">Customer</a>
+                  <a href="/login">Engineer</a>
+                </div>
+              </li>
+              <% } %>
+
+              <li><a href="/contact" class="nav-link">Contact</a></li>
+
+              <% if (user && user.name) { %>
+              <li class="dropdown">
+                <a href="#" class="nav-link d-flex align-items-center">
+                  <i class="fa-solid fa-user"></i>
+                  <span><%= user.name %></span>
+                </a>
+                <div class="dropdown-menu">
+                  <a href="/userProfile/<%= user.id %>" class="nav-link">
+                    <i class="fas fa-user me-2"></i>Profile
+                  </a>
+                  <a href="#" class="nav-link" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                  </a>
+                </div>
+              </li>
+              <% }else{ %>
+
+              <% } %>
+              <button onclick="toggleDarkMode()" class="dark-mode"
+                aria-label="Toggle dark mode">
+                <i class="fa-solid fa-moon" aria-hidden="true"
+                  title="Toggle to dark mode"></i>
               </button>
             </ul>
           </div>
@@ -275,7 +312,7 @@ body {
         <div class="col-12 col-lg-8">
           <div class="card shadow-lg border-0">
             <div class="card-body p-4 p-md-5">
-              <h1 class="text-center mb-4" style="font-size: 35px;"> Join our
+              <h1 class="text-center mb-4 section-gradient-title" style="font-size: 35px;"> Join our
                 network of talented designers and showcase your skills to a <br>
                 world of clients looking for extraordinary events</h1>
               <form action="/register" method="post" class="needs-validation"
@@ -287,7 +324,7 @@ body {
                     <input type="text" name="firstName" class="form-control"
                       style="font-family: sans-serif;" required minlength="2"
                       placeholder="Enter your first name">
-                      <span id="firstNameError" class="error-message"></span>
+                    <span id="firstNameError" class="error-message"></span>
                   </div>
                   <div class="col-md-6">
                     <label class="form-label"
@@ -296,7 +333,7 @@ body {
                       required
                       minlength="2" style="font-family: sans-serif;"
                       placeholder="Enter your last name">
-                      <span id="lastNameError" class="error-message"></span>
+                    <span id="lastNameError" class="error-message"></span>
                   </div>
                   <div class="col-md-6">
                     <label class="form-label"
@@ -304,7 +341,7 @@ body {
                     <input type="email" name="email" class="form-control"
                       style="font-family: sans-serif;" required
                       placeholder="your.email@gmail.com">
-                      <span id="emailError" class="error-message"></span>
+                    <span id="emailError" class="error-message"></span>
                   </div>
 
                   <div class="col-md-6">
@@ -312,36 +349,39 @@ body {
                       style="font-family: sans-serif;">Phone Number</label>
                     <input type="tel" id="phone" name="phone"
                       class="form-control" required>
-                      <span id="phoneError" class="error-message"></span>
+                    <span id="phoneError" class="error-message"></span>
                   </div>
 
                   <div class="col-md-6 position-relative">
-                    <label class="form-label"
-                      style="font-family: sans-serif;">Password</label>
-                    <input type="password" name="password" class="form-control"
-                      style="font-family: sans-serif;" required minlength="6"
-                      id="password">
-                    <i class="bi bi-eye password-toggle"></i>
-                    <span id="passwordError" class="error-message"></span>
+  <label class="form-label" style="font-family: sans-serif;">Password</label>
+  <input type="password" name="password" class="form-control" id="password" required minlength="6">
+  <i class="bi bi-eye password-toggle" data-target="password"
+     style="position: absolute; top: 50%; right: 1rem; transform: translateY(-50%); cursor: pointer; color: gray;"></i>
+  <span id="passwordError" class="error-message"></span>
+</div>
 
-                  </div>
+                  <div class="col-md-6 position-relative">
+  <label class="form-label" style="font-family: sans-serif;">Confirm Password</label>
+  <input type="password" name="confirmPassword" class="form-control" id="confirmPassword" required>
+  <i class="bi bi-eye password-toggle" data-target="confirmPassword"
+     style="position: absolute; top: 50%; right: 1rem; transform: translateY(-50%);
+            cursor: pointer; color: gray;"></i>
+  <span id="confirmPasswordError" class="error-message"></span>
+</div>
+
+
                   <div class="col-md-6">
                     <label class="form-label"
-                      style="font-family: sans-serif;">Confirm Password</label>
-                    <input type="password" name="confirmPassword"
-                      class="form-control" required>
-                      <span id="confirmPasswordError"
-                        class="error-message"></span>
-                  </div>
-
-                  <div class="col-md-6">
-                    <select name="role" id="role">
+                      style="font-family: sans-serif;">Role</label>
+                    <select name="role" id="role" class="form-control"
+                      onchange="toggleFieldsBasedOnRole()">
                       <option value="Engineer">Engineer</option>
+                      <option value="Admin">Admin</option>
                     </select>
                     <span id="roleError" class="error-message"></span>
                   </div>
 
-                  <div class="col-12">
+                  <div class="col-12 engineer-only-field">
                     <label class="form-label"
                       style="font-family: sans-serif;">Profile Photo</label>
                     <div class="drop-zone">
@@ -356,7 +396,7 @@ body {
                     </div>
                   </div>
 
-                  <div class="col-12">
+                  <div class="col-12 engineer-only-field">
                     <label class="form-label"
                       style="font-family: sans-serif;">ID Card Photo</label>
                     <div class="drop-zone">
@@ -369,7 +409,7 @@ body {
                     </div>
                   </div>
 
-                  <div class="col-12">
+                  <div class="col-12 engineer-only-field">
                     <label class="form-label"
                       style="font-family: sans-serif;">Events
                       Specialization</label>
@@ -377,7 +417,7 @@ body {
                       <div class="event-type">
                         <input type="checkbox" id="birthday" name="specialties"
                           value="birthday"
-                          class="event-checkbox" required>
+                          class="event-checkbox" >
                         <label style="font-family: sans-serif;"
                           for="birthday"><i class="bi bi-cake2"
                             style="color: goldenrod;"></i>Birthday</label>
@@ -385,7 +425,7 @@ body {
                       <div class="event-type">
                         <input type="checkbox" id="engagement"
                           name="specialties" value="engagement"
-                          class="event-checkbox" required>
+                          class="event-checkbox" >
                         <label style="font-family: sans-serif;"
                           for="engagement"><i class="bi bi-heart-fill"
                             style="color: goldenrod;"></i>Engagement</label>
@@ -393,7 +433,7 @@ body {
                       <div class="event-type">
                         <input type="checkbox" id="wedding" name="specialties"
                           value="wedding"
-                          class="event-checkbox" required>
+                          class="event-checkbox" >
                         <label style="font-family: sans-serif;" for="wedding"><i
                             class="bi bi-hearts"
                             style="color: goldenrod;"></i>Wedding</label>
@@ -401,40 +441,42 @@ body {
                       <div class="event-type">
                         <input type="checkbox" id="babyshower"
                           name="specialties" value="babyShower"
-                          class="event-checkbox" required>
+                          class="event-checkbox" >
                         <label style="font-family: sans-serif;"
                           for="babyshower"><i class="bi bi-stars"
                             style="color: goldenrod;"></i>Baby Showers</label>
                       </div>
                     </div>
                   </div>
-                  <div class="col-12">
+                  <div class="col-12 engineer-only-field">
                     <label class="form-label"
                       style="font-family: sans-serif;">Personal Bio</label>
                     <textarea name="bio" class="form-control" rows="4"
                       maxlength="300"
                       style="font-family: sans-serif;"
                       placeholder="Share your design philosophy and creative approach"></textarea>
-                      <span id="bioError" class="error-message"></span>
+                    <span id="bioError" class="error-message"></span>
                     <div class="char-count text-end"><span>0</span>/300</div>
-                    <div class="col-12">
-                      <div class="form-check">
-                        <input type="hidden" name="termsAccepted" value="false">
-                        <input class="form-check-input" type="checkbox" required
-                          id="termsAccepted" value="true">
-                          <span id="termsAcceptedError" class="error-message"></span>
-                        <label class="form-check-label"
-                          style="color: goldenrod ; font-family: sans-serif;"
-                          for="terms">I agree to the Terms of Service and
-                          Privacy
-                          Policy</label>
-                      </div>
-                    </div> 
+                  </div>
+
+                  <div class="col-12 engineer-only-field">
+                    <div class="form-check">
+                      <input type="hidden" name="termsAccepted" value="false">
+                      <input class="form-check-input" type="checkbox" required
+                        id="termsAccepted" value="true">
+                      <span id="termsAcceptedError"
+                        class="error-message"></span>
+                      <label class="form-check-label"
+                        style="color: goldenrod ; font-family: sans-serif;"
+                        for="terms">I agree to the Terms of Service and
+                        Privacy
+                        Policy</label>
+                    </div>
                   </div>
 
                   <div class="col-12 text-center">
                     <button type="submit" class="btn  px-5"
-                      style="font-family: sans-serif; background-color: goldenrod; color: white;">Regsiter</button>
+                      style="font-family: sans-serif; background-color: goldenrod; color: white;">Register</button>
                   </div>
                 </div>
                 <div id="message" style="display: none;"></div>
@@ -447,64 +489,92 @@ body {
     <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const checkboxes = document.querySelectorAll(".event-checkbox");
-        
+
                 checkboxes.forEach(checkbox => {
                     checkbox.addEventListener("change", function () {
                         const parentDiv = this.closest(".event-type");
                         if (this.checked) {
-                            parentDiv.style.border = "2px solid goldenrod"; 
+                            parentDiv.style.border = "2px solid goldenrod";
                         } else {
-                            parentDiv.style.border = ""; 
+                            parentDiv.style.border = "";
                         }
                     });
                 });
             });
+
+            // Function to toggle fields based on role selection
+            function toggleFieldsBasedOnRole() {
+                const roleSelect = document.getElementById('role');
+                const engineerOnlyFields = document.querySelectorAll('.engineer-only-field');
+
+                if (roleSelect.value === 'Admin') {
+                    // Hide engineer-only fields for Admin
+                    engineerOnlyFields.forEach(field => {
+                        field.style.display = 'none';
+                        // Remove required attribute from inputs in hidden fields
+                        const inputs = field.querySelectorAll('input, textarea, select');
+                        inputs.forEach(input => {
+                            input.removeAttribute('required');
+                        });
+                    });
+                } else {
+                    // Show engineer-only fields for Engineer
+                    engineerOnlyFields.forEach(field => {
+                        field.style.display = 'block';
+                        // Add back required attribute for specific inputs
+                        const requiredInputs = field.querySelectorAll('input[name="idCardPhoto"], .event-checkbox ,#termsAccepted');
+                        requiredInputs.forEach(input => {
+                            input.setAttribute('required', 'required');
+                        });
+                    });
+                }
+            }
         </script>
 
     <style>
 
-  
+
   footer a:hover {
       opacity: 0.8;
       transition: all 0.3s ease;
   }
-  
+
   footer {
       border-top: 2px solid var(--border);
   }
-  
+
   footer h5 {
       font-weight: 600;
       letter-spacing: 1px;
   }
-  
+
   footer .social-links a:hover {
       transform: translateY(-3px);
   }
-  
+
   footer .list-unstyled li a:hover {
       padding-left: 5px;
   }
-  
+
   footer .container {
       max-width: 1200px;
   }
-  
+
   @media (max-width: 768px) {
       footer h2.display-4 {
           font-size: 2.5rem;
       }
-      
+
       footer .col-md-4 {
           text-align: center;
       }
-      
+
       footer .d-flex.gap-3 {
           justify-content: center;
       }
   }
   </style>
-  <script>
+    <script>
     function logout() {
     fetch("/logout", { method: "POST" }).then(() => (window.location.href = "/login"));
   }
@@ -535,10 +605,12 @@ body {
                   class="text-warning text-decoration-none">Home</a></li>
               <li class="mb-2"><a href="/#op"
                   class="text-warning text-decoration-none">About</a></li>
+              <% if (!user) { %>
               <li class="mb-2"><a href="/login"
                   class="text-warning text-decoration-none">login</a></li>
               <li class="mb-2"><a href="/register"
                   class="text-warning text-decoration-none">register</a></li>
+              <% } %>
 
             </ul>
           </div>
@@ -564,29 +636,33 @@ body {
       </div>
     </footer>
 
-    <script src="../user/register.js"></script>
-    <script src="../user/login.js"></script>
+    <script src="/js/register.js"></script>
+    <script src="/js/login.js"></script>
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/js/darkMode.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <script>
+<script>
+  document.querySelectorAll('.password-toggle').forEach(toggle => {
+    toggle.addEventListener('click', function () {
+      const targetId = this.getAttribute('data-target');
+      const input = document.getElementById(targetId);
 
-
-// show Password
-document.querySelector('.password-toggle').addEventListener('click', function() {
-  const passwordField = document.getElementById('password');
-  const type = passwordField.type === 'password' ? 'text' : 'password';
-  passwordField.type = type;
-});
-
-
-
+      if (input) {
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        this.classList.toggle('bi-eye');
+        this.classList.toggle('bi-eye-slash');
+      }
+    });
+  });
 </script>
 
 
-<style>
+    <style>
   .input-error {
     border: 2px solid red;
     background-color: #ffe6e6;
@@ -599,8 +675,11 @@ document.querySelector('.password-toggle').addEventListener('click', function() 
     margin-top: 5px;
 }
 
-</style>
+.engineer-only-field {
+    transition: all 0.3s ease;
+}
 
+</style>
 
   </body>
 </html>

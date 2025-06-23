@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation | Decore&More</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      rel="stylesheet">
+    <link rel="stylesheet" href="/css/public.css">
+    <style>
+    body {
+      background: #f8f9fa;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .page-title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: goldenrod;
+      margin-bottom: 1.5rem;
+    }
+    .card {
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      border: none;
+    }
+    .booking-details {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .detail-row {
+      padding: 12px 0;
+      border-bottom: 1px solid #dee2e6;
+    }
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+    .detail-label {
+      font-weight: 600;
+      color: #495057;
+    }
+    .detail-value {
+      color: #212529;
+    }
+    .btn-gold {
+      background-color: goldenrod;
+      color: white;
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+    }
+    .btn-gold:hover {
+      background-color: #daa520;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      color: white;
+    }
+    .btn-back {
+      background-color: #6c757d;
+      color: white;
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+    }
+    .btn-back:hover {
+      background-color: #5a6268;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      color: white;
+    }
+    .next-steps {
+      background-color: #e8f5e9;
+      border-left: 4px solid #4caf50;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 30px;
+    }
+    .next-steps h5 {
+      color: #2e7d32;
+      margin-bottom: 15px;
+    }
+    .next-steps ul {
+      padding-left: 20px;
+    }
+    .next-steps li {
+      margin-bottom: 8px;
+      color: #1b5e20;
+    }
+  </style>
+    <link rel="stylesheet" href="/css/darkMode.css">
+    <script src="/js/darkMode.js"></script>
+  </head>
+  <body>
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="card p-4">
+            <h2 class="page-title text-center section-gradient-title">Review Your Booking</h2>
+
+            <!-- Booking Details -->
+
+            <div class="booking-details mb-4">
+              <div class="detail-row">
+                <div class="row">
+                  <div class="col-md-4 detail-label">Booking ID</div>
+                  <div class="col-md-8 detail-value"><%= bookingId %></div>
+                </div>
+              </div>
+
+              <div class="detail-row">
+                <div class="row">
+                  <div class="col-md-4 detail-label">Package</div>
+                  <div class="col-md-8 detail-value"><%= package.name %></div>
+                </div>
+              </div>
+              <div class="detail-row">
+                <div class="row">
+                  <div class="col-md-4 detail-label">Event Type</div>
+                  <div class="col-md-8 detail-value"><%= package.eventType
+                    %></div>
+                </div>
+              </div>
+              <div class="detail-row">
+                <div class="row">
+                  <div class="col-md-4 detail-label">Event Date</div>
+                  <div class="col-md-8 detail-value"><%= eventDate %></div>
+                </div>
+              </div>
+              <div class="detail-row">
+                <div class="row">
+                  <div class="col-md-4 detail-label">Original Price</div>
+                  <div class="col-md-8 detail-value"><%= originalPrice %>
+                    EGP</div>
+                </div>
+              </div>
+              <div class="detail-row">
+                <div class="row">
+                  <div class="col-md-4 detail-label">Total Price</div>
+                  <div class="col-md-8 detail-value"><%= price %> EGP</div>
+                </div>
+              </div>
+              <div class="detail-row">
+                <div class="row">
+                  <div class="col-md-4 detail-label">Deposit Required</div>
+                  <div class="col-md-8 detail-value text-success"><%= deposit %>
+                    EGP</div>
+                </div>
+              </div>
+              <div class="detail-row">
+                <div class="row">
+                  <div class="col-md-4 detail-label">Remaining Balance</div>
+                  <div class="col-md-8 detail-value"><%= price - deposit %>
+                    EGP</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-center gap-4 mt-4">
+              <button onclick="history.back()" class="btn btn-back">
+                <i class="fas fa-arrow-left me-2"></i>Back
+              </button>
+              <form action="/proceed-to-payment" method="POST">
+                <input type="hidden" name="bookingId" value="<%= bookingId %>">
+                <input type="hidden" name="packageId"
+                  value="<%= package._id %>">
+                <input type="hidden" name="packageName"
+                  value="<%= package.name %>">
+                <input type="hidden" name="eventDate" value="<%= eventDate %>">
+                <input type="hidden" name="price" value="<%= price %>">
+                <input type="hidden" name="deposit" value="<%= deposit %>">
+                <input type="hidden" name="eventType" value="<%= eventType %>">
+                <button type="submit" class="btn btn-gold">
+                  <i class="fas fa-credit-card me-2"></i>Proceed to Payment
+                </button>
+              </form>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="next-steps">
+              <h5><i class="fas fa-info-circle me-2 section-gradient-title"></i>What happens next?</h5>
+              <ul>
+                <li>Review your booking details carefully</li>
+                <li>Click "Proceed to Payment" to complete your booking</li>
+                <li>You'll be redirected to our secure payment page</li>
+                <li>After payment, the designer will contact you within 24
+                  hours</li>
+                <li>The remaining <%= price - deposit %> EGP will be paid in
+                  cash to the designer onsite</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>

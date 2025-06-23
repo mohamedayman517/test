@@ -1,0 +1,95 @@
+<!-- Add this in the profile section where you want the favorite button to appear -->
+<% if (user && user.role === 'user' && userData.role === 'Engineer') { %>
+    <button id="favoriteBtn" class="btn btn-outline-warning" onclick="toggleFavorite('<%= userData._id %>')">
+        <i class="bi bi-heart-fill"></i> Add to Favorites
+    </button>
+<% } %>
+
+<!-- Add this script section at the bottom of the file -->
+<script>
+async function toggleFavorite(engineerId) {
+    try {
+        const response = await fetch('/api/favorites/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ engineerId })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            Swal.fire({
+                title: 'Success!',
+                text: 'Success Add to Favourite',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false,
+                position: 'top-end',
+                toast: true
+            });
+
+            // تغيير شكل الزر
+            const favoriteBtn = document.getElementById('favoriteBtn');
+            favoriteBtn.classList.remove('btn-outline-warning');
+            favoriteBtn.classList.add('btn-warning');
+            favoriteBtn.innerHTML = '<i class="bi bi-heart-fill"></i> Added to Favorites';
+            favoriteBtn.disabled = true;
+        } else {
+            if (data.error === "Engineer already in favorites") {
+                Swal.fire({
+                    title: 'Warning!',
+                    text: 'Engineer Already Exits',
+                    icon: 'info',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    position: 'top-end',
+                    toast: true
+                });
+            } else {
+                throw new Error(data.error);
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+            title: 'Error!',
+            text: 'Error During Add Engineer',
+            icon: 'error',
+            timer: 2000,
+            showConfirmButton: false,
+            position: 'top-end',
+            toast: true
+        });
+    }
+}
+
+// التحقق مما إذا كان المهندس مفضل بالفعل عند تحميل الصفحة
+async function checkIfFavorite(engineerId) {
+    try {
+        const response = await fetch('/api/favorites');
+        const favorites = await response.json();
+        
+        const isFavorite = favorites.some(fav => fav.engineerId === engineerId);
+        
+        if (isFavorite) {
+            const favoriteBtn = document.getElementById('favoriteBtn');
+            if (favoriteBtn) {
+                favoriteBtn.classList.remove('btn-outline-warning');
+                favoriteBtn.classList.add('btn-warning');
+                favoriteBtn.innerHTML = '<i class="bi bi-heart-fill"></i> Added to Favorites';
+                favoriteBtn.disabled = true;
+            }
+        }
+    } catch (error) {
+        console.error('Error checking favorite status:', error);
+    }
+}
+
+// تشغيل الفحص عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', () => {
+    const engineerId = '<%= userData._id %>';
+    checkIfFavorite(engineerId);
+});
+</script> 

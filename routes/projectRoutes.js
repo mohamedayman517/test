@@ -57,13 +57,13 @@ router.post("/create", upload.single("projectImage"), async (req, res) => {
 });
 
 // Get a single project
-router.get("/projects/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);
     if (!project) {
       return res.status(404).json({ success: false, message: "Project not found" });
     }
-    res.json(project);
+    res.json({ success: true, project });
   } catch (error) {
     console.error("Error fetching project:", error);
     res.status(500).json({ success: false, message: "Server error fetching project" });
@@ -71,7 +71,7 @@ router.get("/projects/:id", async (req, res) => {
 });
 
 // Update a project
-router.put("/projects/:id", upload.single("projectImage"), async (req, res) => {
+router.put("/:id", upload.single("projectImage"), async (req, res) => {
   try {
     const { projectName, projectType, projectArea, projectPrice } = req.body;
     
@@ -122,17 +122,17 @@ router.put("/projects/:id", upload.single("projectImage"), async (req, res) => {
 });
 
 // Delete a project
-router.delete("/projects/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const projectId = req.params.id;
     const deletedProject = await Project.findByIdAndDelete(projectId);
     if (!deletedProject) {
-      return res.status(404).send("Project not found.");
+      return res.status(404).json({ success: false, message: "Project not found." });
     }
-    res.status(200).json({ message: "Project deleted successfully." });
+    res.status(200).json({ success: true, message: "Project deleted successfully." });
   } catch (error) {
     console.error("Error deleting project:", error);
-    res.status(500).send("Server error while deleting project.");
+    res.status(500).json({ success: false, message: "Server error while deleting project." });
   }
 });
 

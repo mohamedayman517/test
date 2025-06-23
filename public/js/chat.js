@@ -1,170 +1,213 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const socket = io();
   const chatBox = document.getElementById('chat-box');
   const messageInput = document.getElementById('messageInput');
-  const sendButton = document.getElementById('sendMessageButton');
+  const sendMessageButton = document.getElementById('sendMessageButton');
+  const chatList = document.getElementById('chat-list');
   
   // Get user IDs from window.chatData
   const userId = window.chatData?.userId;
-  const engineerId = window.chatData?.engineerId;
-  const senderType = window.chatData?.senderType || 'user';
-  const isEngineer = window.chatData?.isEngineer || false;
+  const userId1 = window.chatData?.userId1;
+  const userId2 = window.chatData?.userId2;
+  const isEngineer = window.chatData?.isEngineer === 'true';
 
-  if (!userId || !engineerId) {
-    console.error('Missing user IDs');
+  if (!userId) {
+    console.error('Missing user ID');
     chatBox.innerHTML = '<div class="error">Error: Missing user information. Please refresh the page.</div>';
     return;
   }
 
   // Check if engineer is trying to message themselves
-  if (isEngineer && userId === engineerId) {
+  if (isEngineer && userId1 === userId2) {
     console.error('Engineer cannot message themselves');
     chatBox.innerHTML = '<div class="error">Error: Engineers cannot message themselves. Please select a user to chat with.</div>';
-    document.getElementById('input-area').style.display = 'none';
+    if (document.getElementById('input-area')) {
+      document.getElementById('input-area').style.display = 'none';
+    }
     return;
   }
 
-  console.log('Chat data:', { userId, engineerId, senderType, isEngineer });
+  console.log('Chat data:', { userId, userId1, userId2, isEngineer });
 
-  // Join the specific chat room with both IDs
-  // Create a consistent room ID by sorting the IDs alphabetically
-  const roomId = [userId, engineerId].sort().join('-');
-  console.log('Joining room:', roomId);
-  socket.emit('joinChatRoom', { userId, engineerId });
-  
-  // Also join the notification rooms
-  if (isEngineer) {
-    socket.emit('joinEngineerRoom', { engineerId });
-  } else {
-    socket.emit('joinUserRoom', { userId });
-  }
-
-  // Load existing messages
-  function loadMessages() {
-    fetch(`/messages/${userId}/${engineerId}`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(messages => {
-        chatBox.innerHTML = '';
-        messages.forEach(message => {
-          appendMessage(message);
-        });
-        // Mark messages as read
-        markMessagesAsRead();
-      })
-      .catch(error => {
-        console.error('Error loading messages:', error);
-        chatBox.innerHTML = '<div class="error">Error loading messages. Please try again.</div>';
-      });
-  }
-
-  // Append a message to the chat box
-  function appendMessage(message) {
+  // Function to add a message to the chat box
+  function addMessage(message, isSelf) {
     const messageContainer = document.createElement('div');
-    messageContainer.className = `message-container ${message.senderType === 'user' ? 'self' : ''}`;
+    messageContainer.className = `message-container ${isSelf ? 'self' : ''}`;
+    messageContainer.dataset.messageId = message._id;
     
     const senderName = document.createElement('div');
     senderName.className = 'sender-name';
-    senderName.textContent = message.senderName;
+    senderName.textContent = message.sender.name;
     
-    const messageElement = document.createElement('div');
-    messageElement.className = `message ${message.senderType === 'user' ? 'self' : ''}`;
-    messageElement.textContent = message.content;
+    const messageContent = document.createElement('div');
+    messageContent.className = `message ${isSelf ? 'self' : ''}`;
+    messageContent.textContent = message.content;
+    
+    const timestamp = document.createElement('div');
+    timestamp.className = 'message-timestamp';
+    timestamp.textContent = new Date(message.timestamp).toLocaleString();
     
     messageContainer.appendChild(senderName);
-    messageContainer.appendChild(messageElement);
+    messageContainer.appendChild(messageContent);
+    messageContainer.appendChild(timestamp);
     chatBox.appendChild(messageContainer);
+    
+    // Scroll to bottom
     chatBox.scrollTop = chatBox.scrollHeight;
   }
 
-  // Mark messages as read
-  function markMessagesAsRead() {
-    fetch('/mark-read', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        userId,
-        engineerId
-      })
-    })
-    .catch(error => {
-      console.error('Error marking messages as read:', error);
-    });
-  }
-
-  // Handle sending messages
-  sendButton.addEventListener('click', function() {
+  // Function to send a message
+  async function sendMessage() {
     const content = messageInput.value.trim();
-    if (content) {
-      // Check if engineer is trying to message themselves
-      if (isEngineer && userId === engineerId) {
-        console.error('Engineer cannot message themselves');
-        showErrorAlert('Engineers cannot message themselves. Please select a user to chat with.');
-        return;
+    if (!content) return;
+
+    try {
+      const chatId = window.chatData.chatId;
+      if (!chatId) {
+        throw new Error('No chat ID available');
       }
 
-      const messageData = {
-        userId,
-        engineerId,
-        content,
-        senderType
-      };
-
-      console.log('Sending message:', messageData);
-
-      fetch('/messages/send', {
+      const response = await fetch(`/api/chats/${chatId}/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(messageData)
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        if (data.success) {
-          // Don't append the message here, it will be handled by the socket event
-          messageInput.value = '';
-        } else {
-          console.error('Error sending message:', data.error);
-          showErrorAlert('Failed to send message. Please try again.');
-        }
-      })
-      .catch(error => {
-        console.error('Error sending message:', error);
-        showErrorAlert('Failed to send message. Please try again.');
+        body: JSON.stringify({ content })
       });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          window.location.href = '/login';
+          return;
+        }
+        throw new Error('Failed to send message');
+      }
+
+      const data = await response.json();
+      addMessage(data.message, true);
+      messageInput.value = '';
+      
+      // Poll for new messages after sending
+      loadMessages();
+    } catch (error) {
+      console.error('Error sending message:', error);
+      alert('Failed to send message. Please try again.');
+    }
+  }
+
+  // Function to load messages
+  async function loadMessages() {
+    try {
+      if (!userId1 || !userId2) {
+        console.error('Missing user IDs for chat');
+        return;
+      }
+
+      const response = await fetch(`/api/chat/${userId1}/${userId2}`);
+      if (!response.ok) {
+        if (response.status === 401) {
+          window.location.href = '/login';
+          return;
+        }
+        throw new Error('Failed to load messages');
+      }
+
+      const data = await response.json();
+      
+      // Store the chat ID for future use
+      window.chatData.chatId = data._id;
+      
+      // Only clear and reload if we have new messages
+      if (data.messages && data.messages.length > 0) {
+        const lastMessage = chatBox.querySelector('.message-container:last-child');
+        const lastMessageId = lastMessage?.dataset?.messageId;
+        const newMessages = data.messages.filter(msg => 
+          !lastMessageId || msg._id > lastMessageId
+        );
+        
+        if (newMessages.length > 0) {
+          if (!lastMessageId) {
+            chatBox.innerHTML = '';
+          }
+          newMessages.forEach(message => {
+            const isSelf = message.sender._id === userId;
+            addMessage(message, isSelf);
+          });
+        }
+      } else if (!chatBox.innerHTML.trim()) {
+        chatBox.innerHTML = '<div class="no-messages">No messages yet. Start the conversation!</div>';
+      }
+    } catch (error) {
+      console.error('Error loading messages:', error);
+      if (!chatBox.querySelector('.error')) {
+        chatBox.innerHTML = '<div class="error">Error loading messages. Please try again.</div>';
+      }
+    }
+  }
+
+  // Function to load chat list
+  async function loadChatList() {
+    try {
+      const response = await fetch(`/api/chats/user/${userId}`);
+      if (!response.ok) {
+        if (response.status === 401) {
+          window.location.href = '/login';
+          return;
+        }
+        throw new Error('Failed to load chat list');
+      }
+
+      const chats = await response.json();
+      chatList.innerHTML = '';
+
+      if (chats.length === 0) {
+        chatList.innerHTML = '<div class="no-chats">No chats yet</div>';
+        return;
+      }
+
+      chats.forEach(chat => {
+        const chatItem = document.createElement('div');
+        chatItem.className = 'chat-item';
+        if (chat.otherParticipant._id === (userId2 || userId1)) {
+          chatItem.classList.add('active');
+        }
+        
+        chatItem.innerHTML = `
+          <div class="chat-item-name">${chat.otherParticipant.name}</div>
+          ${chat.lastMessage ? `
+            <div class="chat-item-preview">
+              <span class="preview-text">${chat.lastMessage.content}</span>
+              <span class="preview-time">${new Date(chat.lastMessage.timestamp).toLocaleString()}</span>
+            </div>
+          ` : ''}
+        `;
+        chatItem.onclick = () => {
+          window.location.href = `/chat/${userId}/${chat.otherParticipant._id}`;
+        };
+        chatList.appendChild(chatItem);
+      });
+    } catch (error) {
+      console.error('Error loading chat list:', error);
+      chatList.innerHTML = '<div class="error">Error loading chat list. Please try again.</div>';
+    }
+  }
+
+  // Event listeners
+  sendMessageButton.addEventListener('click', sendMessage);
+  messageInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
     }
   });
 
-  // Handle Enter key press
-  messageInput.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-      sendButton.click();
-    }
-  });
+  // Initialize
+  if (userId1 && userId2) {
+    loadMessages();
+  }
+  loadChatList();
 
-  // Handle incoming messages from socket
-  socket.on('message', function(message) {
-    console.log('Received message:', message);
-    if ((message.userId === userId && message.engineerId === engineerId) ||
-        (message.userId === engineerId && message.engineerId === userId)) {
-      appendMessage(message);
-      // Mark messages as read when receiving new ones
-      markMessagesAsRead();
-    }
-  });
-
-  // Load initial messages
-  loadMessages();
+  // Poll for new messages every 5 seconds if in a chat
+  if (userId1 && userId2) {
+    setInterval(loadMessages, 5000);
+  }
 }); 

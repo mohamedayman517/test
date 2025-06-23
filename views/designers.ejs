@@ -38,11 +38,13 @@
   </head>
   <body>
     <style>
+
  
+
       .dropdown {
           position: relative;
       }
-      
+
       .dropdown-menu {
           position: absolute;
           top: 100%;
@@ -54,24 +56,66 @@
           flex-direction: column;
           min-width: 150px;
       }
-      
+
       .dropdown-menu a {
           display: block;
           padding: 10px;
           color: black;
           text-decoration: none;
       }
-      
+
       .dropdown-menu a:hover {
           background: #f4f4f4;
       }
-      
-      
+
+
       .dropdown:hover .dropdown-menu {
           display: flex;
       }
-      
-      </style>
+
+      .btn-gold {
+        background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%) !important;
+        color: #222 !important;
+        border: 2px solid #bfa14a !important;
+        font-weight: bold !important;
+        transition: all 0.3s ease !important;
+      }
+      .btn-gold:hover, .btn-gold:focus {
+        background: linear-gradient(135deg, #ffe066 0%, #d4af37 100%) !important;
+        color: #000 !important;
+        box-shadow: 0 3px 10px rgba(218, 165, 32, 0.2) !important;
+      }
+
+      .badge-gold {
+        background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%) !important;
+        color: #222 !important;
+        border: 1px solid #bfa14a !important;
+        font-weight: bold !important;
+        font-size: 15px;
+        box-shadow: 0 2px 6px rgba(218, 165, 32, 0.08);
+        padding: 6px 18px;
+        border-radius: 20px;
+        display: inline-block;
+        margin-bottom: 6px;
+        letter-spacing: 0.5px;
+        transition: all 0.3s;
+      }
+      .badge-gold:hover {
+        background: linear-gradient(135deg, #ffe066 0%, #d4af37 100%) !important;
+        color: #000 !important;
+        box-shadow: 0 4px 12px rgba(218, 165, 32, 0.15);
+      }
+
+
+      .logo-hero {
+    background: linear-gradient(90deg, #d4af37 0%, #ffd700 50%, #bfa14a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
+    </style>
     <div class="container" data-aos="zoom-in" data-aos-duration="1200">
       <div class="row">
         <div
@@ -85,7 +129,7 @@
 
 
 
-          <span class="ms-3">Decore&More</span>  
+          <span class="logo-hero  ms-3">Decore&More</span>
           </div>
           <div class="menu-btn d-lg-none" data-aos="fade-up"
             data-aos-duration="1200">
@@ -98,24 +142,39 @@
               <li class="dropdown">
                 <a href="/#od" class="nav-link">Services</a>
                 <div class="dropdown-menu">
-                  <a href="/eng?occasion=Birthday" class="nav-link">Birthday</a>
-                  <a href="/eng?occasion=Wedding" class="nav-link">Wedding</a>
-                  <a href="/eng?occasion=Engagement" class="nav-link">Engagement</a>
-                  <a href="/eng?occasion=BabyShower" class="nav-link">BabyShower</a>
+                  <a href="/packages/by-occasion?occasion=Birthday" class="nav-link">Birthday</a>
+                  <a href="/packages/by-occasion?occasion=Wedding" class="nav-link">Wedding</a>
+                  <a href="/packages/by-occasion?occasion=Engagement" class="nav-link">Engagement</a>
+                  <a href="/packages/by-occasion?occasion=BabyShower" class="nav-link">BabyShower</a>
                 </div>
               </li>
               <li><a href="/designers" class="nav-link">Designers</a></li>
+              <% if (!user || !user.name) { %>
               <li class="dropdown">
-                <a href="/eng" class="nav-link">Engineers</a>
-              <div class="dropdown-menu">
-                <a href="/login">Log In</a>
-                <a href="/register">Register</a>
-              </div>
+                <a href="#" class="nav-link">Register</a>
+                <div class="dropdown-menu">
+                  <a href="/registerCustomer">Customer</a>
+                  <a href="/register">Engineer</a>
+                </div>
               </li>
+              <% } %>
+
+    <% if (!user || !user.name) { %>
+              <li class="dropdown">
+                <a href="#" class="nav-link">Login</a>
+                <div class="dropdown-menu">
+                  <a href="/login">Customer</a>
+                  <a href="/login">Engineer</a>
+                </div>
+              </li>
+              <% } %>
+
+
+
               <li><a href="/contact" class="nav-link">Contact</a></li>
-              <li><a href="/Favorite" class="nav-link">Favorite</a></li>
-              
-            
+
+
+
                     <% if (user && user.name) { %>
                       <li class="dropdown">
                         <a href="#" class="nav-link d-flex align-items-center">
@@ -123,7 +182,7 @@
                           <span><%= user.name %></span>
                         </a>
                         <div class="dropdown-menu">
-                          <a href="/userProfile/<%= user._id %>" class="nav-link">
+                          <a href="/userProfile/<%= user.id %>" class="nav-link">
                             <i class="fas fa-user me-2"></i>Profile
                           </a>
                           <a href="#" class="nav-link" onclick="logout()">
@@ -131,12 +190,11 @@
                           </a>
                         </div>
                       </li>
-                      <% }else{ %>  
-                        <li><a href="/login" class="nav-link"><i
-                          class="fa-solid fa-user"></i></a></li>
+                      <% }else{ %>
+                        
                     <% } %>
-              <button onclick="toggleDarkMode()" class="dark-mode">
-                <li class="fa-solid fa-moon"></li>
+              <button onclick="toggleDarkMode()" class="dark-mode" aria-label="Toggle dark mode">
+                <i class="fa-solid fa-moon" aria-hidden="true" title="Toggle to dark mode"></i>
               </button>
 
             </ul>
@@ -147,7 +205,7 @@
 
     <div class="hero-section py-5 text-center">
       <div class="container">
-        <h1 class="display-4 mb-4">Meet Our Creative Engineers</h1>
+        <h1 class="display-4 mb-4 section-gradient-title">Meet Our Creative Engineers</h1>
         <p class="lead mx-auto" style="max-width: 800px;">Meet the creative
           minds behind unforgettable celebrations! Here, you'll find a curated
           collection of talented engineers, each with a unique touch to make
@@ -156,40 +214,78 @@
     </div>
 
     <div class="container py-5">
-      <div class="row g-4">
-        <h1 class="text-center py-5">Our Talented Engineers</h1>
-        <% engineers.forEach(engineer => { %>
-        <div class="col-12 col-md-6 col-lg-4">
-          <div class="designer-card h-100">
-            <div class="card-body text-center">
-              <div class="profile-img-wrapper mb-3">
-                <img
-                  src="<%= engineer.profilePhoto || 'https://via.placeholder.com/200' %>"
-                  alt="<%= engineer.name %>" class="profile-img">
-              </div>
-              <h3 class="designer-name"><%= engineer.firstName %><%=
-                engineer.lastName %></h3>
-              <div class="rating mb-2">
-                <% let rating = Math.round(engineer.averageRating); %>
-                <% for (let i = 0; i < 5; i++) { %>
-                <% if (i < rating) { %>
-                <i class="bi bi-star-fill"></i>
-                <% } else { %>
-                <i class="bi bi-star"></i>
-                <% } %>
-                <% } %>
-                <span class="ms-2"
-                  style="font-family: sans-serif; font-size: 18px;"><%=
-                  engineer.rating %></span>
-              </div>
-              <p class="designer-bio"><%= engineer.bio %></p>
-              <a href="/profile/<%= engineer._id %>"><button class="btn"
-                  style="background-color: goldenrod; color:white; font-family: sans-serif;">View
-                  Full Profile</button></a>
+      <!-- Add specialization filter -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title mb-3 section-gradient-title">Filter by Specialization</h5>
+              <form id="specializationFilter" class="d-flex flex-wrap gap-2">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="specializations" value="Birthday" id="birthday" <%= selectedSpecializations.includes('Birthday') ? 'checked' : '' %>>
+                  <label class="form-check-label" for="birthday">Birthday</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="specializations" value="Wedding" id="wedding" <%= selectedSpecializations.includes('Wedding') ? 'checked' : '' %>>
+                  <label class="form-check-label" for="wedding">Wedding</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="specializations" value="Engagement" id="engagement" <%= selectedSpecializations.includes('Engagement') ? 'checked' : '' %>>
+                  <label class="form-check-label" for="engagement">Engagement</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="specializations" value="BabyShower" id="babyshower" <%= selectedSpecializations.includes('BabyShower') ? 'checked' : '' %>>
+                  <label class="form-check-label" for="babyshower">Baby Shower</label>
+                </div>
+                <button type="submit" class="btn btn-gold ms-auto">Apply Filters</button>
+              </form>
             </div>
           </div>
         </div>
-        <% }) %>
+      </div>
+
+      <div class="row g-4">
+        <h1 class="text-center py-5 section-gradient-title">Our Talented Engineers</h1>
+        <% if (engineers.length === 0) { %>
+          <div class="col-12 text-center">
+            <p class="lead">No engineers found matching the selected specializations.</p>
+          </div>
+        <% } else { %>
+          <% engineers.forEach(engineer => { %>
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="designer-card h-100">
+              <div class="card-body text-center">
+                <div class="profile-img-wrapper mb-3">
+                  <img
+                    src="<%= engineer.profilePhoto || 'https://via.placeholder.com/200' %>"
+                    alt="<%= engineer.name %>" class="profile-img">
+                </div>
+                <h3 class="designer-name"><%= engineer.firstName %> <%= engineer.lastName %></h3>
+                <div class="specialties mb-2">
+                  <% engineer.specialties.forEach(specialty => { %>
+                    <span class="badge badge-gold me-1"><%= specialty %></span>
+                  <% }) %>
+                </div>
+                <div class="rating mb-2">
+                  <% let rating = Math.round(engineer.averageRating); %>
+                  <% for (let i = 0; i < 5; i++) { %>
+                    <% if (i < rating) { %>
+                      <i class="bi bi-star-fill"></i>
+                    <% } else { %>
+                      <i class="bi bi-star"></i>
+                    <% } %>
+                  <% } %>
+                  <span class="ms-2" style="font-family: sans-serif; font-size: 18px;"><%= engineer.rating %></span>
+                </div>
+                <p class="designer-bio"><%= engineer.bio %></p>
+                <a href="/profile/<%= engineer._id %>">
+                  <button class="btn" style="background-color: goldenrod; color:white; font-family: sans-serif;">View Full Profile</button>
+                </a>
+              </div>
+            </div>
+          </div>
+          <% }) %>
+        <% } %>
       </div>
     </div>
 
@@ -197,7 +293,7 @@
         <div class="container">
           <div class="row g-4">
             <div class="col-12 text-center mb-4">
-              <h2 class="display-4 fw-bold">Decor&More</h2>
+              <h2 class="display-4 fw-bold section-gradient-title">Decor&More</h2>
             </div>
             <div class="col-md-4">
               <h5 class="border-bottom border-warning pb-2">Contact Us</h5>
@@ -220,10 +316,12 @@
                     class="text-warning text-decoration-none">Home</a></li>
                 <li class="mb-2"><a href="/#op"
                     class="text-warning text-decoration-none">About</a></li>
-                <li class="mb-2"><a href="/login"
-                    class="text-warning text-decoration-none">login</a></li>
-                <li class="mb-2"><a href="/register"
-                    class="text-warning text-decoration-none">register</a></li>
+                    <% if (!user) { %>
+                      <li class="mb-2"><a href="/login"
+                          class="text-warning text-decoration-none">login</a></li>
+                      <li class="mb-2"><a href="/register"
+                          class="text-warning text-decoration-none">register</a></li>
+                          <% } %>
               </ul>
             </div>
             <div class="col-md-4">
@@ -256,6 +354,18 @@
         fetch("/logout", { method: "POST" }).then(() => (window.location.href = "/"));
       }
     </script>
+    <script>
+    document.getElementById('specializationFilter').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const selectedSpecializations = Array.from(this.querySelectorAll('input[name="specializations"]:checked'))
+        .map(checkbox => checkbox.value);
+      
+      const queryString = selectedSpecializations.length > 0 
+        ? '?specializations=' + selectedSpecializations.join('&specializations=')
+        : '';
+        
+      window.location.href = '/designers' + queryString;
+    });
     </script>
     </body>
   </html>

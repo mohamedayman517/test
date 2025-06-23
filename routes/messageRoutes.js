@@ -1,315 +1,262 @@
-const express = require("express");
+// controllers/ChatController.js
+
+const express = require('express');
 const router = express.Router();
-const Message = require("../models/messageSchema");
-const User = require("../models/userSchema");
-const Client = require("../models/clientSchema");
-const mongoose = require("mongoose");
+const Chat = require('../models/messageSchema');
+const User = require('../models/userSchema');
 
-// عرض صفحة الشات
-router.get("/chat/:userId/:engineerId", async (req, res) => {
-  try {
-    const { userId, engineerId } = req.params;
-    
-    // Validate ObjectIds
-    if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(engineerId)) {
-      return res.status(400).send("Invalid user or engineer ID");
+// Middleware to check authentication
+const checkAuth = (req, res, next) => {
+    const userId = req.session?.user?._id;
+    if (!userId) {
+        return res.status(401).json({ error: 'User not authenticated' });
     }
+    req.userId = userId;
+    next();
+};
 
-    // Try to find client first, then user
-    let user = await Client.findById(userId);
-    if (!user) {
-      user = await User.findById(userId);
+// Get a specific chat by ID
+router.get('/chat/:chatId', checkAuth, async (req, res) => {
+    try {
+        const { chatId } = req.params;
+        const userId = req.userId;
+
+        // Find the chat and populate the participants and message senders
+        const chat = await Chat.findById(chatId)
+            .populate('participants', 'firstName lastName role')
+            .populate('messages.sender', 'firstName lastName role');
+
+        if (!chat) {
+            return res.status(404).json({ error: 'Chat not found' });
+        }
+
+        // Check if the user is a participant in this chat
+        const isParticipant = chat.participants.some(participant => 
+            participant._id.toString() === userId
+        );
+
+        if (!isParticipant) {
+            return res.status(403).json({ error: 'Not authorized to access this chat' });
+        }
+
+        // Format the chat data
+        const formattedChat = {
+            _id: chat._id,
+            participants: chat.participants.map(participant => ({
+                _id: participant._id,
+                name: `${participant.firstName} ${participant.lastName}`,
+                role: participant.role
+            })),
+            messages: chat.messages.map(message => ({
+                _id: message._id,
+                content: message.content,
+                timestamp: message.timestamp,
+                sender: {
+                    _id: message.sender._id,
+                    name: `${message.sender.firstName} ${message.sender.lastName}`,
+                    role: message.sender.role
+                }
+            }))
+        };
+
+        res.status(200).json(formattedChat);
+    } catch (error) {
+        console.error('Error fetching chat:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
-
-    const engineer = await User.findById(engineerId);
-
-    if (!user) {
-      return res.status(404).send(`User with ID ${userId} not found`);
-    }
-    if (!engineer) {
-      return res.status(404).send(`Engineer with ID ${engineerId} not found`);
-    }
-    
-    const messages = await Message.find({
-      $or: [
-        { userId, engineerId },
-        { userId: engineerId, engineerId: userId }
-      ]
-    }).sort({ timestamp: 1 });
-
-    // Pass the IDs as strings to the template
-    res.render("chat", { 
-      user: { ...user.toObject(), _id: user._id.toString() }, 
-      engineer: { ...engineer.toObject(), _id: engineer._id.toString() }, 
-      messages 
-    });
-  } catch (error) {
-    console.error("Error loading chat page:", error);
-    res.status(500).send("Server error");
-  }
 });
 
-// استرجاع الرسائل بين المستخدم والمهندس
-router.get("/messages/:userId/:engineerId", async (req, res) => {
-  try {
-    const { userId, engineerId } = req.params;
-    
-    // Validate ObjectIds
-    if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(engineerId)) {
-      return res.status(400).json({ error: 'Invalid user or engineer ID' });
+// Create a new chat
+router.post('/chats', checkAuth, async (req, res) => {
+    try {
+        const userId = req.userId;
+        const receiverId = req.body.receiverId;
+
+        if (!receiverId) {
+            return res.status(400).json({ error: 'Receiver ID is required' });
+        }
+
+        // Check if a chat already exists between these participants
+        const existingChat = await Chat.findOne({
+            participants: { $all: [userId, receiverId] }
+        });
+
+        if (existingChat) {
+            return res.status(200).json({ 
+                message: 'Chat already exists', 
+                chat: existingChat 
+            });
+        }
+
+        const participants = [userId, receiverId];
+        const chat = new Chat({ participants });
+        await chat.save();
+
+        res.status(201).json({ message: 'Chat created successfully', chat });
+    } catch (error) {
+        console.error('Error creating chat:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
-
-    const messages = await Message.find({
-      $or: [
-        { userId, engineerId },
-        { userId: engineerId, engineerId: userId }
-      ]
-    }).sort({ timestamp: 1 });
-
-    res.json(messages);
-  } catch (error) {
-    console.error('Error fetching messages:', error);
-    res.status(500).json({ error: 'Error fetching messages' });
-  }
 });
 
-// إرسال رسالة
-router.post("/messages/send", async (req, res) => {
-  try {
-    const { userId, engineerId, content, senderType } = req.body;
+// Send a message in a chat
+router.post('/chats/:chatId/messages', checkAuth, async (req, res) => {
+    try {
+        const { chatId } = req.params;
+        const userId = req.userId;
+        const { content } = req.body;
 
-    // Validate ObjectIds
-    if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(engineerId)) {
-      return res.status(400).json({ error: 'Invalid user or engineer ID' });
-    }
+        const chat = await Chat.findById(chatId);
 
-    // Prevent engineers from messaging themselves
-    if (userId === engineerId) {
-      return res.status(400).json({ error: 'Engineers cannot message themselves' });
-    }
+        if (!chat) {
+            return res.status(404).json({ error: 'Chat not found' });
+        }
 
-    // Get sender information
-    let sender;
-    let senderName;
-    
-    if (senderType === 'user') {
-      sender = await Client.findById(userId);
-      if (!sender) {
-        sender = await User.findById(userId);
-      }
-      // For clients, use the name field directly
-      // For users, use firstName
-      senderName = sender ? (sender.name || sender.firstName) : 'Guest';
-    } else {
-      sender = await User.findById(engineerId);
-      senderName = sender ? sender.firstName : 'Guest';
-    }
+        // Check if the user is a participant in this chat
+        const isParticipant = chat.participants.some(participant => 
+            participant.toString() === userId
+        );
 
-    const message = new Message({
-      userId: new mongoose.Types.ObjectId(userId),
-      engineerId: new mongoose.Types.ObjectId(engineerId),
-      content,
-      senderType,
-      senderName
-    });
+        if (!isParticipant) {
+            return res.status(403).json({ error: 'Not authorized to send messages in this chat' });
+        }
 
-    await message.save();
-    
-    // Get the io instance from the app
-    const io = req.app.get('io');
-    if (!io) {
-      console.error('Socket.io instance not found');
-      return res.status(500).json({ error: 'Server error: Socket.io not initialized' });
+        chat.messages.push({ 
+            sender: userId, 
+            content,
+            timestamp: new Date()
+        });
+        await chat.save();
+
+        // Populate the sender information for the new message
+        const populatedChat = await Chat.findById(chatId)
+            .populate('messages.sender', 'firstName lastName role');
+        
+        const newMessage = populatedChat.messages[populatedChat.messages.length - 1];
+        const formattedMessage = {
+            _id: newMessage._id,
+            content: newMessage.content,
+            timestamp: newMessage.timestamp,
+            sender: {
+                _id: newMessage.sender._id,
+                name: `${newMessage.sender.firstName} ${newMessage.sender.lastName}`,
+                role: newMessage.sender.role
+            }
+        };
+
+        res.status(200).json({ message: 'Message sent successfully', message: formattedMessage });
+    } catch (error) {
+        console.error('Error sending message:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
-    
-    // Emit the message to the specific chat room with both IDs
-    // Create a consistent room ID by sorting the IDs alphabetically
-    const roomId = [userId, engineerId].sort().join('-');
-    console.log(`Emitting message to room: ${roomId}`);
-    io.to(roomId).emit('message', message);
-    
-    // Emit notification to the engineer if message is from user
-    // Emit notification to the user if message is from engineer
-    if (senderType === 'user') {
-      io.to(`engineer-${engineerId}`).emit('notification', {
-        messageId: message._id,
-        userId,
-        engineerId,
-        content,
-        senderName,
-        timestamp: message.timestamp
-      });
-    } else {
-      io.to(`user-${userId}`).emit('notification', {
-        messageId: message._id,
-        userId,
-        engineerId,
-        content,
-        senderName,
-        timestamp: message.timestamp
-      });
-    }
-    
-    res.json({ success: true, message });
-  } catch (error) {
-    console.error('Error sending message:', error);
-    res.status(500).json({ error: 'Error sending message' });
-  }
 });
 
-// تحديث حالة الرسالة كمقروءة
-router.put("/messages/:messageId/read", async (req, res) => {
-  try {
-    const message = await Message.findByIdAndUpdate(
-      req.params.messageId,
-      { read: true },
-      { new: true }
-    );
+// Get chats for a user
+router.get('/chats/user/:userId', checkAuth, async (req, res) => {
+    try {
+        const userId = req.userId;
+        const requestedUserId = req.params.userId;
 
-    if (!message) {
-      return res.status(404).json({ success: false, message: "Message not found" });
+        if (userId !== requestedUserId) {
+            return res.status(403).json({ error: 'Not authorized to access these chats' });
+        }
+
+        const chats = await Chat.find({ 'participants': userId })
+            .populate('participants', 'firstName lastName role')
+            .populate('messages.sender', 'firstName lastName role');
+
+        // Format the chats data
+        const formattedChats = chats.map(chat => {
+            const otherParticipant = chat.participants.find(
+                participant => participant._id.toString() !== userId
+            );
+
+            return {
+                _id: chat._id,
+                otherParticipant: {
+                    _id: otherParticipant._id,
+                    name: `${otherParticipant.firstName} ${otherParticipant.lastName}`,
+                    role: otherParticipant.role
+                },
+                lastMessage: chat.messages.length > 0 ? {
+                    content: chat.messages[chat.messages.length - 1].content,
+                    timestamp: chat.messages[chat.messages.length - 1].timestamp
+                } : null
+            };
+        });
+
+        res.status(200).json(formattedChats);
+    } catch (error) {
+        console.error('Error fetching user chats:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
-
-    res.json({ success: true, message });
-  } catch (error) {
-    console.error("Error updating message status:", error);
-    res.status(500).json({ success: false, message: "Server error" });
-  }
 });
 
-// Mark messages as read
-router.post('/mark-read', async (req, res) => {
-  try {
-    const { userId, engineerId } = req.body;
+// Get a chat between two users
+router.get('/chat/:userId1/:userId2', checkAuth, async (req, res) => {
+    try {
+        const { userId1, userId2 } = req.params;
+        const currentUserId = req.userId;
 
-    // Validate ObjectIds
-    if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(engineerId)) {
-      return res.status(400).json({ error: 'Invalid user or engineer ID' });
+        // Check if the current user is one of the participants
+        if (currentUserId !== userId1 && currentUserId !== userId2) {
+            return res.status(403).json({ error: 'Not authorized to access this chat' });
+        }
+
+        // Find the chat between these two users
+        let chat = await Chat.findOne({
+            participants: { $all: [userId1, userId2] }
+        })
+        .populate('participants', 'firstName lastName role')
+        .populate('messages.sender', 'firstName lastName role');
+
+        if (!chat) {
+            // If no chat exists, create a new one
+            chat = new Chat({
+                participants: [userId1, userId2]
+            });
+            await chat.save();
+
+            // Populate the new chat
+            chat = await Chat.findById(chat._id)
+                .populate('participants', 'firstName lastName role');
+        }
+
+        // Get the other participant's details
+        const otherParticipant = chat.participants.find(
+            participant => participant._id.toString() !== currentUserId
+        );
+
+        // Format the chat data
+        const formattedChat = {
+            _id: chat._id,
+            participants: chat.participants.map(participant => ({
+                _id: participant._id,
+                name: `${participant.firstName} ${participant.lastName}`,
+                role: participant.role
+            })),
+            otherParticipant: {
+                _id: otherParticipant._id,
+                name: `${otherParticipant.firstName} ${otherParticipant.lastName}`,
+                role: otherParticipant.role
+            },
+            messages: chat.messages.map(message => ({
+                _id: message._id,
+                content: message.content,
+                timestamp: message.timestamp,
+                sender: {
+                    _id: message.sender._id,
+                    name: `${message.sender.firstName} ${message.sender.lastName}`,
+                    role: message.sender.role
+                }
+            }))
+        };
+
+        res.status(200).json(formattedChat);
+    } catch (error) {
+        console.error('Error fetching chat between users:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
-
-    await Message.updateMany(
-      { userId: engineerId, engineerId: userId, read: false },
-      { $set: { read: true } }
-    );
-
-    res.json({ success: true });
-  } catch (error) {
-    console.error('Error marking messages as read:', error);
-    res.status(500).json({ error: 'Error marking messages as read' });
-  }
-});
-
-// Chat route with just engineerId
-router.get("/chat/:engineerId", async (req, res) => {
-  try {
-    const { engineerId } = req.params;
-    
-    // Check if user is logged in
-    if (!req.session.user) {
-      return res.redirect('/login');
-    }
-
-    // Validate ObjectId
-    if (!mongoose.Types.ObjectId.isValid(engineerId)) {
-      return res.status(400).send("Invalid engineer ID");
-    }
-
-    // Get current user - try both Client and User models
-    let user = null;
-    
-    // First try to find in Client model
-    if (req.session.user.role === 'Client') {
-      user = await Client.findById(req.session.user.id);
-    } 
-    
-    // If not found in Client, try User model
-    if (!user) {
-      user = await User.findById(req.session.user.id);
-    }
-    
-    // If still not found, try using the ID directly from session
-    if (!user) {
-      user = await Client.findById(req.session.user._id);
-      if (!user) {
-        user = await User.findById(req.session.user._id);
-      }
-    }
-
-    const engineer = await User.findById(engineerId);
-
-    if (!user) {
-      console.error("User not found in database. Session data:", req.session.user);
-      return res.status(404).send("User not found. Please log in again.");
-    }
-    
-    if (!engineer) {
-      return res.status(404).send(`Engineer with ID ${engineerId} not found`);
-    }
-    
-    const messages = await Message.find({
-      $or: [
-        { userId: user._id, engineerId },
-        { userId: engineerId, engineerId: user._id }
-      ]
-    }).sort({ timestamp: 1 });
-
-    // Pass the IDs as strings to the template
-    res.render("chat", { 
-      user: { ...user.toObject(), _id: user._id.toString() }, 
-      engineer: { ...engineer.toObject(), _id: engineer._id.toString() }, 
-      messages 
-    });
-  } catch (error) {
-    console.error("Error loading chat page:", error);
-    res.status(500).send("Server error");
-  }
-});
-
-// Get current user route
-router.get("/get-current-user", async (req, res) => {
-  try {
-    if (!req.session.user) {
-      return res.status(401).json({ success: false, message: "Not authenticated" });
-    }
-
-    // Try to find the user in both Client and User models
-    let user = null;
-    
-    // First try to find in Client model
-    if (req.session.user.role === 'Client') {
-      user = await Client.findById(req.session.user.id);
-    } 
-    
-    // If not found in Client, try User model
-    if (!user) {
-      user = await User.findById(req.session.user.id);
-    }
-    
-    // If still not found, try using the ID directly from session
-    if (!user) {
-      user = await Client.findById(req.session.user._id);
-      if (!user) {
-        user = await User.findById(req.session.user._id);
-      }
-    }
-
-    if (!user) {
-      console.error("User not found in database. Session data:", req.session.user);
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
-
-    return res.json({
-      success: true,
-      user: {
-        _id: user._id,
-        name: user.name || user.firstName,
-        role: user.role || 'Client'
-      }
-    });
-  } catch (error) {
-    console.error("Error getting current user:", error);
-    return res.status(500).json({ success: false, message: "Server error" });
-  }
 });
 
 module.exports = router;
