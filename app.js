@@ -169,6 +169,7 @@ app.use(
         "https://code.jquery.com",
         "https://cdn.datatables.net",
         "https://cdn.jsdelivr.net/npm/sweetalert2@11",
+        "https://js.stripe.com",
         ...(process.env.NODE_ENV === "development"
           ? ["http://localhost:35729"]
           : []),
@@ -206,6 +207,8 @@ app.use(
         "https://cdn.datatables.net",
         "https://cdn.jsdelivr.net/npm/sweetalert2@11",
         "https://*.up.railway.app",
+        "https://api.stripe.com",
+        "https://*.stripe.com",
         process.env.BASE_URL,
         ...(process.env.NODE_ENV === "development"
           ? ["http://localhost:35729"]
@@ -227,6 +230,8 @@ app.use(
         "https://cdnjs.cloudflare.com",
         "https://cdn.datatables.net",
         "https://cdn.jsdelivr.net/npm/sweetalert2@11",
+        "https://js.stripe.com",
+        "https://*.stripe.com",
       ],
       scriptSrcAttr: ["'unsafe-inline'", "'unsafe-hashes'"], // السماح بـ inline event handlers وhashes
     },
