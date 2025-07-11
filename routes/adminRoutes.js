@@ -16,17 +16,17 @@ router.get("/AdminDashboard", async (req, res) => {
     let allBookings = [];
     let totalRevenue = 0;
 
-    // اجمع كل الحجوزات من كل مهندس
+    // Collect all bookings from all engineers
     engineers.forEach((engineer) => {
       if (Array.isArray(engineer.bookings)) {
         engineer.bookings.forEach((booking) => {
-          // ضيف اسم المهندس للحجز
+          // Add engineer name to booking
           booking.engineerName = engineer.firstName + " " + engineer.lastName;
 
-          // ضيف الحجز للمصفوفة العامة
+          // Add booking to general array
           allBookings.push(booking);
 
-          // احسب العمولة
+          // Calculate commission
           if (booking.commission) {
             totalRevenue += booking.commission;
           }

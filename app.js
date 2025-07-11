@@ -18,7 +18,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const uploadDir = path.join(__dirname, "uploads");
 
-// التأكد من وجود مجلد التحميلات
+// Ensure uploads directory exists
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
   console.log(`✅ Created uploads directory at ${uploadDir}`);
@@ -37,7 +37,7 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: true, // السماح لجميع الـ origins مثل localhost
+    origin: true, // Allow all origins like localhost
     credentials: true,
   })
 );
@@ -65,10 +65,10 @@ app.use(
       autoRemove: "native",
     }),
     cookie: {
-      secure: false, // إعادة إعدادات localhost
+      secure: false, // Localhost settings
       sameSite: "Lax",
       maxAge: 60 * 60 * 24 * 1000, // 24 hours
-      httpOnly: false, // نفس localhost
+      httpOnly: false, // Same as localhost
       path: "/",
       domain: undefined,
     },
@@ -80,19 +80,19 @@ app.use(
 app.use((req, res, next) => {
   res.locals.session = req.session;
 
-  // إضافة headers للتأكد من عمل الكوكيز
+  // Add headers to ensure cookies work
   if (process.env.NODE_ENV === "production") {
     res.header("Access-Control-Allow-Credentials", "true");
     res.header("Access-Control-Allow-Origin", req.headers.origin);
   }
 
-  // فرض إنشاء جلسة جديدة إذا لم تكن موجودة
+  // Force create new session if not exists
   if (!req.session.initialized) {
     req.session.initialized = true;
     req.session.save();
   }
 
-  // تسجيل معلومات الجلسة للتشخيص
+  // Log session information for debugging
   if (req.path.includes("AdminDashboard") || req.path.includes("login")) {
     console.log(`🔍 Session Debug - Path: ${req.path}`);
     console.log(`🔍 Session ID: ${req.sessionID}`);
@@ -107,7 +107,7 @@ app.use((req, res, next) => {
       `🔍 User-Agent: ${req.headers["user-agent"]?.substring(0, 50)}...`
     );
 
-    // تم حل مشكلة الكوكيز - لا حاجة للإرسال اليدوي
+    // Cookie issue resolved - no need for manual sending
   }
 
   next();
@@ -233,7 +233,7 @@ app.use(
         "https://js.stripe.com",
         "https://*.stripe.com",
       ],
-      scriptSrcAttr: ["'unsafe-inline'", "'unsafe-hashes'"], // السماح بـ inline event handlers وhashes
+      scriptSrcAttr: ["'unsafe-inline'", "'unsafe-hashes'"], // Allow inline event handlers and hashes
     },
   })
 );

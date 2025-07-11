@@ -1,16 +1,16 @@
 /**
- * مثال على تنفيذ تحويل الصور إلى Base64 مع ضغط الصور في مسار المشاريع
- * هذا الملف هو مثال توضيحي فقط ولا يجب استخدامه مباشرة
+ * Example of implementing image conversion to Base64 with image compression in projects route
+ * This file is an illustrative example only and should not be used directly
  */
 
 const express = require("express");
 const router = express.Router();
 const fs = require("fs");
 const multer = require("multer");
-const sharp = require("sharp"); // تأكد من تثبيت مكتبة sharp: npm install sharp
+const sharp = require("sharp"); // Make sure to install sharp library: npm install sharp
 const Project = require("../models/projectSchema");
 
-// إعداد التخزين المؤقت للملفات
+// Setup temporary file storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "./uploads/");
@@ -20,35 +20,41 @@ const storage = multer.diskStorage({
   },
 });
 
-// تكوين multer مع التحقق من نوع الملف
-const upload = multer({ 
+// Configure multer with file type validation
+const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // حد أقصى 10 ميجابايت
+  limits: { fileSize: 10 * 1024 * 1024 }, // Maximum 10 MB
   fileFilter: (req, file, cb) => {
-    // قبول الصور فقط
-    if (file.mimetype.startsWith('image/')) {
+    // Accept images only
+    if (file.mimetype.startsWith("image/")) {
       cb(null, true);
     } else {
-      cb(new Error('يجب أن يكون الملف صورة'), false);
+      cb(new Error("File must be an image"), false);
     }
-  }
+  },
 });
 
-// ✅ إنشاء مشروع جديد مع ضغط الصورة
+// ✅ Create new project with image compression
 router.post("/create", upload.single("projectImage"), async (req, res) => {
   try {
     if (!req.session.user || !req.session.user.id) {
       return res.status(401).json({
         success: false,
-        message: "يرجى تسجيل الدخول لإنشاء مشاريع.",
+        message: "Please login to create projects.",
       });
     }
 
     const { projectName, projectType, projectArea, projectPrice } = req.body;
-    if (!projectName || !projectType || !projectArea || !projectPrice || !req.file) {
+    if (
+      !projectName ||
+      !projectType ||
+      !projectArea ||
+      !projectPrice ||
+      !req.file
+    ) {
       return res
         .status(400)
-        .json({ success: false, message: "جميع الحقول مطلوبة." });
+        .json({ success: false, message: "All fields are required." });
     }
 
     const area = parseFloat(projectArea);
@@ -57,25 +63,25 @@ router.post("/create", upload.single("projectImage"), async (req, res) => {
     if (isNaN(area) || area <= 0) {
       return res
         .status(400)
-        .json({ success: false, message: "مساحة المشروع غير صالحة." });
+        .json({ success: false, message: "Invalid project area." });
     }
     if (isNaN(price) || price <= 0) {
       return res
         .status(400)
-        .json({ success: false, message: "سعر المشروع غير صالح." });
+        .json({ success: false, message: "Invalid project price." });
     }
 
-    // ضغط الصورة باستخدام sharp
+    // Compress image using sharp
     const compressedImageBuffer = await sharp(req.file.path)
-      .resize({ width: 1200, height: 800, fit: 'inside' }) // تغيير حجم الصورة
-      .jpeg({ quality: 80 }) // ضغط الصورة بجودة 80%
+      .resize({ width: 1200, height: 800, fit: "inside" }) // Resize image
+      .jpeg({ quality: 80 }) // Compress image with 80% quality
       .toBuffer();
 
-    // تحويل الصورة المضغوطة إلى Base64
+    // Convert compressed image to Base64
     const base64Image = compressedImageBuffer.toString("base64");
     const imageData = `data:image/jpeg;base64,${base64Image}`;
 
-    // إنشاء مشروع جديد
+    // Create new project
     const newProject = new Project({
       name: projectName,
       engID: req.session.user.id,
@@ -86,18 +92,20 @@ router.post("/create", upload.single("projectImage"), async (req, res) => {
     });
 
     await newProject.save();
-    
-    // حذف الملف المؤقت
+
+    // Delete temporary file
     fs.unlinkSync(req.file.path);
-    
-    res.json({ success: true, message: "تم إنشاء المشروع بنجاح" });
+
+    res.json({ success: true, message: "Project created successfully" });
   } catch (error) {
-    console.error("خطأ في حفظ المشروع:", error);
-    res.status(500).json({ success: false, message: "خطأ في الخادم أثناء حفظ المشروع" });
+    console.error("Error saving project:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Server error while saving project" });
   }
 });
 
-// ✅ تعديل مشروع مع ضغط الصورة
+// ✅ Edit project with image compression
 router.put("/:id", upload.single("projectImage"), async (req, res) => {
   try {
     const { projectName, projectType, projectArea, projectPrice } = req.body;
@@ -105,7 +113,7 @@ router.put("/:id", upload.single("projectImage"), async (req, res) => {
     if (!projectName || !projectType || !projectArea || !projectPrice) {
       return res
         .status(400)
-        .json({ success: false, message: "جميع الحقول مطلوبة." });
+        .json({ success: false, message: "All fields are required." });
     }
 
     const area = parseFloat(projectArea);
@@ -114,12 +122,12 @@ router.put("/:id", upload.single("projectImage"), async (req, res) => {
     if (isNaN(area) || area <= 0) {
       return res
         .status(400)
-        .json({ success: false, message: "مساحة المشروع غير صالحة." });
+        .json({ success: false, message: "Invalid project area." });
     }
     if (isNaN(price) || price <= 0) {
       return res
         .status(400)
-        .json({ success: false, message: "سعر المشروع غير صالح." });
+        .json({ success: false, message: "Invalid project price." });
     }
 
     const updateData = {
@@ -129,19 +137,19 @@ router.put("/:id", upload.single("projectImage"), async (req, res) => {
       price: price,
     };
 
-    // إذا تم تحميل صورة جديدة
+    // If new image was uploaded
     if (req.file) {
-      // ضغط الصورة باستخدام sharp
+      // Compress image using sharp
       const compressedImageBuffer = await sharp(req.file.path)
-        .resize({ width: 1200, height: 800, fit: 'inside' }) // تغيير حجم الصورة
-        .jpeg({ quality: 80 }) // ضغط الصورة بجودة 80%
+        .resize({ width: 1200, height: 800, fit: "inside" }) // Resize image
+        .jpeg({ quality: 80 }) // Compress image with 80% quality
         .toBuffer();
 
-      // تحويل الصورة المضغوطة إلى Base64
+      // Convert compressed image to Base64
       const base64Image = compressedImageBuffer.toString("base64");
       updateData.image = `data:image/jpeg;base64,${base64Image}`;
-      
-      // حذف الملف المؤقت
+
+      // Delete temporary file
       fs.unlinkSync(req.file.path);
     }
 
@@ -152,41 +160,58 @@ router.put("/:id", upload.single("projectImage"), async (req, res) => {
     );
 
     if (!updatedProject) {
-      return res.status(404).json({ success: false, message: "لم يتم العثور على المشروع" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Project not found" });
     }
 
-    res.json({ success: true, message: "تم تحديث المشروع بنجاح" });
+    res.json({ success: true, message: "Project updated successfully" });
   } catch (error) {
-    console.error("خطأ في تحديث المشروع:", error);
-    res.status(500).json({ success: false, message: "خطأ في الخادم أثناء تحديث المشروع" });
+    console.error("Error updating project:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Server error while updating project" });
   }
 });
 
-// ✅ عرض مشروع
+// ✅ Display project
 router.get("/:id", async (req, res) => {
   try {
     const project = await Project.findById(req.params.id);
     if (!project) {
-      return res.status(404).json({ success: false, message: "لم يتم العثور على المشروع" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Project not found" });
     }
     res.json({ success: true, project });
   } catch (error) {
-    console.error("خطأ في جلب المشروع:", error);
-    res.status(500).json({ success: false, message: "خطأ في الخادم أثناء جلب المشروع" });
+    console.error("Error fetching project:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Server error while fetching project" });
   }
 });
 
-// ✅ حذف مشروع
+// ✅ Delete project
 router.delete("/:id", async (req, res) => {
   try {
     const deletedProject = await Project.findByIdAndDelete(req.params.id);
     if (!deletedProject) {
-      return res.status(404).json({ success: false, message: "لم يتم العثور على المشروع." });
+      return res
+        .status(404)
+        .json({ success: false, message: "Project not found." });
     }
-    res.status(200).json({ success: true, message: "تم حذف المشروع بنجاح." });
+    res
+      .status(200)
+      .json({ success: true, message: "Project deleted successfully." });
   } catch (error) {
-    console.error("خطأ في حذف المشروع:", error);
-    res.status(500).json({ success: false, message: "خطأ في الخادم أثناء حذف المشروع." });
+    console.error("Error deleting project:", error);
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "Server error while deleting project.",
+      });
   }
 });
 

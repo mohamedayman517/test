@@ -84,7 +84,7 @@
 
 .rounded-gold:focus {
   border-color: goldenrod;
-  box-shadow: 0 0 0 0.15rem rgba(218, 165, 32, 0.25); /* ذهبي شفاف */
+  box-shadow: 0 0 0 0.15rem rgba(218, 165, 32, 0.25); /* Transparent gold */
 }
 
 
@@ -453,7 +453,7 @@
     </button>
 
     <script>
-      // تعريف مودال الدخول/التسجيل باستخدام Bootstrap 5
+      // Define login/register modal using Bootstrap 5
       var authModal = new bootstrap.Modal(document.getElementById('authModal'));
     </script>
     <script>
@@ -482,7 +482,7 @@
         });
       }
 
-      // تشغيل التصفية عند تغيير الفلتر أو عند الكتابة في البحث
+      // Run filtering when filter changes or when typing in search
       document.getElementById("ratingFilter").addEventListener("change", filterEngineers);
       document.getElementById("searchEngineer").addEventListener("input", filterEngineers);
     </script>

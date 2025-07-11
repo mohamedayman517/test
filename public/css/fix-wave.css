@@ -1,16 +1,16 @@
-/* إلغاء تأثير الخط المتموج */
+/* Remove wave effect */
 .placeholder-wave {
   mask-image: none !important;
   animation: none !important;
 }
 
-/* إلغاء تأثير الخط المتموج في SweetAlert2 */
+/* Remove wave effect in SweetAlert2 */
 .swal2-container .placeholder-wave {
   mask-image: none !important;
   animation: none !important;
 }
 
-/* إلغاء تأثير الخط المتموج في Bootstrap */
+/* Remove wave effect in Bootstrap */
 .placeholder-wave .placeholder {
   mask-image: none !important;
   animation: none !important;

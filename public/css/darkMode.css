@@ -18,7 +18,7 @@
   --moon-color: #6c757d;
 }
 
-/* تنسيق زر الدارك مود */
+/* Dark mode button styling */
 button.dark-mode {
   background: transparent;
   border: none;
@@ -443,7 +443,7 @@ body.dark-mode .portfolio-overlay {
   color: #fff !important;
 }
 
-/* تحسين النصوص الثانوية والحواف في الدارك مود */
+/* Improve secondary texts and borders in dark mode */
 body.dark-mode .text-muted,
 body.dark-mode .section-subtitle,
 body.dark-mode .lead {
@@ -522,7 +522,7 @@ body.dark-mode .card .package-desc {
   color: #fff !important;
 }
 
-/* زر Logout في الدارك مود */
+/* Logout button in dark mode */
 body.dark-mode button.btn,
 body.dark-mode .btn {
   background: transparent !important;
@@ -537,7 +537,7 @@ body.dark-mode .btn:hover {
   color: #181818 !important;
 }
 
-/* زر إزالة من المفضلة في الدارك مود */
+/* Remove from favorites button in dark mode */
 body.dark-mode .remove-btn {
   background: transparent !important;
   color: #ff4d4f !important;
@@ -551,7 +551,7 @@ body.dark-mode .remove-btn:hover {
   border-color: #ff1a1a !important;
 }
 
-/* أزرار القائمة الجانبية في البروفايل */
+/* Profile sidebar menu buttons */
 body.dark-mode .list-group-item {
   background: #000000 !important;
   color: #ffd700 !important;
@@ -585,7 +585,7 @@ body.dark-mode textarea::placeholder {
   opacity: 1;
 }
 
-/* تحسين جميع حقول الإدخال في الدارك مود */
+/* Improve all input fields in dark mode */
 body.dark-mode input.form-control,
 body.dark-mode select.form-select,
 body.dark-mode textarea.form-control {
@@ -617,7 +617,7 @@ body.dark-mode ::placeholder {
   opacity: 1 !important;
 }
 
-/* إصلاح مشكلة حقل التاريخ في الوضع الداكن */
+/* Fix date field issue in dark mode */
 body.dark-mode input[type="date"] {
   color: #ffd700 !important;
 }
@@ -629,7 +629,7 @@ body.dark-mode input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
 }
 
-/* تغيير لون النص الافتراضي لحقل التاريخ */
+/* Change default text color for date field */
 body.dark-mode input[type="date"]::-webkit-datetime-edit {
   color: #ffd700 !important;
 }
@@ -688,7 +688,7 @@ body.dark-mode {
   --foreground: #ffffff;
 }
 
-/* تجاوز قوي للـ footer في الوضع الداكن */
+/* Strong override for footer in dark mode */
 body.dark-mode footer.bg-dark,
 body.dark-mode footer.bg-dark.text-warning,
 body.dark-mode footer.bg-dark.py-5 {
@@ -749,7 +749,7 @@ body.dark-mode footer.bg-dark p {
   color: #ffd700 !important;
 }
 
-/* تحسين إضافي للـ footer في الوضع الداكن */
+/* Additional footer improvement in dark mode */
 body.dark-mode footer.bg-dark .border-warning {
   border-color: #ffd700 !important;
 }
