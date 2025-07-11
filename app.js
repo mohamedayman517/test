@@ -31,7 +31,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const allowedOrigins = [
   process.env.NODE_ENV === "development" ? "http://localhost:3000" : null,
-  "https://decoree-moree-production.up.railway.app/",
+  "https://decoree-moree-production.up.railway.app",
   process.env.BASE_URL,
 ].filter(Boolean);
 
