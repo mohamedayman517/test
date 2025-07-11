@@ -5,7 +5,6 @@ const Client = require("../models/clientSchema");
 const transporter = require("../utils/emailTransporter");
 const Booking = require("../models/userSchema");
 
-
 // Admin Dashboard
 router.get("/AdminDashboard", async (req, res) => {
   try {
@@ -13,34 +12,32 @@ router.get("/AdminDashboard", async (req, res) => {
       return res.status(403).send("Access denied. Admins only.");
     }
     const engineers = await User.find({ role: "Engineer" }).lean();
-    
-
 
     let allBookings = [];
-let totalRevenue = 0;
+    let totalRevenue = 0;
 
-// اجمع كل الحجوزات من كل مهندس
-engineers.forEach(engineer => {
-  if (Array.isArray(engineer.bookings)) {
-    engineer.bookings.forEach(booking => {
-      // ضيف اسم المهندس للحجز
-      booking.engineerName = engineer.firstName + " " + engineer.lastName;
+    // اجمع كل الحجوزات من كل مهندس
+    engineers.forEach((engineer) => {
+      if (Array.isArray(engineer.bookings)) {
+        engineer.bookings.forEach((booking) => {
+          // ضيف اسم المهندس للحجز
+          booking.engineerName = engineer.firstName + " " + engineer.lastName;
 
-      // ضيف الحجز للمصفوفة العامة
-      allBookings.push(booking);
+          // ضيف الحجز للمصفوفة العامة
+          allBookings.push(booking);
 
-      // احسب العمولة
-      if (booking.commission) {
-        totalRevenue += booking.commission;
+          // احسب العمولة
+          if (booking.commission) {
+            totalRevenue += booking.commission;
+          }
+        });
       }
     });
-  }
-});
 
-    res.render("AdminDashboard", { engineers ,
-     bookings: allBookings, // استخدم allBookings هنا
-  totalRevenue
-
+    res.render("AdminDashboard", {
+      engineers,
+      bookings: allBookings, // استخدم allBookings هنا
+      totalRevenue,
     });
   } catch (error) {
     console.error(error);
@@ -61,7 +58,8 @@ router.delete("/AdminDashboard/engineers/:id", async (req, res) => {
     // حذف كل الباكدجات الخاصة بالمهندس
     await require("../models/packageSchema").deleteMany({ engID: engineerId });
     // حذف المهندس نفسه
-    const deletedEngineer = await require("../models/userSchema").findByIdAndDelete(engineerId);
+    const deletedEngineer =
+      await require("../models/userSchema").findByIdAndDelete(engineerId);
     if (!deletedEngineer) {
       return res.status(404).send("Engineer not found.");
     }
@@ -113,7 +111,7 @@ router.post("/approve-engineer", async (req, res) => {
     console.log("Engineer found and updated:", engineer.email);
 
     // Create verification link
-    const verificationLink = `http://localhost:3000/verify?engineerId=${engineer._id}`;
+    const verificationLink = `https://decoree-moree-production.up.railway.app/verify?engineerId=${engineer._id}`;
 
     // Send verification email with link
     const mailOptions = {
