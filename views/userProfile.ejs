@@ -453,106 +453,100 @@
     <script src="../user/login.js"></script>
 
     <script>
-      document.addEventListener("DOMContentLoaded", function() {
-        const user = {
-          _id: "<%= userData._id %>",
-          name: "<%= userData.name %>",
-          bio: "<%= userData.bio %>",
-          profilePhoto: "<%= userData.profilePhoto || 'images/team-img2.jpg' %>"
-        };
+  document.addEventListener("DOMContentLoaded", function() {
+    const user = {
+      _id: "<%= userData._id %>",
+      name: "<%= userData.name %>",
+      bio: "<%= userData.bio %>",
+      profilePhoto: "<%= userData.profilePhoto || 'images/team-img2.jpg' %>"
+    };
 
-        // Initialize edit profile form
-        const editProfileForm = document.getElementById("editProfileForm");
-        const editProfileModal = document.getElementById('editProfileModal');
+    const editProfileForm = document.getElementById("editProfileForm");
+    const editProfileModal = document.getElementById('editProfileModal');
 
-        if (editProfileForm && editProfileModal) {
-          // Set initial values
-          document.getElementById("editName").value = user.name;
-          document.getElementById("editBio").value = user.bio;
+    if (editProfileForm && editProfileModal) {
+      // Set initial values
+      document.getElementById("editName").value = user.name;
+      document.getElementById("editBio").value = user.bio;
 
-          // Initialize the modal with error handling
-          let modalInstance;
-          try {
-            modalInstance = new bootstrap.Modal(editProfileModal, {
-              backdrop: true,
-              keyboard: true,
-              focus: true
-            });
-          } catch (error) {
-            console.error('Error initializing modal:', error);
-          }
+      let modalInstance;
+      try {
+        modalInstance = new bootstrap.Modal(editProfileModal, {
+          backdrop: true,
+          keyboard: true,
+          focus: true
+        });
+      } catch (error) {
+        console.error('Error initializing modal:', error);
+      }
 
-          editProfileForm.addEventListener("submit", async function (event) {
-            event.preventDefault();
+      editProfileForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
 
-            const formData = new FormData();
-            formData.append("name", document.getElementById("editName").value);
-            formData.append("bio", document.getElementById("editBio").value);
+        const formData = new FormData();
+        formData.append("name", document.getElementById("editName").value);
+        formData.append("bio", document.getElementById("editBio").value);
 
-            const fileInput = document.getElementById("editProfilePhoto");
-            if (fileInput && fileInput.files.length > 0) {
-              formData.append("profilePhoto", fileInput.files[0]);
+        const fileInput = document.getElementById("editProfilePhoto");
+        if (fileInput && fileInput.files.length > 0) {
+          formData.append("profilePhoto", fileInput.files[0]);
+        }
+
+        try {
+          const response = await fetch("/update", {
+            method: "POST",
+            body: formData,
+            credentials: 'include'
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            // Update the UI
+            const nameElement = document.getElementById("userName");
+            const bioElement = document.getElementById("userBio");
+            const profileImage = document.querySelector(".img-fluid.rounded-circle");
+
+            if (nameElement) nameElement.textContent = result.user.name;
+            if (bioElement) bioElement.textContent = result.user.bio;
+            if (result.user.profilePhoto && profileImage) {
+              profileImage.src = result.user.profilePhoto;
             }
 
-            try {
-              const response = await fetch("/update", {
-                method: "POST",
-                body: formData,
-                credentials: 'include'
+            Swal.fire({
+              title: 'Success!',
+              text: 'Profile updated successfully',
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false,
+              position: 'top-end',
+              toast: true
+            });
+
+            if (modalInstance) {
+              modalInstance.hide();
+            } else {
+              const modal = bootstrap.Modal.getInstance(editProfileModal);
+              if (modal) modal.hide();
+            }
+
+          } else {
+            // Show specific validation errors if present
+            if (result.errors && Array.isArray(result.errors)) {
+              const errorMessages = result.errors.map(err => `${err.field}: ${err.message}`).join('\n');
+              Swal.fire({
+                title: 'Validation Error!',
+                text: errorMessages,
+                icon: 'warning',
+                timer: 4000,
+                showConfirmButton: false,
+                position: 'top-end',
+                toast: true
               });
-
-              const result = await response.json();
-              if (result.success) {
-                // Update the UI with new data
-                const nameElement = document.getElementById("userName");
-                const bioElement = document.getElementById("userBio");
-                const profileImage = document.querySelector(".img-fluid.rounded-circle");
-
-                if (nameElement) nameElement.textContent = result.user.name;
-                if (bioElement) bioElement.textContent = result.user.bio;
-
-                // Update profile photo if changed
-                if (result.user.profilePhoto && profileImage) {
-                  profileImage.src = result.user.profilePhoto;
-                }
-
-                // Show success message using SweetAlert2
-                Swal.fire({
-                  title: 'Success!',
-                  text: 'Profile updated successfully',
-                  icon: 'success',
-                  timer: 2000,
-                  showConfirmButton: false,
-                  position: 'top-end',
-                  toast: true
-                });
-
-                // Close the modal
-                if (modalInstance) {
-                  modalInstance.hide();
-                } else {
-                  // Fallback if modal instance is not available
-                  const modal = bootstrap.Modal.getInstance(editProfileModal);
-                  if (modal) modal.hide();
-                }
-              } else {
-                // Show error message using SweetAlert2
-                Swal.fire({
-                  title: 'Error!',
-                  text: result.message || 'Error updating profile',
-                  icon: 'error',
-                  timer: 2000,
-                  showConfirmButton: false,
-                  position: 'top-end',
-                  toast: true
-                });
-              }
-            } catch (error) {
-              console.error('Error:', error);
-              // Show error message using SweetAlert2
+            } else {
               Swal.fire({
                 title: 'Error!',
-                text: 'Error updating profile. Please try again.',
+                text: result.message || 'Error updating profile',
                 icon: 'error',
                 timer: 2000,
                 showConfirmButton: false,
@@ -560,10 +554,23 @@
                 toast: true
               });
             }
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          Swal.fire({
+            title: 'Error!',
+            text: 'Error updating profile. Please try again.',
+            icon: 'error',
+            timer: 2000,
+            showConfirmButton: false,
+            position: 'top-end',
+            toast: true
           });
         }
       });
-    </script>
+    }
+  });
+</script>
 
     <script>
     function logout() {
@@ -1127,22 +1134,31 @@ async function deleteBooking(bookingId) {
           </div>
           <div class="modal-body">
             <form id="changePasswordForm">
-              <div class="mb-3">
+              <div class="mb-3 position-relative">
                 <label for="currentPassword" class="form-label">Current
                   Password</label>
                 <input type="password" class="form-control" id="currentPassword"
                   required>
+                <i
+                  class="fa fa-eye position-absolute top-50 end-0 translate-middle-y me-3 toggle-password"
+                  data-target="currentPassword" style="cursor: pointer;"></i>
               </div>
-              <div class="mb-3">
+              <div class="mb-3 position-relative">
                 <label for="newPassword" class="form-label">New Password</label>
                 <input type="password" class="form-control" id="newPassword"
                   required>
+                <i
+                  class="fa fa-eye position-absolute top-50 end-0 translate-middle-y me-3 toggle-password"
+                  data-target="newPassword" style="cursor: pointer;"></i>
               </div>
-              <div class="mb-3">
+              <div class="mb-3 position-relative">
                 <label for="confirmPassword" class="form-label">Confirm New
                   Password</label>
                 <input type="password" class="form-control" id="confirmPassword"
                   required>
+                <i
+                  class="fa fa-eye position-absolute top-50 end-0 translate-middle-y me-3 toggle-password"
+                  data-target="confirmPassword" style="cursor: pointer;"></i>
               </div>
               <div class="alert alert-danger d-none" id="passwordError"></div>
               <button type="submit" class="btn btn-gold">Change
@@ -1152,6 +1168,27 @@ async function deleteBooking(bookingId) {
         </div>
       </div>
     </div>
+
+    <script>
+  // إظهار/إخفاء الباسورد
+  document.querySelectorAll('.toggle-password').forEach(icon => {
+    icon.addEventListener('click', () => {
+      const inputId = icon.getAttribute('data-target');
+      const input = document.getElementById(inputId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    });
+  });
+
+
+  </script>
 
     <script>
     // Change Password Functionality

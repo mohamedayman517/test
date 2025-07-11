@@ -4,6 +4,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
+const fs = require("fs");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const helmet = require("helmet");
@@ -16,15 +17,30 @@ const nodemailer = require("nodemailer");
 const app = express();
 const port = process.env.PORT || 3000;
 const uploadDir = path.join(__dirname, "uploads");
+
+// التأكد من وجود مجلد التحميلات
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+  console.log(`✅ Created uploads directory at ${uploadDir}`);
+}
+
 const httpServer = http.createServer(app);
 
 // Basic middleware setup
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true
-}));
+const allowedOrigins = [
+  process.env.NODE_ENV === "development" ? "http://localhost:3000" : null,
+  "https://decore-and-more-production.up.railway.app",
+  process.env.BASE_URL,
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: true, // السماح لجميع الـ origins مثل localhost
+    credentials: true,
+  })
+);
 
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
@@ -39,19 +55,22 @@ app.set("views", path.join(__dirname, "views"));
 // Session setup
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || "fallback-secret-key-for-development",
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: "mongodb://localhost:27017/DecorAndMore",
+      mongoUrl: process.env.MONGO_URI,
       collectionName: "sessions",
-      ttl: 60 * 60, // 1 hour in seconds
+      ttl: 60 * 60 * 24, // 24 hours in seconds
       autoRemove: "native",
     }),
     cookie: {
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 1000, // 1 hour in milliseconds
-      httpOnly: true,
+      secure: false, // إعادة إعدادات localhost
+      sameSite: "Lax",
+      maxAge: 60 * 60 * 24 * 1000, // 24 hours
+      httpOnly: false, // نفس localhost
+      path: "/",
+      domain: undefined,
     },
     rolling: true, // Reset expiration on every response
   })
@@ -60,6 +79,37 @@ app.use(
 // Make session available to all routes
 app.use((req, res, next) => {
   res.locals.session = req.session;
+
+  // إضافة headers للتأكد من عمل الكوكيز
+  if (process.env.NODE_ENV === "production") {
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Origin", req.headers.origin);
+  }
+
+  // فرض إنشاء جلسة جديدة إذا لم تكن موجودة
+  if (!req.session.initialized) {
+    req.session.initialized = true;
+    req.session.save();
+  }
+
+  // تسجيل معلومات الجلسة للتشخيص
+  if (req.path.includes("AdminDashboard") || req.path.includes("login")) {
+    console.log(`🔍 Session Debug - Path: ${req.path}`);
+    console.log(`🔍 Session ID: ${req.sessionID}`);
+    console.log(
+      `🔍 Session User: ${
+        req.session.user ? JSON.stringify(req.session.user) : "No user"
+      }`
+    );
+    console.log(`🔍 Cookies: ${JSON.stringify(req.headers.cookie)}`);
+    console.log(`🔍 Set-Cookie Header: ${res.getHeaders()["set-cookie"]}`);
+    console.log(
+      `🔍 User-Agent: ${req.headers["user-agent"]?.substring(0, 50)}...`
+    );
+
+    // تم حل مشكلة الكوكيز - لا حاجة للإرسال اليدوي
+  }
+
   next();
 });
 
@@ -106,77 +156,82 @@ app.use((req, res, next) => {
 });
 
 // Security middleware
-if (process.env.NODE_ENV === "development") {
-  app.use(
-    helmet.contentSecurityPolicy({
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: [
-          "'self'",
-          "'unsafe-inline'",
-          "'unsafe-eval'",
-          "https://cdn.jsdelivr.net",
-          "https://cdnjs.cloudflare.com",
-          "https://code.jquery.com",
-          "https://cdn.datatables.net",
-          "https://cdn.jsdelivr.net/npm/sweetalert2@11",
-          "http://localhost:35729",
-        ],
-        styleSrc: [
-          "'self'",
-          "'unsafe-inline'",
-          "https://cdn.jsdelivr.net",
-          "https://cdnjs.cloudflare.com",
-          "https://fonts.googleapis.com",
-          "https://cdn.datatables.net",
-          "https://cdn.jsdelivr.net/npm/sweetalert2@11",
-        ],
-        styleSrcElem: [
-          "'self'",
-          "'unsafe-inline'",
-          "https://cdn.jsdelivr.net",
-          "https://cdnjs.cloudflare.com",
-          "https://fonts.googleapis.com",
-          "https://cdn.datatables.net",
-          "https://cdn.jsdelivr.net/npm/sweetalert2@11",
-        ],
-        imgSrc: [
-          "'self'",
-          "data:",
-          "https://cdn.jsdelivr.net",
-          "https://cdnjs.cloudflare.com",
-          "https://cdn.datatables.net",
-          "https://cdn.jsdelivr.net/npm/sweetalert2@11",
-        ],
-        connectSrc: [
-          "'self'",
-          "https://cdn.jsdelivr.net",
-          "https://cdnjs.cloudflare.com",
-          "https://cdn.datatables.net",
-          "https://cdn.jsdelivr.net/npm/sweetalert2@11",
-          "http://localhost:35729",
-        ],
-        fontSrc: [
-          "'self'",
-          "https://cdn.jsdelivr.net",
-          "https://cdnjs.cloudflare.com",
-          "https://fonts.gstatic.com",
-          "https://cdn.datatables.net",
-          "https://cdn.jsdelivr.net/npm/sweetalert2@11",
-        ],
-        objectSrc: ["'none'"],
-        mediaSrc: ["'self'"],
-        frameSrc: [
-          "'self'",
-          "https://cdn.jsdelivr.net",
-          "https://cdnjs.cloudflare.com",
-          "https://cdn.datatables.net",
-          "https://cdn.jsdelivr.net/npm/sweetalert2@11",
-        ],
-      },
-    })
-  );
-}
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        "'unsafe-eval'",
+        "https://cdn.jsdelivr.net",
+        "https://cdnjs.cloudflare.com",
+        "https://code.jquery.com",
+        "https://cdn.datatables.net",
+        "https://cdn.jsdelivr.net/npm/sweetalert2@11",
+        ...(process.env.NODE_ENV === "development"
+          ? ["http://localhost:35729"]
+          : []),
+      ],
+      styleSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        "https://cdn.jsdelivr.net",
+        "https://cdnjs.cloudflare.com",
+        "https://fonts.googleapis.com",
+        "https://cdn.datatables.net",
+        "https://cdn.jsdelivr.net/npm/sweetalert2@11",
+      ],
+      styleSrcElem: [
+        "'self'",
+        "'unsafe-inline'",
+        "https://cdn.jsdelivr.net",
+        "https://cdnjs.cloudflare.com",
+        "https://fonts.googleapis.com",
+        "https://cdn.datatables.net",
+        "https://cdn.jsdelivr.net/npm/sweetalert2@11",
+      ],
+      imgSrc: [
+        "'self'",
+        "data:",
+        "https://cdn.jsdelivr.net",
+        "https://cdnjs.cloudflare.com",
+        "https://cdn.datatables.net",
+        "https://cdn.jsdelivr.net/npm/sweetalert2@11",
+      ],
+      connectSrc: [
+        "'self'",
+        "https://cdn.jsdelivr.net",
+        "https://cdnjs.cloudflare.com",
+        "https://cdn.datatables.net",
+        "https://cdn.jsdelivr.net/npm/sweetalert2@11",
+        "https://*.up.railway.app",
+        process.env.BASE_URL,
+        ...(process.env.NODE_ENV === "development"
+          ? ["http://localhost:35729"]
+          : []),
+      ],
+      fontSrc: [
+        "'self'",
+        "https://cdn.jsdelivr.net",
+        "https://cdnjs.cloudflare.com",
+        "https://fonts.gstatic.com",
+        "https://cdn.datatables.net",
+        "https://cdn.jsdelivr.net/npm/sweetalert2@11",
+      ],
+      objectSrc: ["'none'"],
+      mediaSrc: ["'self'"],
+      frameSrc: [
+        "'self'",
+        "https://cdn.jsdelivr.net",
+        "https://cdnjs.cloudflare.com",
+        "https://cdn.datatables.net",
+        "https://cdn.jsdelivr.net/npm/sweetalert2@11",
+      ],
+      scriptSrcAttr: ["'unsafe-inline'", "'unsafe-hashes'"], // السماح بـ inline event handlers وhashes
+    },
+  })
+);
 
 // Live reload setup
 if (process.env.NODE_ENV === "development") {
@@ -225,7 +280,7 @@ app.use("/", userProfileRoutes);
 app.use("/", authRoute);
 app.use("/", BookingRoutes);
 app.use("/", ConfirmationRoutes);
-app.use("/", registerCustomerRoutes)
+app.use("/", registerCustomerRoutes);
 
 // Chat route
 app.get("/chat/:userId1?/:userId2?", async (req, res) => {
@@ -268,13 +323,40 @@ app.get("/verify", (req, res) => {
   });
 });
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error("Error occurred:", err);
+  if (err.message === "Not allowed by CORS") {
+    return res.status(403).json({
+      error: "CORS Error",
+      message: "Origin not allowed",
+      origin: req.headers.origin,
+    });
+  }
+  res.status(500).json({ error: "Internal Server Error" });
+});
+
 // Database connection and server start
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
-    httpServer.listen(port, () =>
-      console.log(`🚀 Server running on http://localhost:${port}`)
-    );
+    httpServer.listen(port, () => {
+      const baseUrl =
+        process.env.BASE_URL ||
+        `https://decore-and-more-production.up.railway.app`;
+      console.log("🔧 Environment Configuration:");
+      console.log(`   NODE_ENV: ${process.env.NODE_ENV}`);
+      console.log(`   BASE_URL: ${process.env.BASE_URL}`);
+      console.log(
+        `   SESSION_SECRET: ${process.env.SESSION_SECRET ? "Set" : "Not Set"}`
+      );
+      console.log(`   MONGO_URI: ${process.env.MONGO_URI ? "Set" : "Not Set"}`);
+      console.log(
+        process.env.NODE_ENV === "development"
+          ? `🚀 Server running on http://localhost:${port}`
+          : `🚀 Server running on ${baseUrl}`
+      );
+    });
   })
   .catch((err) => {
     console.error("❌ Failed to connect to MongoDB:", err);

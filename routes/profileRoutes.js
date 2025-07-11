@@ -8,17 +8,37 @@ const multer = require("multer");
 const path = require("path");
 const Joi = require("joi");
 const bcrypt = require("bcrypt");
+const fs = require("fs");
 
+// إعداد multer للتخزين المؤقت
 const storage = multer.diskStorage({
-  destination: "./public/uploads/",
-  filename: (req, file, cb) => {
-    cb(
-      null,
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-    );
+  destination: function (req, file, cb) {
+    // التأكد من وجود المجلد
+    const dir = "./uploads/";
+    if (!fs.existsSync(dir)){
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    cb(null, dir); // مكان مؤقت للتخزين
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
   },
 });
-const upload = multer({ storage });
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5000000 }, // حد أقصى 5 ميجابايت
+  fileFilter: function (req, file, cb) {
+    const filetypes = /jpeg|jpg|png/;
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = filetypes.test(file.mimetype);
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb("Error: Images Only!");
+    }
+  },
+});
 
 const ratingSchema = Joi.object({
   engineerId: Joi.string().required(),
@@ -176,6 +196,17 @@ router.post(
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
+      // تحويل الصورة إلى Base64 إذا تم تحميلها
+      let profilePhotoBase64 = "/uploads/default.png";
+      if (req.file) {
+        // قراءة الملف المؤقت
+        const fileData = fs.readFileSync(req.file.path);
+        // تحويل الملف إلى سلسلة Base64
+        profilePhotoBase64 = `data:${req.file.mimetype};base64,${fileData.toString('base64')}`;
+        // حذف الملف المؤقت بعد التحويل
+        fs.unlinkSync(req.file.path);
+      }
+
       // Create new user
       const newUser = new Client({
         name,
@@ -184,9 +215,7 @@ router.post(
         phone,
         bio,
         role: "user",
-        profilePhoto: req.file
-          ? `/uploads/${req.file.filename}`
-          : "/uploads/default.png",
+        profilePhoto: profilePhotoBase64,
       });
 
       await newUser.save();
@@ -302,8 +331,14 @@ router.post(
       const { firstName, lastName, bio } = req.body;
       const updateData = { firstName, lastName, bio };
 
+      // تحويل الصورة إلى Base64 إذا تم تحميلها
       if (req.file) {
-        updateData.profilePhoto = "/uploads/" + req.file.filename;
+        // قراءة الملف المؤقت
+        const fileData = fs.readFileSync(req.file.path);
+        // تحويل الملف إلى سلسلة Base64
+        updateData.profilePhoto = `data:${req.file.mimetype};base64,${fileData.toString('base64')}`;
+        // حذف الملف المؤقت بعد التحويل
+        fs.unlinkSync(req.file.path);
       }
 
       const userId = req.session.user.id;
@@ -325,12 +360,9 @@ router.post(
         name: `${updateUser.firstName} ${updateUser.lastName}`,
       };
 
-      // Ensure the profile photo path is correct
+      // استخدام الصورة مباشرة من قاعدة البيانات
       const userWithPhoto = {
         ...updateUser,
-        profilePhoto: updateUser.profilePhoto.startsWith("/uploads/")
-          ? updateUser.profilePhoto
-          : "/uploads/" + updateUser.profilePhoto,
       };
 
       res.status(200).json({
@@ -386,5 +418,5 @@ const updateBadges = async () => {
   }
 };
 
-module.exports = { updateBadges };
 module.exports = router;
+module.exports.updateBadges = updateBadges;

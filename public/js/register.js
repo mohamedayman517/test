@@ -32,7 +32,6 @@ document.addEventListener("DOMContentLoaded", function () {
         phone: document.querySelector('input[name="phone"]'),
         bio: document.querySelector('textarea[name="bio"]'),
         role: document.getElementById("role"),
-        termsAccepted: document.getElementById("termsAccepted"),
       };
 
       const errors = {
@@ -44,7 +43,6 @@ document.addEventListener("DOMContentLoaded", function () {
         phone: document.getElementById("phoneError"),
         bio: document.getElementById("bioError"),
         role: document.getElementById("roleError"),
-        termsAccepted: document.getElementById("termsAcceptedError"),
       };
 
       const specialtiesArray = Array.from(
@@ -62,6 +60,19 @@ document.addEventListener("DOMContentLoaded", function () {
       );
       const idCardPhoto =
         idCardPhotoInput.files.length > 0 ? idCardPhotoInput.files[0] : null;
+      
+      // التحقق من حجم الملفات (الحد الأقصى 5 ميجابايت)
+      const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+      
+      if (profilePhoto && profilePhoto.size > MAX_FILE_SIZE) {
+        showMessage("❌ حجم صورة الملف الشخصي يتجاوز الحد المسموح به (5 ميجابايت)", "red");
+        hasError = true;
+      }
+      
+      if (idCardPhoto && idCardPhoto.size > MAX_FILE_SIZE) {
+        showMessage("❌ حجم صورة بطاقة الهوية يتجاوز الحد المسموح به (5 ميجابايت)", "red");
+        hasError = true;
+      }
 
       // ✅ تحقق من الحقول الخاصة بالمهندسين فقط
       if (inputs.role.value === "Engineer") {
@@ -71,15 +82,15 @@ document.addEventListener("DOMContentLoaded", function () {
           hasError = true;
         }
 
-        // تحقق من بطاقة الهوية
+        // تحقق من بطاقة الهوية (إلزامية للمهندسين)
         if (!idCardPhoto) {
-          showMessage("❌ Please upload your ID card photo.", "red");
+          showMessage("❌ يجب تحميل صورة بطاقة الهوية للمهندسين.", "red");
           hasError = true;
         }
 
         // تحقق من الصورة الشخصية (اختياري)
         if (!profilePhoto) {
-          showMessage("❌ Please upload your profile photo.", "red");
+          showMessage("❌ الرجاء تحميل صورة الملف الشخصي.", "red");
           hasError = true;
         }
       }
@@ -156,18 +167,6 @@ document.addEventListener("DOMContentLoaded", function () {
         hasError = true;
       }
 
-      // ✅ التحقق من قبول الشروط
-      if (inputs.role.value !== "Admin" && !inputs.termsAccepted.checked) {
-        errors.termsAccepted.textContent = "❌ You must accept the terms.";
-        hasError = true;
-      }
-
-      // ✅ التحقق من قبول الشروط
-      if (inputs.role.value !== "Admin" && !inputs.termsAccepted.checked) {
-        errors.termsAccepted.textContent = "❌ You must accept the terms.";
-        hasError = true;
-      }
-
       // ✅ إذا كان هناك خطأ، لا يتم إرسال الطلب
       if (hasError) {
         return;
@@ -187,11 +186,8 @@ document.addEventListener("DOMContentLoaded", function () {
       formData.append("confirmPassword", inputs.confirmPassword.value.trim());
       formData.append("bio", inputs.bio.value.trim());
       formData.append("role", inputs.role.value);
-      formData.append(
-        "termsAccepted",
-        inputs.termsAccepted.checked ? "true" : "false"
-      );
-      specialtiesArray.forEach(s => formData.append("specialties", s));
+
+      specialtiesArray.forEach((s) => formData.append("specialties", s));
       if (profilePhoto) {
         formData.append("profilePhoto", profilePhoto);
       }

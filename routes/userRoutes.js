@@ -7,18 +7,49 @@ const bcrypt = require("bcrypt");
 const multer = require("multer");
 const passport = require("passport");
 const nodemailer = require("nodemailer");
+const fs = require("fs");
+const fsPromises = require("fs").promises;
+const path = require("path");
 
-// Setup multer storage
+// Setup multer storage (مؤقت فقط)
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "public/uploads/");
+    const dir = path.join(__dirname, "../uploads/");
+    console.log(`✅ Upload directory path: ${dir}`);
+    
+    if (!fs.existsSync(dir)) {
+      console.log(`⚠️ Upload directory does not exist, creating it now...`);
+      fs.mkdirSync(dir, { recursive: true });
+      console.log(`✅ Created upload directory: ${dir}`);
+    } else {
+      console.log(`✅ Upload directory exists: ${dir}`);
+    }
+    
+    cb(null, dir);
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + file.originalname);
+    const filename = Date.now() + path.extname(file.originalname);
+    console.log(`✅ Generated filename for upload: ${filename}`);
+    cb(null, filename);
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5000000 },
+  fileFilter: function (req, file, cb) {
+    const filetypes = /jpeg|jpg|png/;
+    const extname = filetypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
+    const mimetype = filetypes.test(file.mimetype);
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb("Error: Images Only!");
+    }
+  },
+});
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -32,17 +63,42 @@ router.get("/login", (req, res) => {
   const clientUser = req.session.user;
   res.render("login", { title: "Login", user: clientUser });
 });
+
 router.get("/register", (req, res) => {
   const clientUser = req.session.user;
   res.render("register", { user: clientUser });
 });
+
 router.post(
   "/register",
-  upload.fields([
-    { name: "profilePhoto", maxCount: 1 },
-    { name: "idCardPhoto", maxCount: 1 },
-  ]),
-
+  (req, res, next) => {
+    // معالجة أخطاء Multer
+    const uploadMiddleware = upload.fields([
+      { name: "profilePhoto", maxCount: 1 },
+      { name: "idCardPhoto", maxCount: 1 },
+    ]);
+    
+    uploadMiddleware(req, res, (err) => {
+      if (err instanceof multer.MulterError) {
+        // خطأ في Multer
+        console.error("❌ Multer error:", err);
+        return res.status(400).json({
+          success: false,
+          message: `خطأ في تحميل الملف: ${err.message}`,
+        });
+      } else if (err) {
+        // خطأ غير معروف
+        console.error("❌ Unknown error during file upload:", err);
+        return res.status(500).json({
+          success: false,
+          message: "حدث خطأ أثناء تحميل الملف. يرجى المحاولة مرة أخرى.",
+        });
+      }
+      
+      // تم تحميل الملفات بنجاح، متابعة المعالجة
+      next();
+    });
+  },
   body("email").isEmail().withMessage("Enter a valid email address"),
   body("password")
     .isLength({ min: 6 })
@@ -67,16 +123,11 @@ router.post(
   body("phone")
     .isMobilePhone(["ar-EG", "en-US", "sa", "ae"], { strictMode: false })
     .withMessage("Enter a valid phone number"),
-
   body("role").isIn(["Admin", "User", "Engineer"]).withMessage("Invalid role"),
-  body("termsAccepted")
-    .custom((value, { req }) => {
-      if (req.body.role === "Engineer") {
-        return value === "true";
-      }
-      return true; // لو مش مهندس، عادي يقبل أي قيمة
-    })
-    .withMessage("You must accept the terms"),
+  body("bio")
+    .optional()
+    .isLength({ max: 1000 })
+    .withMessage("Bio must be less than 1000 characters"),
 
   async (req, res) => {
     try {
@@ -85,17 +136,9 @@ router.post(
         return res.status(400).json({ errors: errors.array() });
       }
 
-      const {
-        firstName,
-        lastName,
-        email,
-        password,
-        phone,
-        role,
-        termsAccepted,
-      } = req.body;
+      const { firstName, lastName, email, password, phone, role, bio } =
+        req.body;
 
-      // Check if email already exists
       const existingUser = await User.findOne({ email });
       if (existingUser) {
         return res.status(400).json({
@@ -104,36 +147,78 @@ router.post(
         });
       }
 
-      // Generate a unique customId
       const customId =
         Math.random().toString(36).substring(2, 15) +
         Math.random().toString(36).substring(2, 15);
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Handle profile photo path (only for Engineers)
-      let profilePhotoPath = null;
+      let profilePhotoBase64 = null;
       if (req.files && req.files["profilePhoto"]) {
-        profilePhotoPath = "/uploads/" + req.files["profilePhoto"][0].filename;
-      }
-
-      // Handle ID card photo path (only for Engineers)
-      let idCardPhotoPath = null;
-      if (req.files && req.files["idCardPhoto"]) {
-        idCardPhotoPath = "/uploads/" + req.files["idCardPhoto"][0].filename;
-      }
-
-      // specialties قد تأتي كـ array أو string حسب عدد الاختيارات
-      let specialtiesArr = [];
-      if (req.body.specialties) {
-        if (Array.isArray(req.body.specialties)) {
-          specialtiesArr = req.body.specialties;
-        } else {
-          specialtiesArr = [req.body.specialties];
+        const profilePhotoFile = req.files["profilePhoto"][0];
+        try {
+          // تأكد من أن المسار موجود
+          console.log("Profile Photo Path:", profilePhotoFile.path);
+          
+          // قراءة الملف
+          const imageBuffer = await fsPromises.readFile(profilePhotoFile.path);
+          const base64Image = imageBuffer.toString("base64");
+          profilePhotoBase64 = `data:${profilePhotoFile.mimetype};base64,${base64Image}`;
+          
+          // حذف الملف المؤقت بعد تحويله
+          await fsPromises.unlink(profilePhotoFile.path);
+        } catch (err) {
+          console.error("❌ Error reading profile photo:", err);
+          // إضافة معلومات إضافية للتصحيح
+          console.error("File path:", profilePhotoFile.path);
+          console.error("File exists:", fs.existsSync(profilePhotoFile.path));
         }
       }
 
-      // Create user object with basic fields
+      let idCardPhotoBase64 = null;
+      if (req.files && req.files["idCardPhoto"]) {
+        const idCardPhotoFile = req.files["idCardPhoto"][0];
+        try {
+          // تأكد من أن المسار موجود
+          console.log("ID Card Photo Path:", idCardPhotoFile.path);
+          console.log("File exists check before reading:", fs.existsSync(idCardPhotoFile.path));
+          
+          // التحقق من حجم الملف
+          const stats = await fsPromises.stat(idCardPhotoFile.path);
+          console.log(`✅ ID Card Photo file size: ${stats.size} bytes`);
+          
+          // قراءة الملف
+          const imageBuffer = await fsPromises.readFile(idCardPhotoFile.path);
+          console.log(`✅ Successfully read ID Card Photo file, size: ${imageBuffer.length} bytes`);
+          
+          const base64Image = imageBuffer.toString("base64");
+          idCardPhotoBase64 = `data:${idCardPhotoFile.mimetype};base64,${base64Image}`;
+          console.log(`✅ ID Card Photo processed successfully`);
+          
+          // حذف الملف المؤقت بعد تحويله
+          await fsPromises.unlink(idCardPhotoFile.path);
+          console.log(`✅ Temporary ID Card Photo file deleted`);
+        } catch (err) {
+          console.error("❌ Error reading ID card photo:", err);
+          // إضافة معلومات إضافية للتصحيح
+          console.error("File path:", idCardPhotoFile.path);
+          console.error("File exists:", fs.existsSync(idCardPhotoFile.path));
+          console.error("Directory contents:", fs.readdirSync(path.dirname(idCardPhotoFile.path)));
+          
+          return res.status(400).json({
+            success: false,
+            message: "حدث خطأ أثناء معالجة صورة بطاقة الهوية. يرجى المحاولة مرة أخرى.",
+          });
+        }
+      }
+
+      let specialtiesArr = [];
+      if (req.body.specialties) {
+        specialtiesArr = Array.isArray(req.body.specialties)
+          ? req.body.specialties
+          : [req.body.specialties];
+      }
+
       const userObj = {
         firstName,
         lastName,
@@ -142,7 +227,7 @@ router.post(
         phone,
         role,
         customId,
-        termsAccepted: true,
+        bio,
         isApproved:
           role === "Admin" ? true : role === "Engineer" ? false : true,
         isVerified: false,
@@ -150,15 +235,28 @@ router.post(
         specialties: specialtiesArr,
       };
 
-      // Add engineer-specific fields only if role is Engineer
       if (role === "Engineer") {
-        userObj.profilePhoto = profilePhotoPath;
-        userObj.idCardPhoto = idCardPhotoPath;
+        userObj.profilePhoto = profilePhotoBase64 || "/uploads/default.png";
+        // تأكد من أن صورة بطاقة الهوية موجودة للمهندسين
+        if (!idCardPhotoBase64) {
+          return res.status(400).json({
+            success: false,
+            message: "صورة بطاقة الهوية مطلوبة للمهندسين",
+          });
+        }
+        
+        // تسجيل معلومات إضافية للتصحيح
+        console.log("✅ ID Card Photo processed successfully");
+        userObj.idCardPhoto = idCardPhotoBase64;
+      } else {
+        if (profilePhotoBase64) {
+          userObj.profilePhoto = profilePhotoBase64;
+        }
       }
 
       const newUser = new User(userObj);
-
       await newUser.save();
+
       res.status(201).json({
         message: "User registered successfully",
         user: {

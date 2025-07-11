@@ -5,18 +5,35 @@ const User = require("../models/userSchema");
 const Client = require("../models/clientSchema");
 const bcrypt = require("bcrypt");
 const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
 
-// Setup multer storage
+// Setup multer storage (مؤقت فقط)
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "public/uploads/");
+    cb(null, "./uploads/"); // مكان مؤقت للتخزين
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + file.originalname);
+    cb(null, Date.now() + path.extname(file.originalname));
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5000000 }, // حد أقصى 5 ميجابايت
+  fileFilter: function (req, file, cb) {
+    const filetypes = /jpeg|jpg|png/;
+    const extname = filetypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
+    const mimetype = filetypes.test(file.mimetype);
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb("Error: Images Only!");
+    }
+  },
+});
 
 router.get("/registerCustomer", (req, res) => {
   const clientUser = req.session.user;
@@ -45,6 +62,10 @@ router.post(
   body("phone")
     .isMobilePhone(["ar-EG", "en-US", "sa", "ae"], { strictMode: false })
     .withMessage("Enter a valid phone number"),
+  body("bio")
+    .optional()
+    .isLength({ max: 1000 })
+    .withMessage("Bio must be less than 1000 characters"),
 
   async (req, res) => {
     try {
@@ -53,7 +74,7 @@ router.post(
         return res.status(400).json({ errors: errors.array() });
       }
 
-      const { Name, email, password, phone } = req.body;
+      const { Name, email, password, phone, bio } = req.body;
 
       // Check if email already exists
       const existingUser = await Client.findOne({ email });
@@ -71,10 +92,16 @@ router.post(
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Handle profile photo path (only for Engineers)
-      let profilePhotoPath = null;
+      // معالجة صورة البروفايل وتحويلها إلى Base64
+      let profilePhotoBase64 = null;
       if (req.files && req.files["profilePhoto"]) {
-        profilePhotoPath = "/uploads/" + req.files["profilePhoto"][0].filename;
+        const profilePhotoFile = req.files["profilePhoto"][0];
+        const imageBuffer = fs.readFileSync(profilePhotoFile.path);
+        const base64Image = imageBuffer.toString("base64");
+        profilePhotoBase64 = `data:${profilePhotoFile.mimetype};base64,${base64Image}`;
+
+        // حذف الملف المؤقت بعد التحويل
+        fs.unlinkSync(profilePhotoFile.path);
       }
 
       // Create user object with basic fields
@@ -83,13 +110,12 @@ router.post(
         email,
         password: hashedPassword,
         phone,
-
         customId,
+        bio,
       };
 
-      // Add engineer-specific fields only if role is Engineer
-
-      userObj.profilePhoto = profilePhotoPath;
+      // إضافة صورة البروفايل كـ Base64
+      userObj.profilePhoto = profilePhotoBase64 || "/uploads/default.png";
 
       const newUser = new Client(userObj);
 

@@ -2422,10 +2422,6 @@
                 <div class="mb-3">
                   <label class="form-label">Project Type</label>
                   <select class="form-select" id="editProjectType" required>
-                    <option value="Birthday" ${project.type === 'Birthday' ? 'selected' : ''}>Birthday</option>
-                    <option value="Wedding" ${project.type === 'Wedding' ? 'selected' : ''}>Wedding</option>
-                    <option value="BabyShower" ${project.type === 'BabyShower' ? 'selected' : ''}>BabyShower</option>
-                    <option value="Engagement" ${project.type === 'Engagement' ? 'selected' : ''}>Engagement</option>
                   </select>
                 </div>
                 <div class="mb-3">
@@ -2448,6 +2444,25 @@
       `;
 
       document.body.appendChild(modal);
+      
+      // Populate project type dropdown with engineer specialties only
+      const editProjectTypeSelect = modal.querySelector('#editProjectType');
+      const specialties = <%- JSON.stringify(engData.specialties || []) %>;
+      
+      // Clear any existing options
+      editProjectTypeSelect.innerHTML = '';
+      
+      // Add options based on engineer specialties
+      specialties.forEach(specialty => {
+        const option = document.createElement('option');
+        option.value = specialty;
+        option.textContent = specialty;
+        if (project.type === specialty) {
+          option.selected = true;
+        }
+        editProjectTypeSelect.appendChild(option);
+      });
+      
       const modalInstance = new bootstrap.Modal(modal);
       modalInstance.show();
 

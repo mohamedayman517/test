@@ -83,13 +83,7 @@ const userSchema = new mongoose.Schema(
         message: "Invalid badge",
       },
     },
-    termsAccepted: {
-      type: Boolean,
-      required: function () {
-        return this.role === "Engineer";
-      },
-      default: false,
-    },
+
     isApproved: { type: Boolean, default: false },
     isVerified: {
       type: Boolean,
@@ -156,8 +150,8 @@ const userSchema = new mongoose.Schema(
         deposit: { type: Number, required: true },
         commission: { type: Number },
         priceAfterCommission: { type: Number },
-        totalPrice:{type: Number},
-        remaining:{type:Number},
+        totalPrice: { type: Number },
+        remaining: { type: Number },
 
         paymentStatus: {
           type: String,
@@ -228,20 +222,20 @@ userSchema.pre("save", async function (next) {
 });
 
 // حذف كل مشاريع وباكدجات وحجوزات المهندس عند حذفه من الداتا بيز مباشرة
-userSchema.post('findOneAndDelete', async function(doc) {
-  if (doc && doc.role === 'Engineer') {
+userSchema.post("findOneAndDelete", async function (doc) {
+  if (doc && doc.role === "Engineer") {
     const engineerId = doc._id;
     // حذف كل المشاريع الخاصة بالمهندس
-    await require('../models/projectSchema').deleteMany({ engID: engineerId });
+    await require("../models/projectSchema").deleteMany({ engID: engineerId });
     // حذف كل الباكدجات الخاصة بالمهندس
-    await require('../models/packageSchema').deleteMany({ engID: engineerId });
+    await require("../models/packageSchema").deleteMany({ engID: engineerId });
     // حذف كل الحجوزات المرتبطة بالمهندس من جميع العملاء
-    await require('../models/clientSchema').updateMany(
+    await require("../models/clientSchema").updateMany(
       {},
       { $pull: { bookings: { engineerId: engineerId } } }
     );
     // حذف كل الحجوزات المرتبطة بالمهندس من جدول User (لو فيه مهندسين آخرين عندهم حجوزات معه)
-    await require('../models/userSchema').updateMany(
+    await require("../models/userSchema").updateMany(
       {},
       { $pull: { bookings: { engineerId: engineerId } } }
     );

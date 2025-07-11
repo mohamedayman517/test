@@ -312,7 +312,8 @@ body {
         <div class="col-12 col-lg-8">
           <div class="card shadow-lg border-0">
             <div class="card-body p-4 p-md-5">
-              <h1 class="text-center mb-4 section-gradient-title" style="font-size: 35px;"> Join our
+              <h1 class="text-center mb-4 section-gradient-title"
+                style="font-size: 35px;"> Join our
                 network of talented designers and showcase your skills to a <br>
                 world of clients looking for extraordinary events</h1>
               <form action="/register" method="post" class="needs-validation"
@@ -353,22 +354,27 @@ body {
                   </div>
 
                   <div class="col-md-6 position-relative">
-  <label class="form-label" style="font-family: sans-serif;">Password</label>
-  <input type="password" name="password" class="form-control" id="password" required minlength="6">
-  <i class="bi bi-eye password-toggle" data-target="password"
-     style="position: absolute; top: 50%; right: 1rem; transform: translateY(-50%); cursor: pointer; color: gray;"></i>
-  <span id="passwordError" class="error-message"></span>
-</div>
+                    <label class="form-label"
+                      style="font-family: sans-serif;">Password</label>
+                    <input type="password" name="password" class="form-control"
+                      id="password" required minlength="6">
+                    <i class="bi bi-eye password-toggle" data-target="password"
+                      style="position: absolute; top: 50%; right: 1rem; transform: translateY(-50%); cursor: pointer; color: gray;"></i>
+                    <span id="passwordError" class="error-message"></span>
+                  </div>
 
                   <div class="col-md-6 position-relative">
-  <label class="form-label" style="font-family: sans-serif;">Confirm Password</label>
-  <input type="password" name="confirmPassword" class="form-control" id="confirmPassword" required>
-  <i class="bi bi-eye password-toggle" data-target="confirmPassword"
-     style="position: absolute; top: 50%; right: 1rem; transform: translateY(-50%);
+                    <label class="form-label"
+                      style="font-family: sans-serif;">Confirm Password</label>
+                    <input type="password" name="confirmPassword"
+                      class="form-control" id="confirmPassword" required>
+                    <i class="bi bi-eye password-toggle"
+                      data-target="confirmPassword"
+                      style="position: absolute; top: 50%; right: 1rem; transform: translateY(-50%);
             cursor: pointer; color: gray;"></i>
-  <span id="confirmPasswordError" class="error-message"></span>
-</div>
-
+                    <span id="confirmPasswordError"
+                      class="error-message"></span>
+                  </div>
 
                   <div class="col-md-6">
                     <label class="form-label"
@@ -376,7 +382,7 @@ body {
                     <select name="role" id="role" class="form-control"
                       onchange="toggleFieldsBasedOnRole()">
                       <option value="Engineer">Engineer</option>
-                      <option value="Admin">Admin</option>
+                    
                     </select>
                     <span id="roleError" class="error-message"></span>
                   </div>
@@ -417,7 +423,7 @@ body {
                       <div class="event-type">
                         <input type="checkbox" id="birthday" name="specialties"
                           value="birthday"
-                          class="event-checkbox" >
+                          class="event-checkbox">
                         <label style="font-family: sans-serif;"
                           for="birthday"><i class="bi bi-cake2"
                             style="color: goldenrod;"></i>Birthday</label>
@@ -425,7 +431,7 @@ body {
                       <div class="event-type">
                         <input type="checkbox" id="engagement"
                           name="specialties" value="engagement"
-                          class="event-checkbox" >
+                          class="event-checkbox">
                         <label style="font-family: sans-serif;"
                           for="engagement"><i class="bi bi-heart-fill"
                             style="color: goldenrod;"></i>Engagement</label>
@@ -433,7 +439,7 @@ body {
                       <div class="event-type">
                         <input type="checkbox" id="wedding" name="specialties"
                           value="wedding"
-                          class="event-checkbox" >
+                          class="event-checkbox">
                         <label style="font-family: sans-serif;" for="wedding"><i
                             class="bi bi-hearts"
                             style="color: goldenrod;"></i>Wedding</label>
@@ -441,7 +447,7 @@ body {
                       <div class="event-type">
                         <input type="checkbox" id="babyshower"
                           name="specialties" value="babyShower"
-                          class="event-checkbox" >
+                          class="event-checkbox">
                         <label style="font-family: sans-serif;"
                           for="babyshower"><i class="bi bi-stars"
                             style="color: goldenrod;"></i>Baby Showers</label>
@@ -457,21 +463,6 @@ body {
                       placeholder="Share your design philosophy and creative approach"></textarea>
                     <span id="bioError" class="error-message"></span>
                     <div class="char-count text-end"><span>0</span>/300</div>
-                  </div>
-
-                  <div class="col-12 engineer-only-field">
-                    <div class="form-check">
-                      <input type="hidden" name="termsAccepted" value="false">
-                      <input class="form-check-input" type="checkbox" required
-                        id="termsAccepted" value="true">
-                      <span id="termsAcceptedError"
-                        class="error-message"></span>
-                      <label class="form-check-label"
-                        style="color: goldenrod ; font-family: sans-serif;"
-                        for="terms">I agree to the Terms of Service and
-                        Privacy
-                        Policy</label>
-                    </div>
                   </div>
 
                   <div class="col-12 text-center">
@@ -522,7 +513,7 @@ body {
                     engineerOnlyFields.forEach(field => {
                         field.style.display = 'block';
                         // Add back required attribute for specific inputs
-                        const requiredInputs = field.querySelectorAll('input[name="idCardPhoto"], .event-checkbox ,#termsAccepted');
+                        const requiredInputs = field.querySelectorAll('input[name="idCardPhoto"], .event-checkbox ');
                         requiredInputs.forEach(input => {
                             input.setAttribute('required', 'required');
                         });
@@ -645,7 +636,7 @@ body {
     <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
+    <script>
   document.querySelectorAll('.password-toggle').forEach(toggle => {
     toggle.addEventListener('click', function () {
       const targetId = this.getAttribute('data-target');
@@ -660,7 +651,6 @@ body {
     });
   });
 </script>
-
 
     <style>
   .input-error {

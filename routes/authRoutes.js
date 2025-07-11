@@ -184,26 +184,22 @@ router.post("/login", async (req, res) => {
       }
     }
 
-
-
-// ✅ Check if subscription is expired
-const now = new Date();
-if (
-  user.role === "Engineer" &&
-  user.hasPaidSubscription &&
-  user.subscriptionEndDate &&
-  new Date(user.subscriptionEndDate) < now
-) {
-  return res.json({
-    success: false,
-    subscriptionExpired: true,
-    message: "Your subscription has expired. Please renew to continue.",
-    engineerId: user._id,
-    redirectTo: `/subscription-expired?engineerId=${user._id}`,
-  });
-}
-
-
+    // ✅ Check if subscription is expired
+    const now = new Date();
+    if (
+      user.role === "Engineer" &&
+      user.hasPaidSubscription &&
+      user.subscriptionEndDate &&
+      new Date(user.subscriptionEndDate) < now
+    ) {
+      return res.json({
+        success: false,
+        subscriptionExpired: true,
+        message: "Your subscription has expired. Please renew to continue.",
+        engineerId: user._id,
+        redirectTo: `/subscription-expired?engineerId=${user._id}`,
+      });
+    }
 
     // Create session
     req.session.user = {
@@ -238,7 +234,6 @@ if (
   }
 });
 
-
 router.get("/subscription-expired", async (req, res) => {
   const { engineerId } = req.query;
 
@@ -254,8 +249,6 @@ router.get("/subscription-expired", async (req, res) => {
   });
 });
 
-
-
 router.post("/register", async (req, res) => {
   try {
     const {
@@ -266,10 +259,10 @@ router.post("/register", async (req, res) => {
       role,
       phone,
       idCardPhoto,
-      specialties
+      specialties,
     } = req.body;
 
-    console.log('REGISTER BODY:', req.body);
+    console.log("REGISTER BODY:", req.body);
 
     // Check if email already exists
     const existingUser = await User.findOne({ email });
@@ -409,7 +402,7 @@ router.post("/create-payment-intent", async (req, res) => {
 
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: 200000, 
+      amount: 200000,
       currency: "egp",
       metadata: {
         engineerId: engineerId,
@@ -465,7 +458,7 @@ router.post("/payment-engineer", async (req, res) => {
         customer: customer.id,
         items: [
           {
-            price: "price_1RaPEKF11C4VZmHAUNPJ6Kzi", 
+            price: "price_1RaPEKF11C4VZmHAUNPJ6Kzi",
           },
         ],
         payment_settings: {
