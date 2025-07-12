@@ -140,16 +140,26 @@ router.post(
         req.body;
 
       // فحص الإيميل في كلا النموذجين لمنع التكرار
+      console.log("🔍 Checking email:", email);
       const existingUser = await User.findOne({ email });
       const existingClient = await Client.findOne({ email });
 
+      console.log("👤 Existing User:", existingUser ? "Found" : "Not found");
+      console.log(
+        "👥 Existing Client:",
+        existingClient ? "Found" : "Not found"
+      );
+
       if (existingUser || existingClient) {
+        console.log("❌ Email already exists, rejecting registration");
         return res.status(400).json({
           success: false,
           message:
-            "Email address is already registered. Please use a different email or try logging in.",
+            "هذا البريد الإلكتروني مسجل مسبقاً. يرجى استخدام بريد إلكتروني آخر أو تسجيل الدخول.",
         });
       }
+
+      console.log("✅ Email is unique, proceeding with registration");
 
       const customId =
         Math.random().toString(36).substring(2, 15) +

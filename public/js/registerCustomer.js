@@ -131,9 +131,19 @@ document.addEventListener("DOMContentLoaded", function () {
             window.location.href = "/login";
           }, 2000);
         } else {
-          const errorText = await response.text();
-          console.error("Server Error:", errorText);
-          showMessage(errorText || "Failed to register.", "red");
+          try {
+            const errorData = await response.json();
+            console.error("Server Error:", errorData);
+            showMessage(errorData.message || "Failed to register.", "red");
+          } catch (e) {
+            // إذا لم يكن الرد JSON، استخدم النص
+            const errorText = await response.text();
+            console.error("Server Error:", errorText);
+            showMessage(
+              "حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.",
+              "red"
+            );
+          }
         }
       } catch (error) {
         showMessage(`Error: ${error.message}`, "red");

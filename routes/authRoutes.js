@@ -266,15 +266,32 @@ router.post("/register", async (req, res) => {
     console.log("REGISTER BODY:", req.body);
 
     // فحص الإيميل في كلا النموذجين لمنع التكرار
+    console.log("🔍 [Engineer Registration] Checking email:", email);
     const existingUser = await User.findOne({ email });
     const existingClient = await Client.findOne({ email });
 
+    console.log(
+      "👤 [Engineer Registration] Existing User:",
+      existingUser ? "Found" : "Not found"
+    );
+    console.log(
+      "👥 [Engineer Registration] Existing Client:",
+      existingClient ? "Found" : "Not found"
+    );
+
     if (existingUser || existingClient) {
+      console.log(
+        "❌ [Engineer Registration] Email already exists, rejecting registration"
+      );
       return res.status(400).json({
         message:
-          "Email address is already registered. Please use a different email or try logging in.",
+          "هذا البريد الإلكتروني مسجل مسبقاً. يرجى استخدام بريد إلكتروني آخر أو تسجيل الدخول.",
       });
     }
+
+    console.log(
+      "✅ [Engineer Registration] Email is unique, proceeding with registration"
+    );
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);

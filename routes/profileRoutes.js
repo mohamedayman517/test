@@ -198,16 +198,33 @@ router.post(
       const { name, email, password, phone, bio } = req.body;
 
       // فحص الإيميل في كلا النموذجين لمنع التكرار
+      console.log("🔍 [Client Registration] Checking email:", email);
       const existingUser = await User.findOne({ email });
       const existingClient = await Client.findOne({ email });
 
+      console.log(
+        "👤 [Client Registration] Existing User:",
+        existingUser ? "Found" : "Not found"
+      );
+      console.log(
+        "👥 [Client Registration] Existing Client:",
+        existingClient ? "Found" : "Not found"
+      );
+
       if (existingUser || existingClient) {
+        console.log(
+          "❌ [Client Registration] Email already exists, rejecting registration"
+        );
         return res.status(400).json({
           success: false,
           message:
-            "Email address is already registered. Please use a different email or try logging in.",
+            "هذا البريد الإلكتروني مسجل مسبقاً. يرجى استخدام بريد إلكتروني آخر أو تسجيل الدخول.",
         });
       }
+
+      console.log(
+        "✅ [Client Registration] Email is unique, proceeding with registration"
+      );
 
       // Hash password
       const salt = await bcrypt.genSalt(10);
