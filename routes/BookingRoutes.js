@@ -490,21 +490,58 @@ router.delete("/delete-booking/:bookingId", async (req, res) => {
 // Helper function to check engineer availability
 async function checkEngineerAvailability(engineerId, eventDate) {
   try {
-    // Get all confirmed and pending bookings for this engineer on the specified date
-    const clients = await Client.find({
+    console.log(
+      `Checking availability for engineer ${engineerId} on date ${eventDate}`
+    );
+
+    // Convert eventDate to Date object for comparison with Client schema
+    const targetDate = new Date(eventDate);
+    const startOfDay = new Date(
+      targetDate.getFullYear(),
+      targetDate.getMonth(),
+      targetDate.getDate()
+    );
+    const endOfDay = new Date(
+      targetDate.getFullYear(),
+      targetDate.getMonth(),
+      targetDate.getDate(),
+      23,
+      59,
+      59
+    );
+
+    // Check Client bookings (date field is Date object)
+    const clientBookings = await Client.find({
       "bookings.engineerId": engineerId,
-      "bookings.eventDate": eventDate,
+      "bookings.date": {
+        $gte: startOfDay,
+        $lte: endOfDay,
+      },
       "bookings.status": {
         $in: ["confirmed", "pending", "Confirmed", "Pending"],
       },
     });
 
+    // Check User bookings (eventDate field is String)
+    const userBookings = await User.find({
+      _id: engineerId,
+      "bookings.eventDate": eventDate,
+      "bookings.status": {
+        $in: ["Active", "Pending"],
+      },
+    });
+
+    console.log(
+      `Found ${clientBookings.length} client bookings and ${userBookings.length} user bookings`
+    );
+
     // Check if any bookings exist for this date
-    const hasBooking = clients.some((client) =>
+    const hasClientBooking = clientBookings.some((client) =>
       client.bookings.some(
         (booking) =>
           booking.engineerId.toString() === engineerId &&
-          booking.eventDate === eventDate &&
+          booking.date >= startOfDay &&
+          booking.date <= endOfDay &&
           (booking.status === "confirmed" ||
             booking.status === "pending" ||
             booking.status === "Confirmed" ||
@@ -512,13 +549,23 @@ async function checkEngineerAvailability(engineerId, eventDate) {
       )
     );
 
-    if (hasBooking) {
+    const hasUserBooking = userBookings.some((user) =>
+      user.bookings.some(
+        (booking) =>
+          booking.eventDate === eventDate &&
+          (booking.status === "Active" || booking.status === "Pending")
+      )
+    );
+
+    if (hasClientBooking || hasUserBooking) {
+      console.log(`Engineer is booked on ${eventDate}`);
       return {
         available: false,
         message: `Engineer is already booked on ${eventDate}`,
       };
     }
 
+    console.log(`Engineer is available on ${eventDate}`);
     return {
       available: true,
       message: "Engineer is available on this date",
@@ -569,7 +616,9 @@ router.get("/api/engineer-booked-dates/:engineerId", async (req, res) => {
       return res.status(404).json({ message: "Engineer not found" });
     }
 
-    // Get all bookings for this engineer
+    const bookedDates = [];
+
+    // Get bookings from Client schema (date field is Date object)
     const clients = await Client.find({
       "bookings.engineerId": engineerId,
       "bookings.status": {
@@ -577,7 +626,6 @@ router.get("/api/engineer-booked-dates/:engineerId", async (req, res) => {
       },
     });
 
-    const bookedDates = [];
     clients.forEach((client) => {
       client.bookings.forEach((booking) => {
         if (
@@ -587,12 +635,33 @@ router.get("/api/engineer-booked-dates/:engineerId", async (req, res) => {
             booking.status === "Confirmed" ||
             booking.status === "Pending")
         ) {
+          // Convert Date object to YYYY-MM-DD format
+          const dateStr = booking.date.toISOString().split("T")[0];
+          bookedDates.push(dateStr);
+        }
+      });
+    });
+
+    // Get bookings from User schema (eventDate field is String)
+    const userBookings = await User.find({
+      _id: engineerId,
+      "bookings.status": {
+        $in: ["Active", "Pending"],
+      },
+    });
+
+    userBookings.forEach((user) => {
+      user.bookings.forEach((booking) => {
+        if (booking.status === "Active" || booking.status === "Pending") {
           bookedDates.push(booking.eventDate);
         }
       });
     });
 
-    res.json({ bookedDates });
+    // Remove duplicates
+    const uniqueBookedDates = [...new Set(bookedDates)];
+
+    res.json({ bookedDates: uniqueBookedDates });
   } catch (error) {
     console.error("Error getting booked dates:", error);
     res.status(500).json({ message: "Error retrieving booked dates" });
