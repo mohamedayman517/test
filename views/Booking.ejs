@@ -376,7 +376,8 @@
               <h4 class="section-title section-gradient-title">Personal
                 Information</h4>
               <form id="bookingForm" class="needs-validation" novalidate
-                method="POST" action="/booking">
+                method="POST" action="/booking"
+                data-engineer-id="<%= typeof package !== 'undefined' && package !== null ? package.engID : '' %>">
                 <input type="hidden" name="packageId"
                   value="<%= typeof packageId !== 'undefined' ? packageId : (typeof package !== 'undefined' && package !== null ? package._id : (typeof packageID !== 'undefined' ? packageID : '')) %>">
                 <div class="row g-4">
@@ -583,9 +584,16 @@
             const engineerId = form.getAttribute('data-engineer-id');
             const dateInput = document.getElementById('eventDate');
 
+            console.log('Engineer ID:', engineerId);
+            console.log('Date Input:', dateInput);
+
             // Function to check date availability
             async function checkDateAvailability(selectedDate) {
-                if (!engineerId || !selectedDate) return;
+                console.log('Checking availability for:', selectedDate, 'Engineer:', engineerId);
+                if (!engineerId || !selectedDate) {
+                    console.log('Missing engineerId or selectedDate');
+                    return;
+                }
 
                 try {
                     const response = await fetch('/api/check-availability', {
@@ -645,12 +653,16 @@
 
             // Add event listener to date input
             if (dateInput) {
+                console.log('Adding event listener to date input');
                 dateInput.addEventListener('change', function() {
                     const selectedDate = this.value;
+                    console.log('Date changed to:', selectedDate);
                     if (selectedDate) {
                         checkDateAvailability(selectedDate);
                     }
                 });
+            } else {
+                console.log('Date input not found!');
             }
         });
     </script>
