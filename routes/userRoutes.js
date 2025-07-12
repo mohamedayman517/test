@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const dir = path.join(__dirname, "../uploads/");
     console.log(`✅ Upload directory path: ${dir}`);
-    
+
     if (!fs.existsSync(dir)) {
       console.log(`⚠️ Upload directory does not exist, creating it now...`);
       fs.mkdirSync(dir, { recursive: true });
@@ -24,7 +24,7 @@ const storage = multer.diskStorage({
     } else {
       console.log(`✅ Upload directory exists: ${dir}`);
     }
-    
+
     cb(null, dir);
   },
   filename: function (req, file, cb) {
@@ -77,7 +77,7 @@ router.post(
       { name: "profilePhoto", maxCount: 1 },
       { name: "idCardPhoto", maxCount: 1 },
     ]);
-    
+
     uploadMiddleware(req, res, (err) => {
       if (err instanceof multer.MulterError) {
         // خطأ في Multer
@@ -94,7 +94,7 @@ router.post(
           message: "حدث خطأ أثناء تحميل الملف. يرجى المحاولة مرة أخرى.",
         });
       }
-      
+
       // تم تحميل الملفات بنجاح، متابعة المعالجة
       next();
     });
@@ -159,12 +159,12 @@ router.post(
         try {
           // تأكد من أن المسار موجود
           console.log("Profile Photo Path:", profilePhotoFile.path);
-          
+
           // قراءة الملف
           const imageBuffer = await fsPromises.readFile(profilePhotoFile.path);
           const base64Image = imageBuffer.toString("base64");
           profilePhotoBase64 = `data:${profilePhotoFile.mimetype};base64,${base64Image}`;
-          
+
           // حذف الملف المؤقت بعد تحويله
           await fsPromises.unlink(profilePhotoFile.path);
         } catch (err) {
@@ -181,20 +181,25 @@ router.post(
         try {
           // تأكد من أن المسار موجود
           console.log("ID Card Photo Path:", idCardPhotoFile.path);
-          console.log("File exists check before reading:", fs.existsSync(idCardPhotoFile.path));
-          
+          console.log(
+            "File exists check before reading:",
+            fs.existsSync(idCardPhotoFile.path)
+          );
+
           // التحقق من حجم الملف
           const stats = await fsPromises.stat(idCardPhotoFile.path);
           console.log(`✅ ID Card Photo file size: ${stats.size} bytes`);
-          
+
           // قراءة الملف
           const imageBuffer = await fsPromises.readFile(idCardPhotoFile.path);
-          console.log(`✅ Successfully read ID Card Photo file, size: ${imageBuffer.length} bytes`);
-          
+          console.log(
+            `✅ Successfully read ID Card Photo file, size: ${imageBuffer.length} bytes`
+          );
+
           const base64Image = imageBuffer.toString("base64");
           idCardPhotoBase64 = `data:${idCardPhotoFile.mimetype};base64,${base64Image}`;
           console.log(`✅ ID Card Photo processed successfully`);
-          
+
           // حذف الملف المؤقت بعد تحويله
           await fsPromises.unlink(idCardPhotoFile.path);
           console.log(`✅ Temporary ID Card Photo file deleted`);
@@ -203,11 +208,15 @@ router.post(
           // إضافة معلومات إضافية للتصحيح
           console.error("File path:", idCardPhotoFile.path);
           console.error("File exists:", fs.existsSync(idCardPhotoFile.path));
-          console.error("Directory contents:", fs.readdirSync(path.dirname(idCardPhotoFile.path)));
-          
+          console.error(
+            "Directory contents:",
+            fs.readdirSync(path.dirname(idCardPhotoFile.path))
+          );
+
           return res.status(400).json({
             success: false,
-            message: "حدث خطأ أثناء معالجة صورة بطاقة الهوية. يرجى المحاولة مرة أخرى.",
+            message:
+              "حدث خطأ أثناء معالجة صورة بطاقة الهوية. يرجى المحاولة مرة أخرى.",
           });
         }
       }
@@ -244,7 +253,7 @@ router.post(
             message: "صورة بطاقة الهوية مطلوبة للمهندسين",
           });
         }
-        
+
         // تسجيل معلومات إضافية للتصحيح
         console.log("✅ ID Card Photo processed successfully");
         userObj.idCardPhoto = idCardPhotoBase64;
@@ -299,6 +308,14 @@ router.post("/login", async (req, res) => {
           return res
             .status(403)
             .json({ message: "Your account is pending approval" });
+        }
+
+        // Check email verification for Engineers
+        if (user.role === "Engineer" && !user.isVerified) {
+          return res.status(403).json({
+            message:
+              "Please verify your email address using the code sent to your email before logging in.",
+          });
         }
       }
     }

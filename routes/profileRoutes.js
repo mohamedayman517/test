@@ -15,13 +15,16 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     // التأكد من وجود المجلد
     const dir = "./uploads/";
-    if (!fs.existsSync(dir)){
+    if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
     cb(null, dir); // مكان مؤقت للتخزين
   },
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
   },
 });
 
@@ -30,7 +33,9 @@ const upload = multer({
   limits: { fileSize: 5000000 }, // حد أقصى 5 ميجابايت
   fileFilter: function (req, file, cb) {
     const filetypes = /jpeg|jpg|png/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const extname = filetypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
     const mimetype = filetypes.test(file.mimetype);
     if (mimetype && extname) {
       return cb(null, true);
@@ -57,6 +62,15 @@ router.get("/profile/:id", async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "Profile not found",
+      });
+    }
+
+    // التحقق من أن المهندس قد قام بتأكيد البريد الإلكتروني
+    if (profile.role === "Engineer" && !profile.isVerified) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "Please verify your email address before accessing your profile. Check your email for the verification code.",
       });
     }
 
@@ -202,7 +216,9 @@ router.post(
         // قراءة الملف المؤقت
         const fileData = fs.readFileSync(req.file.path);
         // تحويل الملف إلى سلسلة Base64
-        profilePhotoBase64 = `data:${req.file.mimetype};base64,${fileData.toString('base64')}`;
+        profilePhotoBase64 = `data:${
+          req.file.mimetype
+        };base64,${fileData.toString("base64")}`;
         // حذف الملف المؤقت بعد التحويل
         fs.unlinkSync(req.file.path);
       }
@@ -328,6 +344,22 @@ router.post(
           .json({ success: false, error: "User not logged in" });
       }
 
+      // التحقق من أن المهندس قد قام بتأكيد البريد الإلكتروني قبل تحديث البروفايل
+      const userId = req.session.user.id;
+      const currentUser = await User.findById(userId);
+
+      if (
+        currentUser &&
+        currentUser.role === "Engineer" &&
+        !currentUser.isVerified
+      ) {
+        return res.status(403).json({
+          success: false,
+          error:
+            "Please verify your email address before updating your profile. Check your email for the verification code.",
+        });
+      }
+
       const { firstName, lastName, bio } = req.body;
       const updateData = { firstName, lastName, bio };
 
@@ -336,12 +368,13 @@ router.post(
         // قراءة الملف المؤقت
         const fileData = fs.readFileSync(req.file.path);
         // تحويل الملف إلى سلسلة Base64
-        updateData.profilePhoto = `data:${req.file.mimetype};base64,${fileData.toString('base64')}`;
+        updateData.profilePhoto = `data:${
+          req.file.mimetype
+        };base64,${fileData.toString("base64")}`;
         // حذف الملف المؤقت بعد التحويل
         fs.unlinkSync(req.file.path);
       }
 
-      const userId = req.session.user.id;
       const updateUser = await User.findByIdAndUpdate(userId, updateData, {
         new: true,
       }).lean();
