@@ -97,8 +97,22 @@ router.post("/booking", async (req, res) => {
     if (!pkg) {
       return res.status(404).send("Package not found");
     }
+
+    // Check engineer availability before proceeding to payment
+    const availabilityCheck = await checkEngineerAvailability(
+      pkg.engID,
+      eventDate
+    );
+    if (!availabilityCheck.available) {
+      return res.status(409).render("error", {
+        message: "عذراً، هذا المهندس محجوز في هذا التاريخ",
+        details: "يرجى اختيار تاريخ آخر أو مهندس آخر",
+        user: req.session.user,
+        isAuthenticated: !!req.session.user,
+      });
+    }
     const originalPrice = pkg.price;
-    const commission = Math.round(originalPrice * 0.10);
+    const commission = Math.round(originalPrice * 0.1);
     const totalPrice = originalPrice;
     const deposit = Math.round(totalPrice * 0.5);
     const vendorShare = totalPrice - commission;
@@ -119,8 +133,7 @@ router.post("/booking", async (req, res) => {
       originalPrice: originalPrice,
       stripePublicKey: process.env.STRIPE_PUBLISHABLE_KEY,
       eventType: eventType,
-      vendorShare: deposit - commission
-
+      vendorShare: deposit - commission,
     });
   } catch (error) {
     console.error("Booking error:", error);
@@ -162,6 +175,53 @@ router.post("/proceed-to-payment", (req, res) => {
   }
 });
 
+// Helper function to check if engineer is available on a specific date
+async function checkEngineerAvailability(engineerId, eventDate) {
+  try {
+    const engineer = await User.findById(engineerId);
+    if (!engineer) {
+      return { available: false, message: "Engineer not found" };
+    }
+
+    // Convert event date to start and end of day for comparison
+    const requestedDate = new Date(eventDate);
+    const startOfDay = new Date(
+      requestedDate.getFullYear(),
+      requestedDate.getMonth(),
+      requestedDate.getDate()
+    );
+    const endOfDay = new Date(
+      requestedDate.getFullYear(),
+      requestedDate.getMonth(),
+      requestedDate.getDate(),
+      23,
+      59,
+      59
+    );
+
+    // Check if engineer has any active bookings on this date
+    const existingBooking = engineer.bookings.find((booking) => {
+      if (booking.status === "Cancelled") return false; // Skip cancelled bookings
+
+      const bookingDate = new Date(booking.eventDate);
+      return bookingDate >= startOfDay && bookingDate <= endOfDay;
+    });
+
+    if (existingBooking) {
+      return {
+        available: false,
+        message: "Engineer is already booked on this date",
+        conflictingBooking: existingBooking,
+      };
+    }
+
+    return { available: true, message: "Engineer is available" };
+  } catch (error) {
+    console.error("Error checking engineer availability:", error);
+    return { available: false, message: "Error checking availability" };
+  }
+}
+
 router.post("/process-payment", async (req, res) => {
   try {
     const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
@@ -187,7 +247,6 @@ router.post("/process-payment", async (req, res) => {
         Math.random() * 9000 + 1000
       )}`;
 
-
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount,
       currency: "egp",
@@ -207,16 +266,14 @@ router.post("/process-payment", async (req, res) => {
       // إذا كان معرف الباقة متوفر، استخدمه للبحث عن الباقة
       // وإلا ابحث باستخدام اسم الباقة
       let package;
-let totalPrice = 0;
+      let totalPrice = 0;
       if (package_id) {
         package = await Package.findById(package_id);
         console.log(`Searching for package by ID: ${package_id}`);
-      
       } else {
         package = await Package.findOne({ name: package_name });
         console.log(`Searching for package by name: ${package_name}`);
       }
-    
 
       if (package && package.engID) {
         // Log the package and engineer ID for debugging
@@ -224,15 +281,26 @@ let totalPrice = 0;
           `Found package: ${package.name} with engineer ID: ${package.engID}`
         );
 
+        // Check engineer availability before processing payment
+        const availabilityCheck = await checkEngineerAvailability(
+          package.engID,
+          event_date
+        );
+        if (!availabilityCheck.available) {
+          console.log(`Engineer not available: ${availabilityCheck.message}`);
+          return res.status(409).json({
+            status: "failed",
+            message: availabilityCheck.message,
+            error: "ENGINEER_NOT_AVAILABLE",
+            conflictingBooking: availabilityCheck.conflictingBooking,
+          });
+        }
+
         const engineer = await User.findById(package.engID);
         if (!engineer) {
           console.error(`Engineer not found with ID: ${package.engID}`);
           throw new Error("Engineer not found");
         }
-
-
-
-
 
         // Check if engineer's bio meets the minimum length requirement (5 characters)
         // If not, set a default bio to prevent validation errors
@@ -266,13 +334,12 @@ let totalPrice = 0;
           `Found engineer: ${engineer.firstName} ${engineer.lastName} and client: ${client.name}`
         );
 
-
-const price = package.price || amount / 100; // السعر بالجنيه
-const commission = Math.round(price * 0.10); // 10% عمولة
-const deposit = Math.round(price * 0.5); // 50% دفعة مقدمة
-const priceAfterCommission = deposit - commission;
-const totalPrice = price; // ممكن تكتفي باستخدام price
-const remaining = totalPrice - deposit;
+        const price = package.price || amount / 100; // السعر بالجنيه
+        const commission = Math.round(price * 0.1); // 10% عمولة
+        const deposit = Math.round(price * 0.5); // 50% دفعة مقدمة
+        const priceAfterCommission = deposit - commission;
+        const totalPrice = price; // ممكن تكتفي باستخدام price
+        const remaining = totalPrice - deposit;
 
         // Continue with booking process
         try {
@@ -304,10 +371,10 @@ const remaining = totalPrice - deposit;
             eventDate: event_date, // Store as string to match schema expectation
             paymentMethod: paymentIntent.payment_method || "card", // Ensure paymentMethod is set
             bookingId: finalBookingId, // Ensure bookingId is set
-             commission: commission,
-  priceAfterCommission: priceAfterCommission,
-   totalPrice: totalPrice,
-   remaining: remaining,
+            commission: commission,
+            priceAfterCommission: priceAfterCommission,
+            totalPrice: totalPrice,
+            remaining: remaining,
           };
 
           // Ensure bookings arrays exist
@@ -439,6 +506,58 @@ router.get("/payment-success", (req, res) => {
     user: req.session.user,
     isAuthenticated: !!req.session.user,
   });
+});
+
+// Route to check engineer availability for a specific date
+router.post("/check-availability", async (req, res) => {
+  try {
+    const { engineerId, eventDate } = req.body;
+
+    if (!engineerId || !eventDate) {
+      return res.status(400).json({
+        available: false,
+        message: "Engineer ID and event date are required",
+      });
+    }
+
+    const availabilityCheck = await checkEngineerAvailability(
+      engineerId,
+      eventDate
+    );
+
+    res.json(availabilityCheck);
+  } catch (error) {
+    console.error("Error checking availability:", error);
+    res.status(500).json({
+      available: false,
+      message: "Error checking engineer availability",
+    });
+  }
+});
+
+// Route to get engineer's booked dates
+router.get("/engineer-booked-dates/:engineerId", async (req, res) => {
+  try {
+    const { engineerId } = req.params;
+
+    const engineer = await User.findById(engineerId);
+    if (!engineer) {
+      return res.status(404).json({ message: "Engineer not found" });
+    }
+
+    // Get all active booking dates
+    const bookedDates = engineer.bookings
+      .filter((booking) => booking.status !== "Cancelled")
+      .map((booking) => {
+        const date = new Date(booking.eventDate);
+        return date.toISOString().split("T")[0]; // Return YYYY-MM-DD format
+      });
+
+    res.json({ bookedDates });
+  } catch (error) {
+    console.error("Error getting booked dates:", error);
+    res.status(500).json({ message: "Error retrieving booked dates" });
+  }
 });
 
 router.post("/submit-review", isAuthenticated, async (req, res) => {

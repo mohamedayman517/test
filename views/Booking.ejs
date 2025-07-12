@@ -376,7 +376,8 @@
               <h4 class="section-title section-gradient-title">Personal
                 Information</h4>
               <form id="bookingForm" class="needs-validation" novalidate
-                method="POST" action="/booking">
+                method="POST" action="/booking"
+                data-engineer-id="<%= typeof package !== 'undefined' && package !== null ? package.engID : '' %>">
                 <input type="hidden" name="packageId"
                   value="<%= typeof packageId !== 'undefined' ? packageId : (typeof package !== 'undefined' && package !== null ? package._id : (typeof packageID !== 'undefined' ? packageID : '')) %>">
                 <div class="row g-4">
@@ -552,6 +553,10 @@
   </script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Booking Availability Checker -->
+    <script src="/js/booking-availability.js"></script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             // Form validation

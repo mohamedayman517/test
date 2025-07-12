@@ -85,7 +85,7 @@ router.get("/by-occasion", async (req, res) => {
       role: "Engineer",
       isApproved: true, // فقط المهندسين المعتمدين
       isVerified: true, // فقط المهندسين المؤكدين
-      specialties: { $in: [new RegExp(`^${occasion}$`, 'i')] } // فلترة case-insensitive
+      specialties: { $in: [new RegExp(`^${occasion}$`, "i")] }, // فلترة case-insensitive
     });
 
     // جلب الباكدجات الخاصة بالمناسبة
@@ -96,10 +96,10 @@ router.get("/by-occasion", async (req, res) => {
       const engineerPackages = packages.filter(
         (pkg) => pkg.engID.toString() === engineer._id.toString()
       );
-      return { 
-        ...engineer.toObject(), 
+      return {
+        ...engineer.toObject(),
         packages: engineerPackages,
-        hasPackages: engineerPackages.length > 0 // إضافة علامة إذا كان لديه باكدجات أم لا
+        hasPackages: engineerPackages.length > 0, // إضافة علامة إذا كان لديه باكدجات أم لا
       };
     });
 
@@ -190,6 +190,23 @@ router.delete("/:id", async (req, res) => {
   } catch (error) {
     console.error("Error deleting package:", error);
     res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+// Route to get package details by ID (for JavaScript)
+router.get("/api/packages/:packageId", async (req, res) => {
+  try {
+    const { packageId } = req.params;
+    const package = await Package.findById(packageId).lean();
+
+    if (!package) {
+      return res.status(404).json({ message: "Package not found" });
+    }
+
+    res.json(package);
+  } catch (error) {
+    console.error("Error getting package:", error);
+    res.status(500).json({ message: "Error retrieving package" });
   }
 });
 
