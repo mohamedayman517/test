@@ -487,4 +487,116 @@ router.delete("/delete-booking/:bookingId", async (req, res) => {
   }
 });
 
+// Helper function to check engineer availability
+async function checkEngineerAvailability(engineerId, eventDate) {
+  try {
+    // Get all confirmed and pending bookings for this engineer on the specified date
+    const clients = await Client.find({
+      "bookings.engineerId": engineerId,
+      "bookings.eventDate": eventDate,
+      "bookings.status": {
+        $in: ["confirmed", "pending", "Confirmed", "Pending"],
+      },
+    });
+
+    // Check if any bookings exist for this date
+    const hasBooking = clients.some((client) =>
+      client.bookings.some(
+        (booking) =>
+          booking.engineerId.toString() === engineerId &&
+          booking.eventDate === eventDate &&
+          (booking.status === "confirmed" ||
+            booking.status === "pending" ||
+            booking.status === "Confirmed" ||
+            booking.status === "Pending")
+      )
+    );
+
+    if (hasBooking) {
+      return {
+        available: false,
+        message: `Engineer is already booked on ${eventDate}`,
+      };
+    }
+
+    return {
+      available: true,
+      message: "Engineer is available on this date",
+    };
+  } catch (error) {
+    console.error("Error checking engineer availability:", error);
+    return { available: false, message: "Error checking availability" };
+  }
+}
+
+// Route to check engineer availability for a specific date
+router.post("/api/check-availability", async (req, res) => {
+  try {
+    const { engineerId, eventDate } = req.body;
+
+    if (!engineerId || !eventDate) {
+      return res.status(400).json({
+        available: false,
+        message: "Engineer ID and event date are required",
+      });
+    }
+
+    const availabilityResult = await checkEngineerAvailability(
+      engineerId,
+      eventDate
+    );
+
+    return res.json({
+      available: availabilityResult.available,
+      message: availabilityResult.message,
+    });
+  } catch (error) {
+    console.error("Error checking availability:", error);
+    return res.status(500).json({
+      available: false,
+      message: "Error checking availability",
+    });
+  }
+});
+
+// Route to get engineer's booked dates
+router.get("/api/engineer-booked-dates/:engineerId", async (req, res) => {
+  try {
+    const { engineerId } = req.params;
+
+    const engineer = await User.findById(engineerId);
+    if (!engineer) {
+      return res.status(404).json({ message: "Engineer not found" });
+    }
+
+    // Get all bookings for this engineer
+    const clients = await Client.find({
+      "bookings.engineerId": engineerId,
+      "bookings.status": {
+        $in: ["confirmed", "pending", "Confirmed", "Pending"],
+      },
+    });
+
+    const bookedDates = [];
+    clients.forEach((client) => {
+      client.bookings.forEach((booking) => {
+        if (
+          booking.engineerId.toString() === engineerId &&
+          (booking.status === "confirmed" ||
+            booking.status === "pending" ||
+            booking.status === "Confirmed" ||
+            booking.status === "Pending")
+        ) {
+          bookedDates.push(booking.eventDate);
+        }
+      });
+    });
+
+    res.json({ bookedDates });
+  } catch (error) {
+    console.error("Error getting booked dates:", error);
+    res.status(500).json({ message: "Error retrieving booked dates" });
+  }
+});
+
 module.exports = router;
