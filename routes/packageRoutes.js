@@ -193,21 +193,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// Route to get package details by ID (for JavaScript)
-router.get("/api/packages/:packageId", async (req, res) => {
-  try {
-    const { packageId } = req.params;
-    const package = await Package.findById(packageId).lean();
-
-    if (!package) {
-      return res.status(404).json({ message: "Package not found" });
-    }
-
-    res.json(package);
-  } catch (error) {
-    console.error("Error getting package:", error);
-    res.status(500).json({ message: "Error retrieving package" });
-  }
-});
-
 module.exports = router;

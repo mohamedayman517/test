@@ -95,47 +95,7 @@ router.post("/booking", async (req, res) => {
     const { packageId, eventDate, eventType } = req.body;
     const pkg = await Package.findById(packageId).lean();
     if (!pkg) {
-      // Check if request expects JSON (AJAX) or HTML (regular form submission)
-      const acceptsJson =
-        req.headers.accept && req.headers.accept.includes("application/json");
-
-      if (acceptsJson) {
-        return res.status(404).json({
-          success: false,
-          message: "Package not found",
-          error: "PACKAGE_NOT_FOUND",
-        });
-      } else {
-        return res.status(404).send("Package not found");
-      }
-    }
-
-    // Check engineer availability before proceeding to payment
-    const availabilityCheck = await checkEngineerAvailability(
-      pkg.engID,
-      eventDate
-    );
-    if (!availabilityCheck.available) {
-      // Check if request expects JSON (AJAX) or HTML (regular form submission)
-      const acceptsJson =
-        req.headers.accept && req.headers.accept.includes("application/json");
-
-      if (acceptsJson) {
-        return res.status(409).json({
-          success: false,
-          message: "Sorry, this engineer is already booked on this date",
-          details: "Please choose another date or another engineer",
-          error: "ENGINEER_NOT_AVAILABLE",
-        });
-      } else {
-        // For regular form submission, redirect back with error
-        return res.status(409).render("error", {
-          message: "Sorry, this engineer is already booked on this date",
-          details: "Please choose another date or another engineer",
-          user: req.session.user,
-          isAuthenticated: !!req.session.user,
-        });
-      }
+      return res.status(404).send("Package not found");
     }
     const originalPrice = pkg.price;
     const commission = Math.round(originalPrice * 0.1);
@@ -163,20 +123,7 @@ router.post("/booking", async (req, res) => {
     });
   } catch (error) {
     console.error("Booking error:", error);
-
-    // Check if request expects JSON (AJAX) or HTML (regular form submission)
-    const acceptsJson =
-      req.headers.accept && req.headers.accept.includes("application/json");
-
-    if (acceptsJson) {
-      return res.status(500).json({
-        success: false,
-        message: "Error processing booking",
-        error: "BOOKING_ERROR",
-      });
-    } else {
-      res.status(500).send("Error processing booking");
-    }
+    res.status(500).send("Error processing booking");
   }
 });
 
@@ -213,53 +160,6 @@ router.post("/proceed-to-payment", (req, res) => {
     res.status(500).send("Error loading payment page");
   }
 });
-
-// Helper function to check if engineer is available on a specific date
-async function checkEngineerAvailability(engineerId, eventDate) {
-  try {
-    const engineer = await User.findById(engineerId);
-    if (!engineer) {
-      return { available: false, message: "Engineer not found" };
-    }
-
-    // Convert event date to start and end of day for comparison
-    const requestedDate = new Date(eventDate);
-    const startOfDay = new Date(
-      requestedDate.getFullYear(),
-      requestedDate.getMonth(),
-      requestedDate.getDate()
-    );
-    const endOfDay = new Date(
-      requestedDate.getFullYear(),
-      requestedDate.getMonth(),
-      requestedDate.getDate(),
-      23,
-      59,
-      59
-    );
-
-    // Check if engineer has any active bookings on this date
-    const existingBooking = engineer.bookings.find((booking) => {
-      if (booking.status === "Cancelled") return false; // Skip cancelled bookings
-
-      const bookingDate = new Date(booking.eventDate);
-      return bookingDate >= startOfDay && bookingDate <= endOfDay;
-    });
-
-    if (existingBooking) {
-      return {
-        available: false,
-        message: "Engineer is already booked on this date",
-        conflictingBooking: existingBooking,
-      };
-    }
-
-    return { available: true, message: "Engineer is available" };
-  } catch (error) {
-    console.error("Error checking engineer availability:", error);
-    return { available: false, message: "Error checking availability" };
-  }
-}
 
 router.post("/process-payment", async (req, res) => {
   try {
@@ -319,21 +219,6 @@ router.post("/process-payment", async (req, res) => {
         console.log(
           `Found package: ${package.name} with engineer ID: ${package.engID}`
         );
-
-        // Check engineer availability before processing payment
-        const availabilityCheck = await checkEngineerAvailability(
-          package.engID,
-          event_date
-        );
-        if (!availabilityCheck.available) {
-          console.log(`Engineer not available: ${availabilityCheck.message}`);
-          return res.status(409).json({
-            status: "failed",
-            message: availabilityCheck.message,
-            error: "ENGINEER_NOT_AVAILABLE",
-            conflictingBooking: availabilityCheck.conflictingBooking,
-          });
-        }
 
         const engineer = await User.findById(package.engID);
         if (!engineer) {
@@ -545,58 +430,6 @@ router.get("/payment-success", (req, res) => {
     user: req.session.user,
     isAuthenticated: !!req.session.user,
   });
-});
-
-// Route to check engineer availability for a specific date
-router.post("/api/check-availability", async (req, res) => {
-  try {
-    const { engineerId, eventDate } = req.body;
-
-    if (!engineerId || !eventDate) {
-      return res.status(400).json({
-        available: false,
-        message: "Engineer ID and event date are required",
-      });
-    }
-
-    const availabilityCheck = await checkEngineerAvailability(
-      engineerId,
-      eventDate
-    );
-
-    res.json(availabilityCheck);
-  } catch (error) {
-    console.error("Error checking availability:", error);
-    res.status(500).json({
-      available: false,
-      message: "Error checking engineer availability",
-    });
-  }
-});
-
-// Route to get engineer's booked dates
-router.get("/api/engineer-booked-dates/:engineerId", async (req, res) => {
-  try {
-    const { engineerId } = req.params;
-
-    const engineer = await User.findById(engineerId);
-    if (!engineer) {
-      return res.status(404).json({ message: "Engineer not found" });
-    }
-
-    // Get all active booking dates
-    const bookedDates = engineer.bookings
-      .filter((booking) => booking.status !== "Cancelled")
-      .map((booking) => {
-        const date = new Date(booking.eventDate);
-        return date.toISOString().split("T")[0]; // Return YYYY-MM-DD format
-      });
-
-    res.json({ bookedDates });
-  } catch (error) {
-    console.error("Error getting booked dates:", error);
-    res.status(500).json({ message: "Error retrieving booked dates" });
-  }
 });
 
 router.post("/submit-review", isAuthenticated, async (req, res) => {
