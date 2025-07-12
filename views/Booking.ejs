@@ -410,7 +410,11 @@
                   <div class="col-md-6">
                     <label class="form-label">Event Date</label>
                     <input type="date" class="form-control" name="eventDate"
+                      id="eventDate"
                       required placeholder="mm/dd/yyyy">
+                    <!-- Date availability message will appear here -->
+                    <div id="dateAvailabilityMessage" class="mt-2"
+                      style="display: none;"></div>
                   </div>
 
                   <div class="col-md-6">
@@ -572,6 +576,80 @@
                 menuBtn.addEventListener('click', function () {
                     navLinks.classList.toggle('d-none');
                     navLinks.classList.toggle('d-block');
+                });
+            }
+
+            // Date availability checker
+            const engineerId = form.getAttribute('data-engineer-id');
+            const dateInput = document.getElementById('eventDate');
+
+            // Function to check date availability
+            async function checkDateAvailability(selectedDate) {
+                if (!engineerId || !selectedDate) return;
+
+                try {
+                    const response = await fetch('/api/check-availability', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            engineerId: engineerId,
+                            eventDate: selectedDate
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (!data.available) {
+                        // Show error message under the date input
+                        showDateUnavailableMessage();
+                        // Clear the date input
+                        dateInput.value = '';
+                        // Add red border to indicate error
+                        dateInput.style.borderColor = '#dc3545';
+                    } else {
+                        // Hide any existing error message
+                        hideDateAvailabilityMessage();
+                        // Reset border color
+                        dateInput.style.borderColor = '';
+                    }
+                } catch (error) {
+                    console.error('Error checking availability:', error);
+                }
+            }
+
+            // Function to show date unavailable message
+            function showDateUnavailableMessage() {
+                const messageDiv = document.getElementById('dateAvailabilityMessage');
+                if (messageDiv) {
+                    messageDiv.innerHTML = `
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Engineer is already booked on this date</strong><br>
+                            <small>Please choose another date</small>
+                        </div>
+                    `;
+                    messageDiv.style.display = 'block';
+                }
+            }
+
+            // Function to hide date availability message
+            function hideDateAvailabilityMessage() {
+                const messageDiv = document.getElementById('dateAvailabilityMessage');
+                if (messageDiv) {
+                    messageDiv.style.display = 'none';
+                    messageDiv.innerHTML = '';
+                }
+            }
+
+            // Add event listener to date input
+            if (dateInput) {
+                dateInput.addEventListener('change', function() {
+                    const selectedDate = this.value;
+                    if (selectedDate) {
+                        checkDateAvailability(selectedDate);
+                    }
                 });
             }
         });
