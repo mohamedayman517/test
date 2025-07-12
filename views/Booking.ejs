@@ -559,14 +559,90 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Form validation
+            // Form validation with availability check
             const form = document.getElementById('bookingForm');
-            form.addEventListener('submit', function (event) {
+            form.addEventListener('submit', async function (event) {
+                event.preventDefault(); // Always prevent default first
+
                 if (!form.checkValidity()) {
-                    event.preventDefault();
                     event.stopPropagation();
+                    form.classList.add('was-validated');
+                    return;
                 }
+
+                // Check engineer availability before submitting
+                const dateInput = form.querySelector('input[name="eventDate"]');
+                const engineerId = form.getAttribute('data-engineer-id');
+
+                if (dateInput && dateInput.value && engineerId) {
+                    try {
+                        const response = await fetch('/booking/check-availability', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                engineerId: engineerId,
+                                eventDate: dateInput.value
+                            })
+                        });
+
+                        const result = await response.json();
+
+                        if (!result.available) {
+                            // Show error message under date input
+                            bookingChecker.showDateUnavailableMessage(dateInput.value, result.message);
+                            dateInput.value = ''; // Clear the invalid date
+                            return;
+                        }
+                    } catch (error) {
+                        console.error('Error checking availability:', error);
+                        alert('Error checking availability. Please try again.');
+                        return;
+                    }
+                }
+
+                // If we get here, everything is valid - submit the form
                 form.classList.add('was-validated');
+
+                // Create FormData and submit via fetch to handle JSON responses
+                const formData = new FormData(form);
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        // If successful, redirect to payment or success page
+                        const contentType = response.headers.get('content-type');
+                        if (contentType && contentType.includes('application/json')) {
+                            const result = await response.json();
+                            if (result.redirectUrl) {
+                                window.location.href = result.redirectUrl;
+                            }
+                        } else {
+                            // If it's HTML response, replace current page
+                            const html = await response.text();
+                            document.open();
+                            document.write(html);
+                            document.close();
+                        }
+                    } else {
+                        // Handle error response
+                        const errorData = await response.json();
+                        if (errorData.error === 'ENGINEER_NOT_AVAILABLE') {
+                            bookingChecker.showDateUnavailableMessage(dateInput.value, errorData.message);
+                            dateInput.value = '';
+                        } else {
+                            alert(errorData.message || 'An error occurred. Please try again.');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error submitting form:', error);
+                    alert('An error occurred. Please try again.');
+                }
             }, false);
 
             // Mobile menu toggle

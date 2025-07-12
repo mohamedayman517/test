@@ -104,12 +104,26 @@ router.post("/booking", async (req, res) => {
       eventDate
     );
     if (!availabilityCheck.available) {
-      return res.status(409).render("error", {
-        message: "عذراً، هذا المهندس محجوز في هذا التاريخ",
-        details: "يرجى اختيار تاريخ آخر أو مهندس آخر",
-        user: req.session.user,
-        isAuthenticated: !!req.session.user,
-      });
+      // Check if request expects JSON (AJAX) or HTML (regular form submission)
+      const acceptsJson =
+        req.headers.accept && req.headers.accept.includes("application/json");
+
+      if (acceptsJson) {
+        return res.status(409).json({
+          success: false,
+          message: "Sorry, this engineer is already booked on this date",
+          details: "Please choose another date or another engineer",
+          error: "ENGINEER_NOT_AVAILABLE",
+        });
+      } else {
+        // For regular form submission, redirect back with error
+        return res.status(409).render("error", {
+          message: "Sorry, this engineer is already booked on this date",
+          details: "Please choose another date or another engineer",
+          user: req.session.user,
+          isAuthenticated: !!req.session.user,
+        });
+      }
     }
     const originalPrice = pkg.price;
     const commission = Math.round(originalPrice * 0.1);
