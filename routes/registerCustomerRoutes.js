@@ -76,14 +76,34 @@ router.post(
 
       const { Name, email, password, phone, bio } = req.body;
 
-      // Check if email already exists
-      const existingUser = await Client.findOne({ email });
-      if (existingUser) {
+      // فحص الإيميل في كلا النموذجين لمنع التكرار
+      console.log("🔍 [Customer Registration] Checking email:", email);
+      const existingUser = await User.findOne({ email });
+      const existingClient = await Client.findOne({ email });
+
+      console.log(
+        "👤 [Customer Registration] Existing User:",
+        existingUser ? "Found" : "Not found"
+      );
+      console.log(
+        "👥 [Customer Registration] Existing Client:",
+        existingClient ? "Found" : "Not found"
+      );
+
+      if (existingUser || existingClient) {
+        console.log(
+          "❌ [Customer Registration] Email already exists, rejecting registration"
+        );
         return res.status(400).json({
           success: false,
-          message: "User already exists with this email address",
+          message:
+            "Email address is already registered. Please use a different email or try logging in.",
         });
       }
+
+      console.log(
+        "✅ [Customer Registration] Email is unique, proceeding with registration"
+      );
 
       // Generate a unique customId
       const customId =
