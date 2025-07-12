@@ -1,6 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const User = require("../models/userSchema");
+const Client = require("../models/clientSchema");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const nodemailer = require("nodemailer");
 
@@ -264,11 +265,14 @@ router.post("/register", async (req, res) => {
 
     console.log("REGISTER BODY:", req.body);
 
-    // Check if email already exists
+    // فحص الإيميل في كلا النموذجين لمنع التكرار
     const existingUser = await User.findOne({ email });
-    if (existingUser) {
+    const existingClient = await Client.findOne({ email });
+
+    if (existingUser || existingClient) {
       return res.status(400).json({
-        message: "Engineer already exists with this email address",
+        message:
+          "Email address is already registered. Please use a different email or try logging in.",
       });
     }
 

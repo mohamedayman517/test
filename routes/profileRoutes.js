@@ -197,12 +197,15 @@ router.post(
     try {
       const { name, email, password, phone, bio } = req.body;
 
-      // Check if user already exists
-      const existingUser = await Client.findOne({ email });
-      if (existingUser) {
+      // فحص الإيميل في كلا النموذجين لمنع التكرار
+      const existingUser = await User.findOne({ email });
+      const existingClient = await Client.findOne({ email });
+
+      if (existingUser || existingClient) {
         return res.status(400).json({
           success: false,
-          message: "Email already exists",
+          message:
+            "Email address is already registered. Please use a different email or try logging in.",
         });
       }
 
