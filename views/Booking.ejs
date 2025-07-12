@@ -609,21 +609,28 @@
                 const formData = new FormData(form);
 
                 try {
+                    // Add JSON accept header for better error handling
                     const response = await fetch(form.action, {
                         method: 'POST',
+                        headers: {
+                            'Accept': 'application/json, text/html, */*'
+                        },
                         body: formData
                     });
 
                     if (response.ok) {
-                        // If successful, redirect to payment or success page
+                        // If successful, check content type
                         const contentType = response.headers.get('content-type');
                         if (contentType && contentType.includes('application/json')) {
                             const result = await response.json();
                             if (result.redirectUrl) {
                                 window.location.href = result.redirectUrl;
+                            } else if (result.success) {
+                                // Handle successful JSON response
+                                window.location.reload();
                             }
                         } else {
-                            // If it's HTML response, replace current page
+                            // If it's HTML response (payment page), replace current page
                             const html = await response.text();
                             document.open();
                             document.write(html);
@@ -631,17 +638,38 @@
                         }
                     } else {
                         // Handle error response
-                        const errorData = await response.json();
-                        if (errorData.error === 'ENGINEER_NOT_AVAILABLE') {
-                            bookingChecker.showDateUnavailableMessage(dateInput.value, errorData.message);
-                            dateInput.value = '';
-                        } else {
-                            alert(errorData.message || 'An error occurred. Please try again.');
+                        const contentType = response.headers.get('content-type');
+                        let errorMessage = 'An error occurred. Please try again.';
+
+                        try {
+                            if (contentType && contentType.includes('application/json')) {
+                                const errorData = await response.json();
+                                if (errorData.error === 'ENGINEER_NOT_AVAILABLE') {
+                                    bookingChecker.showDateUnavailableMessage(dateInput.value, errorData.message);
+                                    dateInput.value = '';
+                                    return;
+                                } else {
+                                    errorMessage = errorData.message || errorMessage;
+                                }
+                            } else {
+                                // If it's text/HTML error
+                                errorMessage = await response.text();
+                                // Extract meaningful error from HTML if possible
+                                if (errorMessage.includes('Package not found')) {
+                                    errorMessage = 'Package not found. Please try again.';
+                                } else if (errorMessage.length > 100) {
+                                    errorMessage = 'An error occurred. Please try again.';
+                                }
+                            }
+                        } catch (parseError) {
+                            console.error('Error parsing response:', parseError);
                         }
+
+                        alert(errorMessage);
                     }
                 } catch (error) {
                     console.error('Error submitting form:', error);
-                    alert('An error occurred. Please try again.');
+                    alert('Network error. Please check your connection and try again.');
                 }
             }, false);
 

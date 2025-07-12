@@ -95,7 +95,19 @@ router.post("/", async (req, res) => {
     const { packageId, eventDate, eventType } = req.body;
     const pkg = await Package.findById(packageId).lean();
     if (!pkg) {
-      return res.status(404).send("Package not found");
+      // Check if request expects JSON (AJAX) or HTML (regular form submission)
+      const acceptsJson =
+        req.headers.accept && req.headers.accept.includes("application/json");
+
+      if (acceptsJson) {
+        return res.status(404).json({
+          success: false,
+          message: "Package not found",
+          error: "PACKAGE_NOT_FOUND",
+        });
+      } else {
+        return res.status(404).send("Package not found");
+      }
     }
 
     // Check engineer availability before proceeding to payment
@@ -151,7 +163,20 @@ router.post("/", async (req, res) => {
     });
   } catch (error) {
     console.error("Booking error:", error);
-    res.status(500).send("Error processing booking");
+
+    // Check if request expects JSON (AJAX) or HTML (regular form submission)
+    const acceptsJson =
+      req.headers.accept && req.headers.accept.includes("application/json");
+
+    if (acceptsJson) {
+      return res.status(500).json({
+        success: false,
+        message: "Error processing booking",
+        error: "BOOKING_ERROR",
+      });
+    } else {
+      res.status(500).send("Error processing booking");
+    }
   }
 });
 
