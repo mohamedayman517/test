@@ -97,7 +97,7 @@ router.post(
         return res.status(400).json({
           success: false,
           message:
-            "Email address is already registered. Please use a different email or try logging in.",
+            "هذا البريد الإلكتروني مسجل مسبقاً. يرجى استخدام بريد إلكتروني آخر أو تسجيل الدخول.",
         });
       }
 
