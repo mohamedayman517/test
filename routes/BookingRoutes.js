@@ -41,7 +41,7 @@ const isAuthenticated = (req, res, next) => {
 };
 
 // عرض صفحة الحجز
-router.get("/booking", async (req, res) => {
+router.get("/", async (req, res) => {
   const clientUser = req.session.user;
   if (!clientUser) {
     return res.redirect("/");
@@ -90,7 +90,7 @@ router.get("/booking", async (req, res) => {
 });
 
 // معالجة بيانات الحجز وتحويل المستخدم إلى صفحة الدفع
-router.post("/booking", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const { packageId, eventDate, eventType } = req.body;
     const pkg = await Package.findById(packageId).lean();

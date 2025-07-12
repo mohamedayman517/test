@@ -283,7 +283,7 @@ app.use("/", paymentRoutes);
 app.use("/", favoriteRoutes);
 app.use("/", userProfileRoutes);
 app.use("/", authRoute);
-app.use("/", BookingRoutes);
+app.use("/booking", BookingRoutes);
 app.use("/", ConfirmationRoutes);
 app.use("/", registerCustomerRoutes);
 
