@@ -20,35 +20,12 @@ if (sidebarId) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Enhanced mobile navigation
+  // Check for menu button and nav links
   const menuBtn = document.querySelector(".menu-btn");
   const navLinks = document.querySelector(".nav-links");
   if (menuBtn && navLinks) {
     menuBtn.addEventListener("click", () => {
       navLinks.classList.toggle("active");
-      // Add ARIA attributes for accessibility
-      const isExpanded = navLinks.classList.contains("active");
-      menuBtn.setAttribute("aria-expanded", isExpanded);
-      navLinks.setAttribute("aria-hidden", !isExpanded);
-    });
-
-    // Close menu when clicking outside
-    document.addEventListener("click", (e) => {
-      if (!menuBtn.contains(e.target) && !navLinks.contains(e.target)) {
-        navLinks.classList.remove("active");
-        menuBtn.setAttribute("aria-expanded", "false");
-        navLinks.setAttribute("aria-hidden", "true");
-      }
-    });
-
-    // Close menu on escape key
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && navLinks.classList.contains("active")) {
-        navLinks.classList.remove("active");
-        menuBtn.setAttribute("aria-expanded", "false");
-        navLinks.setAttribute("aria-hidden", "true");
-        menuBtn.focus();
-      }
     });
   }
 
@@ -227,159 +204,6 @@ function changeImages(category) {
       "imgs/r-9.jpg",
     ],
   };
-
-  // ===== MOBILE ENHANCEMENTS =====
-
-  // Touch gesture support
-  let touchStartX = 0;
-  let touchStartY = 0;
-  let touchEndX = 0;
-  let touchEndY = 0;
-
-  function handleTouchStart(e) {
-    touchStartX = e.changedTouches[0].screenX;
-    touchStartY = e.changedTouches[0].screenY;
-  }
-
-  function handleTouchEnd(e) {
-    touchEndX = e.changedTouches[0].screenX;
-    touchEndY = e.changedTouches[0].screenY;
-    handleSwipe();
-  }
-
-  function handleSwipe() {
-    const deltaX = touchEndX - touchStartX;
-    const deltaY = touchEndY - touchStartY;
-    const minSwipeDistance = 50;
-
-    if (Math.abs(deltaX) > Math.abs(deltaY)) {
-      if (Math.abs(deltaX) > minSwipeDistance) {
-        if (deltaX > 0) {
-          // Swipe right - close mobile menu if open
-          const navLinks = document.querySelector(".nav-links");
-          const menuBtn = document.querySelector(".menu-btn");
-          if (navLinks && navLinks.classList.contains("active")) {
-            navLinks.classList.remove("active");
-            if (menuBtn) {
-              menuBtn.setAttribute("aria-expanded", "false");
-              navLinks.setAttribute("aria-hidden", "true");
-            }
-          }
-        }
-      }
-    }
-  }
-
-  // Add touch event listeners
-  document.addEventListener("touchstart", handleTouchStart, { passive: true });
-  document.addEventListener("touchend", handleTouchEnd, { passive: true });
-
-  // Improved form handling for mobile
-  function enhanceMobileForms() {
-    const forms = document.querySelectorAll("form");
-
-    forms.forEach((form) => {
-      // Add loading state to submit buttons
-      form.addEventListener("submit", function (e) {
-        const submitBtn = form.querySelector(
-          'button[type="submit"], input[type="submit"]'
-        );
-        if (submitBtn) {
-          submitBtn.disabled = true;
-          const originalText = submitBtn.textContent || submitBtn.value;
-          submitBtn.textContent = "جاري التحميل...";
-          submitBtn.innerHTML = '<span class="loading"></span> جاري التحميل...';
-
-          // Re-enable after 5 seconds as fallback
-          setTimeout(() => {
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalText;
-          }, 5000);
-        }
-      });
-
-      // Auto-resize textareas
-      const textareas = form.querySelectorAll("textarea");
-      textareas.forEach((textarea) => {
-        textarea.addEventListener("input", function () {
-          this.style.height = "auto";
-          this.style.height = this.scrollHeight + "px";
-        });
-      });
-    });
-  }
-
-  // Mobile-specific optimizations
-  function initMobileOptimizations() {
-    // Check if device is mobile
-    const isMobile =
-      window.innerWidth <= 768 ||
-      /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      );
-
-    if (isMobile) {
-      // Add mobile class to body
-      document.body.classList.add("mobile-device");
-
-      // Optimize images for mobile
-      const images = document.querySelectorAll("img");
-      images.forEach((img) => {
-        if (!img.loading) {
-          img.loading = "lazy";
-        }
-      });
-
-      // Add smooth scrolling for anchor links
-      const anchorLinks = document.querySelectorAll('a[href^="#"]');
-      anchorLinks.forEach((link) => {
-        link.addEventListener("click", function (e) {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute("href"));
-          if (target) {
-            target.scrollIntoView({
-              behavior: "smooth",
-              block: "start",
-            });
-          }
-        });
-      });
-
-      // Enhance mobile forms
-      enhanceMobileForms();
-    }
-  }
-
-  // Initialize mobile optimizations when DOM is loaded
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initMobileOptimizations);
-  } else {
-    initMobileOptimizations();
-  }
-
-  // Handle orientation changes
-  window.addEventListener("orientationchange", function () {
-    // Close mobile menu on orientation change
-    const navLinks = document.querySelector(".nav-links");
-    const menuBtn = document.querySelector(".menu-btn");
-    if (navLinks && navLinks.classList.contains("active")) {
-      navLinks.classList.remove("active");
-      if (menuBtn) {
-        menuBtn.setAttribute("aria-expanded", "false");
-        navLinks.setAttribute("aria-hidden", "true");
-      }
-    }
-
-    // Recalculate viewport height
-    setTimeout(() => {
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty("--vh", `${vh}px`);
-    }, 100);
-  });
-
-  // Set initial viewport height
-  const vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty("--vh", `${vh}px`);
 
   for (let i = 1; i <= 9; i++) {
     document.getElementById(`img${i}`).src = images[category][i - 1];
