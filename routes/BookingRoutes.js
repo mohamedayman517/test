@@ -41,7 +41,7 @@ const isAuthenticated = (req, res, next) => {
 };
 
 // عرض صفحة الحجز
-router.get("/", async (req, res) => {
+router.get("/booking", async (req, res) => {
   const clientUser = req.session.user;
   if (!clientUser) {
     return res.redirect("/");
@@ -90,7 +90,7 @@ router.get("/", async (req, res) => {
 });
 
 // معالجة بيانات الحجز وتحويل المستخدم إلى صفحة الدفع
-router.post("/", async (req, res) => {
+router.post("/booking", async (req, res) => {
   try {
     const { packageId, eventDate, eventType } = req.body;
     const pkg = await Package.findById(packageId).lean();
@@ -548,7 +548,7 @@ router.get("/payment-success", (req, res) => {
 });
 
 // Route to check engineer availability for a specific date
-router.post("/check-availability", async (req, res) => {
+router.post("/api/check-availability", async (req, res) => {
   try {
     const { engineerId, eventDate } = req.body;
 
@@ -575,7 +575,7 @@ router.post("/check-availability", async (req, res) => {
 });
 
 // Route to get engineer's booked dates
-router.get("/engineer-booked-dates/:engineerId", async (req, res) => {
+router.get("/api/engineer-booked-dates/:engineerId", async (req, res) => {
   try {
     const { engineerId } = req.params;
 

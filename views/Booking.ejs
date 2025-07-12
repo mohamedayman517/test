@@ -576,7 +576,7 @@
 
                 if (dateInput && dateInput.value && engineerId) {
                     try {
-                        const response = await fetch('/booking/check-availability', {
+                        const response = await fetch('/api/check-availability', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

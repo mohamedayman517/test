@@ -107,7 +107,7 @@ class BookingAvailabilityChecker {
 
     try {
       const response = await fetch(
-        `/booking/engineer-booked-dates/${this.currentEngineerId}`
+        `/api/engineer-booked-dates/${this.currentEngineerId}`
       );
       const data = await response.json();
 
@@ -140,7 +140,7 @@ class BookingAvailabilityChecker {
     if (!this.currentEngineerId || !selectedDate) return;
 
     try {
-      const response = await fetch("/booking/check-availability", {
+      const response = await fetch("/api/check-availability", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -227,7 +227,7 @@ class BookingAvailabilityChecker {
   // Public method to manually check availability
   async isDateAvailable(engineerId, date) {
     try {
-      const response = await fetch("/booking/check-availability", {
+      const response = await fetch("/api/check-availability", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
