@@ -111,7 +111,7 @@ router.post("/approve-engineer", async (req, res) => {
     console.log("Engineer found and updated:", engineer.email);
 
     // Create verification link
-    const verificationLink = `https://decoree-moree-production.up.railway.app/verify?engineerId=${engineer._id}`;
+    const verificationLink = `https://decoreee-moreee-production.up.railway.app/verify?engineerId=${engineer._id}`;
 
     // Send verification email with link
     const mailOptions = {
