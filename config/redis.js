@@ -1,11 +1,11 @@
 const redis = require('redis');
-const { Logger } = require('../utils/Logger');
+const logger = require('../utils/Logger');
 
 class RedisManager {
   constructor() {
     this.client = null;
     this.isConnected = false;
-    this.logger = new Logger('RedisManager');
+    this.logger = logger; // Use logger object directly
   }
 
   async connect() {
