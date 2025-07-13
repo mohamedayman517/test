@@ -268,6 +268,7 @@ const packageRoutes = require("./routes/packageRoutes");
 const BookingRoutes = require("./routes/BookingRoutes");
 const ConfirmationRoutes = require("./routes/confirmationRoutes");
 const registerCustomerRoutes = require("./routes/registerCustomerRoutes");
+const testRoutes = require("./routes/testRoutes");
 
 // Use routes
 app.use("/", indexRoutes);
@@ -286,6 +287,7 @@ app.use("/", authRoute);
 app.use("/", BookingRoutes);
 app.use("/", ConfirmationRoutes);
 app.use("/", registerCustomerRoutes);
+app.use("/test", testRoutes); // Test routes for new system
 
 // Chat route
 app.get("/chat/:userId1?/:userId2?", async (req, res) => {
