@@ -1,10 +1,10 @@
 const Queue = require('bull');
-const { Logger } = require('../utils/Logger');
+const logger = require('../utils/Logger');
 
 class QueueManager {
   constructor() {
     this.queues = new Map();
-    this.logger = new Logger('QueueManager');
+    this.logger = logger; // Use logger object directly
     this.redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
   }
 
