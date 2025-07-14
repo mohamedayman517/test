@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 const ResponseHandler = require('../utils/ResponseHandler');
-const { ErrorHandler } = require('../utils/ErrorHandler');
+const { globalErrorHandler } = require('../utils/ErrorHandler');
 const logger = require('../utils/Logger');
 const { redisManager } = require('../config/redis');
 const { queueManager } = require('../config/queue');
@@ -15,15 +15,13 @@ const { healthController } = require('../controllers/healthController');
 const { userService } = require('../services/userService');
 const { authController } = require('../controllers/authController');
 
-const errorHandler = new ErrorHandler();
-
 // Test health check
 router.get('/health', async (req, res) => {
   try {
     const health = await healthController.getHealth();
     ResponseHandler.success(res, 'Health check completed', health);
   } catch (error) {
-    errorHandler.handleError(error, req, res);
+    globalErrorHandler(error, req, res);
   }
 });
 
@@ -55,7 +53,7 @@ router.get('/cache/test', async (req, res) => {
     
     ResponseHandler.success(res, 'Cache test completed', result);
   } catch (error) {
-    errorHandler.handleError(error, req, res);
+    globalErrorHandler(error, req, res);
   }
 });
 
@@ -102,7 +100,7 @@ router.get('/queue/test', async (req, res) => {
     
     ResponseHandler.success(res, 'Queue test completed', result);
   } catch (error) {
-    errorHandler.handleError(error, req, res);
+    globalErrorHandler(error, req, res);
   }
 });
 
@@ -133,7 +131,7 @@ router.get('/monitoring/test', async (req, res) => {
     
     ResponseHandler.success(res, 'Monitoring test completed', result);
   } catch (error) {
-    errorHandler.handleError(error, req, res);
+    globalErrorHandler(error, req, res);
   }
 });
 
@@ -163,7 +161,7 @@ router.get('/users/cached/:id', async (req, res) => {
     
     ResponseHandler.success(res, `User retrieved from ${source}`, { user, source });
   } catch (error) {
-    errorHandler.handleError(error, req, res);
+    globalErrorHandler(error, req, res);
   }
 });
 
@@ -181,7 +179,7 @@ router.post('/auth/validate', async (req, res) => {
     
     ResponseHandler.success(res, 'Validation completed', validationResult);
   } catch (error) {
-    errorHandler.handleError(error, req, res);
+    globalErrorHandler(error, req, res);
   }
 });
 
@@ -207,7 +205,7 @@ router.get('/error/test', async (req, res) => {
         throw new Error('Generic error: Something went wrong');
     }
   } catch (error) {
-    errorHandler.handleError(error, req, res);
+    globalErrorHandler(error, req, res);
   }
 });
 
@@ -246,7 +244,7 @@ router.get('/performance/test', async (req, res) => {
     
     ResponseHandler.success(res, 'Performance test completed', result);
   } catch (error) {
-    errorHandler.handleError(error, req, res);
+    globalErrorHandler(error, req, res);
   }
 });
 
@@ -259,7 +257,7 @@ router.get('/rate-limit/test', async (req, res) => {
       timestamp: new Date()
     });
   } catch (error) {
-    errorHandler.handleError(error, req, res);
+    globalErrorHandler(error, req, res);
   }
 });
 
@@ -276,7 +274,7 @@ router.get('/logging/test', async (req, res) => {
       timestamp: new Date()
     });
   } catch (error) {
-    errorHandler.handleError(error, req, res);
+    globalErrorHandler(error, req, res);
   }
 });
 
@@ -299,7 +297,7 @@ router.get('/status', async (req, res) => {
     
     ResponseHandler.success(res, 'System status retrieved', status);
   } catch (error) {
-    errorHandler.handleError(error, req, res);
+    globalErrorHandler(error, req, res);
   }
 });
 
@@ -322,7 +320,7 @@ router.post('/cleanup', async (req, res) => {
       timestamp: new Date()
     });
   } catch (error) {
-    errorHandler.handleError(error, req, res);
+    globalErrorHandler(error, req, res);
   }
 });
 
