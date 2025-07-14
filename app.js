@@ -31,7 +31,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const allowedOrigins = [
   process.env.NODE_ENV === "development" ? "http://localhost:3000" : null,
-  "https://decoreee-moreee-production.up.railway.app",
+  "https://test-production-8e7a.up.railway.app",
   process.env.BASE_URL,
 ].filter(Boolean);
 
@@ -318,7 +318,7 @@ mongoose
     httpServer.listen(port, () => {
       const baseUrl =
         process.env.BASE_URL ||
-        `https://decoreee-moreee-production.up.railway.app/`;
+        `https://test-production-8e7a.up.railway.app/`;
       console.log("🔧 Environment Configuration:");
       console.log(`   NODE_ENV: ${process.env.NODE_ENV}`);
       console.log(`   BASE_URL: ${process.env.BASE_URL}`);
