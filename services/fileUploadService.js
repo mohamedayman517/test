@@ -3,35 +3,51 @@
  * Handles file upload and processing operations
  */
 
-const fs = require('fs').promises;
-const path = require('path');
-const sharp = require('sharp');
-const { ValidationError } = require('../utils/ErrorHandler');
-const logger = require('../utils/Logger');
+const fs = require("fs").promises;
+const path = require("path");
+const { ValidationError } = require("../utils/ErrorHandler");
+const logger = require("../utils/Logger");
+
+// Optional sharp import for image processing
+let sharp;
+try {
+  sharp = require("sharp");
+} catch (error) {
+  logger.warn("Sharp not available, image optimization disabled", {
+    error: error.message,
+  });
+  sharp = null;
+}
 
 class FileUploadService {
-
   /**
    * Process image to base64
    */
   static async processImageToBase64(file) {
     const startTime = Date.now();
-    
+
     try {
       if (!file) {
-        throw new ValidationError('No file provided');
+        throw new ValidationError("No file provided");
       }
 
       // Validate file type
-      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/gif",
+      ];
       if (!allowedTypes.includes(file.mimetype)) {
-        throw new ValidationError('Invalid file type. Only JPEG, PNG, and GIF are allowed.');
+        throw new ValidationError(
+          "Invalid file type. Only JPEG, PNG, and GIF are allowed."
+        );
       }
 
       // Validate file size (5MB limit)
       const maxSize = 5 * 1024 * 1024; // 5MB
       if (file.size > maxSize) {
-        throw new ValidationError('File size too large. Maximum size is 5MB.');
+        throw new ValidationError("File size too large. Maximum size is 5MB.");
       }
 
       let imageBuffer;
@@ -43,45 +59,70 @@ class FileUploadService {
         try {
           await fs.unlink(file.path);
         } catch (unlinkError) {
-          logger.warn('Failed to delete uploaded file', {
+          logger.warn("Failed to delete uploaded file", {
             filePath: file.path,
-            error: unlinkError.message
+            error: unlinkError.message,
           });
         }
       } else if (file.buffer) {
         // If file is in memory
         imageBuffer = file.buffer;
       } else {
-        throw new ValidationError('Invalid file format');
+        throw new ValidationError("Invalid file format");
       }
 
-      // Process image with sharp (resize and optimize)
-      const processedBuffer = await sharp(imageBuffer)
-        .resize(800, 600, {
-          fit: 'inside',
-          withoutEnlargement: true
-        })
-        .jpeg({ quality: 85 })
-        .toBuffer();
+      let processedBuffer;
+      let base64String;
 
-      // Convert to base64
-      const base64String = `data:image/jpeg;base64,${processedBuffer.toString('base64')}`;
+      // Process image with sharp if available (resize and optimize)
+      if (sharp) {
+        try {
+          processedBuffer = await sharp(imageBuffer)
+            .resize(800, 600, {
+              fit: "inside",
+              withoutEnlargement: true,
+            })
+            .jpeg({ quality: 85 })
+            .toBuffer();
+
+          base64String = `data:image/jpeg;base64,${processedBuffer.toString(
+            "base64"
+          )}`;
+        } catch (sharpError) {
+          logger.warn("Sharp processing failed, using original image", {
+            filename: file.originalname,
+            error: sharpError.message,
+          });
+          // Fallback to original image
+          base64String = `data:${file.mimetype};base64,${imageBuffer.toString(
+            "base64"
+          )}`;
+          processedBuffer = imageBuffer;
+        }
+      } else {
+        // No sharp available, use original image
+        base64String = `data:${file.mimetype};base64,${imageBuffer.toString(
+          "base64"
+        )}`;
+        processedBuffer = imageBuffer;
+      }
 
       const duration = Date.now() - startTime;
-      logger.debug('Image processed to base64', {
+      logger.debug("Image processed to base64", {
         originalSize: file.size,
         processedSize: processedBuffer.length,
         filename: file.originalname,
-        duration: `${duration}ms`
+        duration: `${duration}ms`,
+        sharpUsed: !!sharp,
       });
 
       return base64String;
     } catch (error) {
       const duration = Date.now() - startTime;
-      logger.error('Failed to process image to base64', {
+      logger.error("Failed to process image to base64", {
         filename: file?.originalname,
         error: error.message,
-        duration: `${duration}ms`
+        duration: `${duration}ms`,
       });
       throw error;
     }
@@ -92,29 +133,29 @@ class FileUploadService {
    */
   static async processMultipleImagesToBase64(files) {
     const startTime = Date.now();
-    
+
     try {
       if (!files || files.length === 0) {
         return [];
       }
 
       const processedImages = await Promise.all(
-        files.map(file => this.processImageToBase64(file))
+        files.map((file) => this.processImageToBase64(file))
       );
 
       const duration = Date.now() - startTime;
-      logger.debug('Multiple images processed to base64', {
+      logger.debug("Multiple images processed to base64", {
         count: files.length,
-        duration: `${duration}ms`
+        duration: `${duration}ms`,
       });
 
       return processedImages;
     } catch (error) {
       const duration = Date.now() - startTime;
-      logger.error('Failed to process multiple images to base64', {
+      logger.error("Failed to process multiple images to base64", {
         count: files?.length,
         error: error.message,
-        duration: `${duration}ms`
+        duration: `${duration}ms`,
       });
       throw error;
     }
@@ -125,19 +166,21 @@ class FileUploadService {
    */
   static validateImageFile(file) {
     if (!file) {
-      throw new ValidationError('No file provided');
+      throw new ValidationError("No file provided");
     }
 
     // Check file type
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
     if (!allowedTypes.includes(file.mimetype)) {
-      throw new ValidationError('Invalid file type. Only JPEG, PNG, and GIF are allowed.');
+      throw new ValidationError(
+        "Invalid file type. Only JPEG, PNG, and GIF are allowed."
+      );
     }
 
     // Check file size (5MB limit)
     const maxSize = 5 * 1024 * 1024; // 5MB
     if (file.size > maxSize) {
-      throw new ValidationError('File size too large. Maximum size is 5MB.');
+      throw new ValidationError("File size too large. Maximum size is 5MB.");
     }
 
     return true;
@@ -146,9 +189,9 @@ class FileUploadService {
   /**
    * Save file to disk (alternative to base64)
    */
-  static async saveFileToDisk(file, uploadDir = 'uploads') {
+  static async saveFileToDisk(file, uploadDir = "uploads") {
     const startTime = Date.now();
-    
+
     try {
       this.validateImageFile(file);
 
@@ -170,22 +213,22 @@ class FileUploadService {
         try {
           await fs.unlink(file.path);
         } catch (unlinkError) {
-          logger.warn('Failed to delete original uploaded file', {
+          logger.warn("Failed to delete original uploaded file", {
             filePath: file.path,
-            error: unlinkError.message
+            error: unlinkError.message,
           });
         }
       } else if (file.buffer) {
         imageBuffer = file.buffer;
       } else {
-        throw new ValidationError('Invalid file format');
+        throw new ValidationError("Invalid file format");
       }
 
       // Process and save image
       await sharp(imageBuffer)
         .resize(800, 600, {
-          fit: 'inside',
-          withoutEnlargement: true
+          fit: "inside",
+          withoutEnlargement: true,
         })
         .jpeg({ quality: 85 })
         .toFile(filePath);
@@ -193,19 +236,19 @@ class FileUploadService {
       const relativePath = `/${uploadDir}/${filename}`;
 
       const duration = Date.now() - startTime;
-      logger.debug('File saved to disk', {
+      logger.debug("File saved to disk", {
         originalName: file.originalname,
         savedPath: relativePath,
-        duration: `${duration}ms`
+        duration: `${duration}ms`,
       });
 
       return relativePath;
     } catch (error) {
       const duration = Date.now() - startTime;
-      logger.error('Failed to save file to disk', {
+      logger.error("Failed to save file to disk", {
         filename: file?.originalname,
         error: error.message,
-        duration: `${duration}ms`
+        duration: `${duration}ms`,
       });
       throw error;
     }
@@ -216,9 +259,9 @@ class FileUploadService {
    */
   static async deleteFileFromDisk(filePath) {
     const startTime = Date.now();
-    
+
     try {
-      if (!filePath || filePath === '/uploads/default.png') {
+      if (!filePath || filePath === "/uploads/default.png") {
         return; // Don't delete default images
       }
 
@@ -226,16 +269,16 @@ class FileUploadService {
       await fs.unlink(fullPath);
 
       const duration = Date.now() - startTime;
-      logger.debug('File deleted from disk', {
+      logger.debug("File deleted from disk", {
         filePath,
-        duration: `${duration}ms`
+        duration: `${duration}ms`,
       });
     } catch (error) {
       const duration = Date.now() - startTime;
-      logger.warn('Failed to delete file from disk', {
+      logger.warn("Failed to delete file from disk", {
         filePath,
         error: error.message,
-        duration: `${duration}ms`
+        duration: `${duration}ms`,
       });
       // Don't throw error for file deletion failures
     }
@@ -248,17 +291,17 @@ class FileUploadService {
     try {
       const fullPath = path.join(process.cwd(), filePath);
       const stats = await fs.stat(fullPath);
-      
+
       return {
         size: stats.size,
         created: stats.birthtime,
         modified: stats.mtime,
-        exists: true
+        exists: true,
       };
     } catch (error) {
       return {
         exists: false,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -268,7 +311,7 @@ class FileUploadService {
    */
   static async createThumbnail(file, width = 150, height = 150) {
     const startTime = Date.now();
-    
+
     try {
       this.validateImageFile(file);
 
@@ -278,36 +321,38 @@ class FileUploadService {
       } else if (file.buffer) {
         imageBuffer = file.buffer;
       } else {
-        throw new ValidationError('Invalid file format');
+        throw new ValidationError("Invalid file format");
       }
 
       // Create thumbnail
       const thumbnailBuffer = await sharp(imageBuffer)
         .resize(width, height, {
-          fit: 'cover',
-          position: 'center'
+          fit: "cover",
+          position: "center",
         })
         .jpeg({ quality: 80 })
         .toBuffer();
 
       // Convert to base64
-      const base64String = `data:image/jpeg;base64,${thumbnailBuffer.toString('base64')}`;
+      const base64String = `data:image/jpeg;base64,${thumbnailBuffer.toString(
+        "base64"
+      )}`;
 
       const duration = Date.now() - startTime;
-      logger.debug('Thumbnail created', {
+      logger.debug("Thumbnail created", {
         originalSize: file.size,
         thumbnailSize: thumbnailBuffer.length,
         dimensions: `${width}x${height}`,
-        duration: `${duration}ms`
+        duration: `${duration}ms`,
       });
 
       return base64String;
     } catch (error) {
       const duration = Date.now() - startTime;
-      logger.error('Failed to create thumbnail', {
+      logger.error("Failed to create thumbnail", {
         filename: file?.originalname,
         error: error.message,
-        duration: `${duration}ms`
+        duration: `${duration}ms`,
       });
       throw error;
     }
@@ -324,23 +369,23 @@ class FileUploadService {
       } else if (file.buffer) {
         imageBuffer = file.buffer;
       } else {
-        throw new ValidationError('Invalid file format');
+        throw new ValidationError("Invalid file format");
       }
 
       const metadata = await sharp(imageBuffer).metadata();
-      
+
       return {
         width: metadata.width,
         height: metadata.height,
         format: metadata.format,
         size: metadata.size,
         hasAlpha: metadata.hasAlpha,
-        orientation: metadata.orientation
+        orientation: metadata.orientation,
       };
     } catch (error) {
-      logger.error('Failed to extract image metadata', {
+      logger.error("Failed to extract image metadata", {
         filename: file?.originalname,
-        error: error.message
+        error: error.message,
       });
       throw error;
     }
