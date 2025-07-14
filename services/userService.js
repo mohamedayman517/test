@@ -108,7 +108,7 @@ class UserService {
       // Check if email already exists
       const emailExists = await this.isEmailExists(userData.email);
       if (emailExists) {
-        throw new ConflictError('Email already exists');
+        throw new ConflictError("Email already exists");
       }
 
       // Hash password if provided
@@ -117,29 +117,30 @@ class UserService {
       }
 
       // Generate custom ID
-      userData.customId = Math.random().toString(36).substring(2, 15) +
-                         Math.random().toString(36).substring(2, 15);
+      userData.customId =
+        Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15);
 
       // Determine which model to use
-      const Model = userData.role === 'user' ? Client : User;
+      const Model = userData.role === "user" ? Client : User;
       const newUser = new Model(userData);
       await newUser.save();
 
       const duration = Date.now() - startTime;
-      logger.info('User created successfully', {
+      logger.info("User created successfully", {
         userId: newUser._id,
         email: newUser.email,
-        role: newUser.role || 'user',
-        duration: `${duration}ms`
+        role: newUser.role || "user",
+        duration: `${duration}ms`,
       });
 
       return newUser;
     } catch (error) {
       const duration = Date.now() - startTime;
-      logger.error('Failed to create user', {
+      logger.error("Failed to create user", {
         email: userData.email,
         error: error.message,
-        duration: `${duration}ms`
+        duration: `${duration}ms`,
       });
       throw error;
     }
@@ -156,7 +157,7 @@ class UserService {
       const existingUser = await this.findUserById(userId);
 
       // Remove password from update data if empty
-      if (updateData.password === '') {
+      if (updateData.password === "") {
         delete updateData.password;
       }
 
@@ -166,39 +167,36 @@ class UserService {
       }
 
       // Determine which model to use
-      const Model = existingUser.role === 'user' ? Client : User;
+      const Model = existingUser.role === "user" ? Client : User;
 
-      const updatedUser = await Model.findByIdAndUpdate(
-        userId,
-        updateData,
-        { new: true, runValidators: true }
-      ).lean();
+      const updatedUser = await Model.findByIdAndUpdate(userId, updateData, {
+        new: true,
+        runValidators: true,
+      }).lean();
 
       if (!updatedUser) {
-        throw new NotFoundError('User');
+        throw new NotFoundError("User");
       }
 
       // Invalidate cache
       await redisManager.invalidateUserCache(userId);
 
       const duration = Date.now() - startTime;
-      logger.info('User updated successfully', {
+      logger.info("User updated successfully", {
         userId,
-        duration: `${duration}ms`
+        duration: `${duration}ms`,
       });
 
       return updatedUser;
     } catch (error) {
       const duration = Date.now() - startTime;
-      logger.error('Failed to update user', {
+      logger.error("Failed to update user", {
         userId,
         error: error.message,
-        duration: `${duration}ms`
+        duration: `${duration}ms`,
       });
       throw error;
     }
-  }
-    return !!(user || client);
   }
 
   /**
