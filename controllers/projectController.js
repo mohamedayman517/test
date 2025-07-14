@@ -363,6 +363,55 @@ class ProjectController {
   });
 
   /**
+   * Search projects
+   */
+  static searchProjects = asyncHandler(async (req, res) => {
+    const { query, page = 1, limit = 10, type, minPrice, maxPrice } = req.body;
+
+    try {
+      if (!query || query.trim().length === 0) {
+        throw new ValidationError("Search query is required");
+      }
+
+      const searchFilters = {
+        $or: [
+          { projectName: { $regex: query, $options: "i" } },
+          { projectType: { $regex: query, $options: "i" } },
+        ],
+      };
+
+      // Add additional filters
+      if (type) {
+        searchFilters.projectType = type;
+      }
+
+      if (minPrice || maxPrice) {
+        searchFilters.projectPrice = {};
+        if (minPrice) searchFilters.projectPrice.$gte = parseFloat(minPrice);
+        if (maxPrice) searchFilters.projectPrice.$lte = parseFloat(maxPrice);
+      }
+
+      const projects = await ProjectService.getProjects(searchFilters, {
+        page: parseInt(page),
+        limit: parseInt(limit),
+      });
+
+      return ResponseHandler.paginated(
+        res,
+        projects.data,
+        projects.pagination,
+        "Projects search completed successfully"
+      );
+    } catch (error) {
+      logger.error("Failed to search projects", {
+        query,
+        error: error.message,
+      });
+      throw error;
+    }
+  });
+
+  /**
    * Get project statistics
    */
   static getProjectStats = asyncHandler(async (req, res) => {
