@@ -1,10 +1,10 @@
-const { Logger } = require('./Logger');
+const logger = require('./Logger');
 const { redisManager } = require('../config/redis');
 const { queueManager } = require('../config/queue');
 
 class MonitoringSystem {
   constructor() {
-    this.logger = new Logger('Monitoring');
+    this.logger = logger; // Use logger object directly
     this.metrics = {
       requests: {
         total: 0,

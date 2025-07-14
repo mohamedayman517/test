@@ -7,7 +7,7 @@ const express = require('express');
 const router = express.Router();
 const { ResponseHandler } = require('../utils/ResponseHandler');
 const { ErrorHandler } = require('../utils/ErrorHandler');
-const { Logger } = require('../utils/Logger');
+const logger = require('../utils/Logger');
 const { redisManager } = require('../config/redis');
 const { queueManager } = require('../config/queue');
 const { monitoringSystem } = require('../utils/monitoring');
@@ -15,7 +15,6 @@ const { healthController } = require('../controllers/healthController');
 const { userService } = require('../services/userService');
 const { authController } = require('../controllers/authController');
 
-const logger = new Logger('TestRoutes');
 const responseHandler = new ResponseHandler();
 const errorHandler = new ErrorHandler();
 
