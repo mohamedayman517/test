@@ -5,7 +5,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { ResponseHandler } = require('../utils/ResponseHandler');
+const ResponseHandler = require('../utils/ResponseHandler');
 const { ErrorHandler } = require('../utils/ErrorHandler');
 const logger = require('../utils/Logger');
 const { redisManager } = require('../config/redis');
@@ -15,14 +15,13 @@ const { healthController } = require('../controllers/healthController');
 const { userService } = require('../services/userService');
 const { authController } = require('../controllers/authController');
 
-const responseHandler = new ResponseHandler();
 const errorHandler = new ErrorHandler();
 
 // Test health check
 router.get('/health', async (req, res) => {
   try {
     const health = await healthController.getHealth();
-    responseHandler.success(res, 'Health check completed', health);
+    ResponseHandler.success(res, 'Health check completed', health);
   } catch (error) {
     errorHandler.handleError(error, req, res);
   }
@@ -54,7 +53,7 @@ router.get('/cache/test', async (req, res) => {
       isConnected: redisManager.isConnected
     };
     
-    responseHandler.success(res, 'Cache test completed', result);
+    ResponseHandler.success(res, 'Cache test completed', result);
   } catch (error) {
     errorHandler.handleError(error, req, res);
   }
@@ -101,7 +100,7 @@ router.get('/queue/test', async (req, res) => {
       queues: Array.from(queueManager.queues.keys())
     };
     
-    responseHandler.success(res, 'Queue test completed', result);
+    ResponseHandler.success(res, 'Queue test completed', result);
   } catch (error) {
     errorHandler.handleError(error, req, res);
   }
@@ -132,7 +131,7 @@ router.get('/monitoring/test', async (req, res) => {
       health: health
     };
     
-    responseHandler.success(res, 'Monitoring test completed', result);
+    ResponseHandler.success(res, 'Monitoring test completed', result);
   } catch (error) {
     errorHandler.handleError(error, req, res);
   }
@@ -159,10 +158,10 @@ router.get('/users/cached/:id', async (req, res) => {
     }
     
     if (!user) {
-      return responseHandler.notFound(res, 'User not found');
+      return ResponseHandler.notFound(res, 'User not found');
     }
     
-    responseHandler.success(res, `User retrieved from ${source}`, { user, source });
+    ResponseHandler.success(res, `User retrieved from ${source}`, { user, source });
   } catch (error) {
     errorHandler.handleError(error, req, res);
   }
@@ -174,13 +173,13 @@ router.post('/auth/validate', async (req, res) => {
     const { email, password, role } = req.body;
     
     if (!email || !password || !role) {
-      return responseHandler.badRequest(res, 'Missing required fields');
+      return ResponseHandler.badRequest(res, 'Missing required fields');
     }
     
     // Test validation logic
     const validationResult = await authController.validateCredentials(email, password, role);
     
-    responseHandler.success(res, 'Validation completed', validationResult);
+    ResponseHandler.success(res, 'Validation completed', validationResult);
   } catch (error) {
     errorHandler.handleError(error, req, res);
   }
@@ -245,7 +244,7 @@ router.get('/performance/test', async (req, res) => {
       metrics: monitoringSystem.exportMetrics()
     };
     
-    responseHandler.success(res, 'Performance test completed', result);
+    ResponseHandler.success(res, 'Performance test completed', result);
   } catch (error) {
     errorHandler.handleError(error, req, res);
   }
@@ -255,7 +254,7 @@ router.get('/performance/test', async (req, res) => {
 router.get('/rate-limit/test', async (req, res) => {
   try {
     // This endpoint will be rate limited by the middleware
-    responseHandler.success(res, 'Rate limit test endpoint', {
+    ResponseHandler.success(res, 'Rate limit test endpoint', {
       message: 'If you see this, rate limiting is working',
       timestamp: new Date()
     });
@@ -272,7 +271,7 @@ router.get('/logging/test', async (req, res) => {
     logger.error('Test error message');
     logger.debug('Test debug message');
     
-    responseHandler.success(res, 'Logging test completed', {
+    ResponseHandler.success(res, 'Logging test completed', {
       message: 'Check the logs for test messages',
       timestamp: new Date()
     });
@@ -298,7 +297,7 @@ router.get('/status', async (req, res) => {
       health: await monitoringSystem.getHealthStatus()
     };
     
-    responseHandler.success(res, 'System status retrieved', status);
+    ResponseHandler.success(res, 'System status retrieved', status);
   } catch (error) {
     errorHandler.handleError(error, req, res);
   }
@@ -318,7 +317,7 @@ router.post('/cleanup', async (req, res) => {
     // Reset monitoring metrics
     monitoringSystem.resetMetrics();
     
-    responseHandler.success(res, 'Cleanup completed', {
+    ResponseHandler.success(res, 'Cleanup completed', {
       message: 'Cache, queues, and metrics have been cleared',
       timestamp: new Date()
     });
