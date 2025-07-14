@@ -173,6 +173,56 @@ const optionalAuth = async (req, res, next) => {
 };
 
 /**
+ * Require ownership or admin access
+ * @param {string} paramName - The parameter name to check ownership against
+ */
+const requireOwnershipOrAdmin = (paramName) => {
+  return async (req, res, next) => {
+    try {
+      const user = req.session?.user;
+      if (!user) {
+        throw new AuthenticationError("Authentication required");
+      }
+
+      // Admin can access anything
+      if (user.role === "admin") {
+        return next();
+      }
+
+      // Check if user owns the resource
+      const resourceId = req.params[paramName];
+      if (user.id === resourceId || user.id.toString() === resourceId) {
+        return next();
+      }
+
+      logger.warn("Ownership access denied", {
+        userId: user.id,
+        resourceId,
+        paramName,
+        userRole: user.role,
+        path: req.path,
+      });
+
+      throw new ForbiddenError("Access denied - insufficient permissions");
+    } catch (error) {
+      logger.error("Ownership check error", {
+        error: error.message,
+        userId: req.session?.user?.id,
+        path: req.path,
+      });
+
+      if (req.path.startsWith("/api/")) {
+        return res.status(error.statusCode || 403).json({
+          error: error.message || "Access denied",
+        });
+      }
+
+      return res.redirect("/login");
+    }
+  };
+};
+
+/**
  * Legacy function for backward compatibility
  */
 const isAuthenticated = (req, res, next) => {
@@ -189,6 +239,7 @@ module.exports = {
   requireEngineer,
   requireEngineerOrAdmin,
   requireClient,
+  requireOwnershipOrAdmin,
   optionalAuth,
   isAuthenticated, // Legacy support
 };
