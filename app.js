@@ -251,43 +251,11 @@ if (process.env.NODE_ENV === "development") {
   });
 }
 
-// Import routes
-const userRoutes = require("./routes/userRoutes");
-const messageRoutes = require("./routes/messageRoutes");
-const projectRoutes = require("./routes/projectRoutes");
-const adminRoutes = require("./routes/adminRoutes");
-const indexRoutes = require("./routes/indexRoutes");
-const contactRoutes = require("./routes/contactRoutes");
-const designersRoutes = require("./routes/designersRoutes");
-const profileRoutes = require("./routes/profileRoutes");
-const paymentRoutes = require("./routes/paymentRoutes");
-const favoriteRoutes = require("./routes/FavoriteRoutes");
-const userProfileRoutes = require("./routes/userProfileRoutes");
-const authRoute = require("./routes/authRoutes");
-const packageRoutes = require("./routes/packageRoutes");
-const BookingRoutes = require("./routes/BookingRoutes");
-const ConfirmationRoutes = require("./routes/confirmationRoutes");
-const registerCustomerRoutes = require("./routes/registerCustomerRoutes");
-const testRoutes = require("./routes/testRoutes");
+// Import the new organized routes system
+const routes = require("./routes");
 
-// Use routes
-app.use("/", indexRoutes);
-app.use("/", userRoutes);
-app.use("/", messageRoutes);
-app.use("/projects", projectRoutes);
-app.use("/packages", packageRoutes);
-app.use("/", adminRoutes);
-app.use("/", contactRoutes);
-app.use("/", designersRoutes);
-app.use("/", profileRoutes);
-app.use("/", paymentRoutes);
-app.use("/", favoriteRoutes);
-app.use("/", userProfileRoutes);
-app.use("/", authRoute);
-app.use("/", BookingRoutes);
-app.use("/", ConfirmationRoutes);
-app.use("/", registerCustomerRoutes);
-app.use("/test", testRoutes); // Test routes for new system
+// Use the new organized routes
+app.use("/", routes);
 
 // Chat route
 app.get("/chat/:userId1?/:userId2?", async (req, res) => {
